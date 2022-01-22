@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 import frc.robot.Configuration.Constants;
 
-public class Drivetrain {
+public class Drivetrain implements ISubsystem {
     
     private CANSparkMax _leftFrontMotor;
     private CANSparkMax _leftRearMotor;
@@ -49,5 +49,15 @@ public class Drivetrain {
         _rightFrontMotor.setIdleMode(IdleMode.kCoast);
         _leftFrontMotor.setIdleMode(IdleMode.kCoast);
         _robotDrive.arcadeDrive(throttle, turn);
+    }
+
+    public void LogTelemetry() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void ReadDashboardData() {
+        // TODO Auto-generated method stub
+        
     }
 }
