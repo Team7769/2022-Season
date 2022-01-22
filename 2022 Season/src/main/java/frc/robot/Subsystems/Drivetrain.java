@@ -6,6 +6,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
+import frc.robot.Configuration.Constants;
+
 public class Drivetrain {
     
     private CANSparkMax _leftFrontMotor;
@@ -27,13 +29,13 @@ public class Drivetrain {
 
     public Drivetrain()
     {
-        _leftFrontMotor = new CANSparkMax(3, MotorType.kBrushless);
-        _leftRearMotor = new CANSparkMax(4, MotorType.kBrushless);
+        _leftFrontMotor = new CANSparkMax(Constants.kLeftFrontDriveDeviceId, MotorType.kBrushless);
+        _leftRearMotor = new CANSparkMax(Constants.kLeftRearDriveDeviceId, MotorType.kBrushless);
 
-        _rightFrontMotor = new CANSparkMax(5, MotorType.kBrushless);
+        _rightFrontMotor = new CANSparkMax(Constants.kRightFrontDriveDeviceId, MotorType.kBrushless);
         _rightFrontMotor.setInverted(true);
 
-        _rightRearMotor = new CANSparkMax(6, MotorType.kBrushless);
+        _rightRearMotor = new CANSparkMax(Constants.kRightRearDriveDeviceId, MotorType.kBrushless);
         _rightRearMotor.setInverted(true);
 
         _leftRearMotor.follow(_leftFrontMotor);
