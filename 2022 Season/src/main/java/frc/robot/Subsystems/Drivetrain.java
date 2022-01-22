@@ -1,6 +1,7 @@
 package frc.robot.Subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -39,5 +40,12 @@ public class Drivetrain {
         _rightRearMotor.follow(_rightFrontMotor);
 
         _robotDrive = new DifferentialDrive(_leftFrontMotor, _rightFrontMotor);
+    }
+
+    public void drive(double throttle, double turn)
+    {
+        _rightFrontMotor.setIdleMode(IdleMode.kCoast);
+        _leftFrontMotor.setIdleMode(IdleMode.kCoast);
+        _robotDrive.arcadeDrive(throttle, turn);
     }
 }
