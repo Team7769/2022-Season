@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Subsystems.Drivetrain;
@@ -21,6 +22,8 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  private XboxController _driverController;
+  private XboxController _operatorController;
   private static Drivetrain _drivetrain;
 
   /**
@@ -33,6 +36,8 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
+    _driverController = new XboxController(0);
+    _operatorController = new XboxController(1);
     _drivetrain = Drivetrain.GetInstance();
   }
 
@@ -86,6 +91,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    teleopDrive();
   }
 
   /** This function is called once when the robot is disabled. */
@@ -103,4 +109,12 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
+  private void teleopDrive() {
+
+    var throttle = _driverController.getLeftY();
+    var turn = _operatorController.getRightX();
+    
+    _drivetrain.drive(throttle, turn);
+  }
 }
