@@ -18,14 +18,5 @@ private static Collector _instance;
         
     }
 
-
-
-
-
-
-
-
-
-
 }
  
