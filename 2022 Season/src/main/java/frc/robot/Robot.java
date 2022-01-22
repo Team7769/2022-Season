@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Configuration.Constants;
 import frc.robot.Subsystems.Drivetrain;
 
 /**
@@ -36,8 +37,8 @@ public class Robot extends TimedRobot {
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
 
-    _driverController = new XboxController(0);
-    _operatorController = new XboxController(1);
+    _driverController = new XboxController(Constants.kDriverControllerUsbSlot);
+    _operatorController = new XboxController(Constants.kOperatorControllerUsbSlot);
     _drivetrain = Drivetrain.GetInstance();
   }
 
