@@ -1,6 +1,6 @@
 package frc.robot.Subsystems;
 
-public class Climber {
+public class Climber implements ISubsystem {
 
     private static Climber _instance;
 
@@ -20,4 +20,14 @@ public class Climber {
      * Constructor for climber
     */
     public Climber(){}
+
+    public void LogTelemetry() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void ReadDashboardData() {
+        // TODO Auto-generated method stub
+        
+    }
 }

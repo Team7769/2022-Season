@@ -1,6 +1,6 @@
 package frc.robot.Subsystems;
 
-public class Collector {
+public class Collector implements ISubsystem {
 
 private static Collector _instance;   
     
@@ -15,6 +15,16 @@ private static Collector _instance;
 
     public Collector() 
     { 
+        
+    }
+
+    public void LogTelemetry() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public void ReadDashboardData() {
+        // TODO Auto-generated method stub
         
     }
 
