@@ -134,8 +134,8 @@ public class Robot extends TimedRobot {
 
   private void teleopDrive() {
 
-    var throttle = _driverController.getLeftY();
-    var turn = _operatorController.getRightX();
+    var throttle = -_driverController.getLeftY();
+    var turn = _driverController.getRightX();
     
     _drivetrain.drive(throttle, turn);
   }
