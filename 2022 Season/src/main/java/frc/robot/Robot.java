@@ -4,9 +4,17 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Configuration.Constants;
+import frc.robot.Subsystems.Climber;
+import frc.robot.Subsystems.Collector;
+import frc.robot.Subsystems.Drivetrain;
+import frc.robot.Subsystems.ISubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -20,6 +28,13 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  private XboxController _driverController;
+  private XboxController _operatorController;
+  private static Drivetrain _drivetrain;
+  private static Collector _collector;
+  private static Climber _climber;
+  private ArrayList<ISubsystem> _subsystems;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -29,6 +44,18 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+
+    _driverController = new XboxController(Constants.kDriverControllerUsbSlot);
+    _operatorController = new XboxController(Constants.kOperatorControllerUsbSlot);
+    _drivetrain = Drivetrain.GetInstance();
+    _collector = Collector.GetInstance();
+    _climber = Climber.GetInstance();
+
+    _subsystems = new ArrayList<ISubsystem>();
+
+    _subsystems.add(_drivetrain);
+    _subsystems.add(_collector);
+    _subsystems.add(_climber);
   }
 
   /**
@@ -39,7 +66,14 @@ public class Robot extends TimedRobot {
    * SmartDashboard integrated updating.
    */
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    // This is the robot periodic method.
+
+    _subsystems.forEach(s -> {
+      s.LogTelemetry();
+      s.ReadDashboardData();
+    });
+  }
 
   /**
    * This autonomous (along with the chooser code above) shows how to select between different
@@ -78,7 +112,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    teleopDrive();
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
@@ -95,4 +131,12 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
+
+  private void teleopDrive() {
+
+    var throttle = -_driverController.getLeftY();
+    var turn = _driverController.getRightX();
+    
+    _drivetrain.drive(throttle, turn);
+  }
 }
