@@ -4,12 +4,17 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Configuration.Constants;
+import frc.robot.Subsystems.Climber;
+import frc.robot.Subsystems.Collector;
 import frc.robot.Subsystems.Drivetrain;
+import frc.robot.Subsystems.ISubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -26,6 +31,9 @@ public class Robot extends TimedRobot {
   private XboxController _driverController;
   private XboxController _operatorController;
   private static Drivetrain _drivetrain;
+  private static Collector _collector;
+  private static Climber _climber;
+  private ArrayList<ISubsystem> _subsystems;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -40,6 +48,14 @@ public class Robot extends TimedRobot {
     _driverController = new XboxController(Constants.kDriverControllerUsbSlot);
     _operatorController = new XboxController(Constants.kOperatorControllerUsbSlot);
     _drivetrain = Drivetrain.GetInstance();
+    _collector = Collector.GetInstance();
+    _climber = Climber.GetInstance();
+
+    _subsystems = new ArrayList<ISubsystem>();
+
+    _subsystems.add(_drivetrain);
+    _subsystems.add(_collector);
+    _subsystems.add(_climber);
   }
 
   /**
@@ -52,6 +68,11 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     // This is the robot periodic method.
+
+    _subsystems.forEach(s -> {
+      s.LogTelemetry();
+      s.ReadDashboardData();
+    });
   }
 
   /**
