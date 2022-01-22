@@ -18,13 +18,11 @@ private static Collector _instance;
         
     }
 
-    @Override
     public void LogTelemetry() {
         // TODO Auto-generated method stub
         
     }
 
-    @Override
     public void ReadDashboardData() {
         // TODO Auto-generated method stub
         
