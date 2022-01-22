@@ -7,7 +7,7 @@ public class Climber {
     /** 
      * Used to get Instance of the Climber
     */
-    public static Climber GetInstance(){
+    public static Climber GetInstance() {
 
         if (_instance == null){
             _instance =  new Climber();
