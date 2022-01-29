@@ -1,5 +1,7 @@
 package frc.robot.Configuration;
 
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+
 public final class Constants {
 
     // Usb Slots
@@ -23,4 +25,26 @@ public final class Constants {
     public static final int kDriveEncoderTicksPerRevolution = 2048;
     public static final double kDriveWheelDiameter = 0.15;
     public static final double kDriveDistancePerPulse = (kDriveWheelDiameter * Math.PI) / kDriveEncoderTicksPerRevolution;
+    
+    //Drive Characteristics
+    public static final double ksVolts = 0.149;
+    public static final double kvVoltSecondsPerMeter = 2.86;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.252;
+    
+    //
+    public static final double kTrackwidthMeters = 0.6223;
+    public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
+
+    //public static final double kMaxSpeedMetersPerSecond = 1.25;
+    //public static final double kMaxAccelerationMetersPerSecondSquared = 1.25;
+
+    public static final double kMaxSpeedMetersPerSecond = 1.5;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
+
+    //Path Following
+    public static final double kPathFollowingkP = 4.5;
+
+    // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
+    public static final double kRamseteB = 2;
+    public static final double kRamseteZeta = 0.7;
 }

@@ -35,6 +35,7 @@ public class Robot extends TimedRobot {
   private static Climber _climber;
   private ArrayList<ISubsystem> _subsystems;
 
+  private int _autonomousCase = 0;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -69,6 +70,8 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     // This is the robot periodic method.
 
+    _drivetrain.updatePose();
+
     _subsystems.forEach(s -> {
       s.LogTelemetry();
       s.ReadDashboardData();
@@ -90,6 +93,17 @@ public class Robot extends TimedRobot {
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
+    
+    _autonomousCase = 0;
+    _drivetrain.resetGyro();
+    resetOdometry();
+  }
+  
+  public void resetOdometry()
+  {
+    _drivetrain.resetEncoders();
+    _drivetrain.updatePose();
+    //_drivetrain.resetPIDControllers();
   }
 
   /** This function is called periodically during autonomous. */
@@ -98,10 +112,34 @@ public class Robot extends TimedRobot {
     switch (m_autoSelected) {
       case kCustomAuto:
         // Put custom auto code here
+        testAuto();
         break;
       case kDefaultAuto:
       default:
         // Put default auto code here
+        break;
+    }
+  }
+
+  public void testAuto()
+  {
+    switch(_autonomousCase)
+    {
+      case 0:
+        _drivetrain.setTestPath();
+        _drivetrain.startPath();
+        _autonomousCase++;
+        break;
+      case 1:
+        _drivetrain.followPath();
+        
+        if (_drivetrain.isPathFinished())
+        {
+          _autonomousCase++;
+        }
+        break;
+      case 2:
+        _drivetrain.tankDriveVolts(0, 0);
         break;
     }
   }
