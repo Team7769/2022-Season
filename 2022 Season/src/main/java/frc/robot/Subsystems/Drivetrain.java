@@ -234,6 +234,10 @@ public class Drivetrain implements ISubsystem {
     {
         _pathFollower.setTestPath(getTrajectoryConfig(false));
     }
+    public void setDriveBackAndShootPath()
+    {
+        _pathFollower.setDriveBackAndShootPath(getTrajectoryConfig(true));
+    }
 
     public void startPath()
     {

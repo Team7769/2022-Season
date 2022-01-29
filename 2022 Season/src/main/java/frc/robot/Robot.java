@@ -116,6 +116,7 @@ public class Robot extends TimedRobot {
         break;
       case kDefaultAuto:
       default:
+        driveBackAndShootAuto();
         // Put default auto code here
         break;
     }
@@ -127,6 +128,29 @@ public class Robot extends TimedRobot {
     {
       case 0:
         _drivetrain.setTestPath();
+        _drivetrain.startPath();
+        _autonomousCase++;
+        break;
+      case 1:
+        _drivetrain.followPath();
+        
+        if (_drivetrain.isPathFinished())
+        {
+          _autonomousCase++;
+        }
+        break;
+      case 2:
+        _drivetrain.tankDriveVolts(0, 0);
+        break;
+    }
+  }
+  
+  public void driveBackAndShootAuto()
+  {
+    switch(_autonomousCase)
+    {
+      case 0:
+        _drivetrain.setDriveBackAndShootPath();
         _drivetrain.startPath();
         _autonomousCase++;
         break;

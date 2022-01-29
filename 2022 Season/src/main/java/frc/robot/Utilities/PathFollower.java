@@ -45,6 +45,10 @@ public class PathFollower {
     {
         _currentPath = generateTestTrajectory(config);
     }
+    public void setDriveBackAndShootPath(TrajectoryConfig config)
+    {
+        _currentPath = getDriveBackAndShootTrajectory(config);
+    }
 
     public Trajectory getCurrentTrajectory()
     {
@@ -89,18 +93,19 @@ public class PathFollower {
         // Pass config
         config);
       }
-    //   private Trajectory getLineToTrenchTrajectory(TrajectoryConfig config) {
 
-    //     return TrajectoryGenerator.generateTrajectory(new Pose2d(Constants.kCenterGoalLineX, Constants.kCenterGoalLineY, new Rotation2d(Constants.kCenterGoalLineStartAngle)),
-    //     // Pass through these two interior waypoints, making an 's' curve path
-    //     List.of(
-    //         new Translation2d(Constants.kTrenchPathMidpointX,Constants.kTrenchPathMidpointY)
-    //     ),
-    //     // End 3 meters straight ahead of where we started, facing forward
-    //     new Pose2d(Constants.kTrenchPathEndX, Constants.kTrenchPathEndY, new Rotation2d(Constants.kTrenchPathEndAngle)),
-    //     // Pass config
-    //     config);
-    //   }
+      private Trajectory getDriveBackAndShootTrajectory(TrajectoryConfig config) {
+
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(
+            new Translation2d(-1.63, .56)
+        ),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(-3, 0, new Rotation2d(-.785)),
+        // Pass config
+        config);
+      }
     //   private Trajectory getTrenchToLineTrajectory(TrajectoryConfig config)
     //   {
     //     return TrajectoryGenerator.generateTrajectory(new Pose2d(Constants.kTrenchPathEndX,Constants.kTrenchPathEndY, new Rotation2d(Constants.kTrenchPathEndAngle)),
