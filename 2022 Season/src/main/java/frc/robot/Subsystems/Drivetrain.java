@@ -97,7 +97,7 @@ public class Drivetrain implements ISubsystem {
     }
 
     public void updatePose() {
-        _odometry.update(Rotation2d.fromDegrees(getHeading()), _leftDriveEncoder.getDistance(), _rightDriveEncoder.getDistance());
+        _odometry.update(_gyro.getRotation2d(), _leftDriveEncoder.getDistance(), _rightDriveEncoder.getDistance());
     }
 
     /**
@@ -111,7 +111,13 @@ public class Drivetrain implements ISubsystem {
 
     public void resetOdometry(Pose2d pose) {
         resetEncoders();
-        _odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
+        _odometry.resetPosition(pose, _gyro.getRotation2d());
+    }
+
+    public void resetOdometry()
+    {
+        resetEncoders();
+        _odometry.resetPosition(_pathFollower.getStartingPose(), _gyro.getRotation2d());
     }
 
     /**
@@ -236,13 +242,14 @@ public class Drivetrain implements ISubsystem {
     }
     public void setDriveBackAndShootPath()
     {
-        _pathFollower.setDriveBackAndShootPath(getTrajectoryConfig(true));
+        _pathFollower.setDriveBackAndShootPath(getTrajectoryConfig(false));
     }
 
     public void startPath()
     {
         _leftDriveVelocityPID.reset();
         _rightDriveVelocityPID.reset();
+        resetOdometry(_pathFollower.getStartingPose());
         _pathFollower.startPath();
     }
     public void followPath()

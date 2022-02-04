@@ -70,6 +70,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     // This is the robot periodic method.
 
+    m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     _drivetrain.updatePose();
 
     _subsystems.forEach(s -> {
@@ -90,19 +91,21 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    // m_autoSelected = m_chooser.getSelected();
+    // m_autoSelected = SmartDashboard.getString("Auto Selector", kCustomAuto);
+    m_autoSelected = kDefaultAuto;
     System.out.println("Auto selected: " + m_autoSelected);
     
     _autonomousCase = 0;
-    _drivetrain.resetGyro();
+    //_drivetrain.resetGyro();
     resetOdometry();
   }
   
   public void resetOdometry()
   {
+    //_drivetrain.resetOdometry();
     _drivetrain.resetEncoders();
-    _drivetrain.updatePose();
+    //_drivetrain.updatePose();
     //_drivetrain.resetPIDControllers();
   }
 

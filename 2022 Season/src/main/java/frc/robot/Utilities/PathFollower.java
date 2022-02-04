@@ -63,9 +63,13 @@ public class PathFollower {
         var time = _timer.get();
         var goal = _currentPath.sample(time);
         var targetSpeeds = _controller.calculate(currentPose, goal);
+        SmartDashboard.putNumber("currentPoseX", currentPose.getX());
+        SmartDashboard.putNumber("currentPoseY", currentPose.getY());
+        SmartDashboard.putNumber("currentPoseDegrees", currentPose.getRotation().getDegrees());
         SmartDashboard.putNumber("goalDegrees", goal.poseMeters.getRotation().getDegrees());
         SmartDashboard.putNumber("totalPathTime", _currentPath.getTotalTimeSeconds());
-        SmartDashboard.putNumber("goal", goal.poseMeters.getTranslation().getX());
+        SmartDashboard.putNumber("goalX", goal.poseMeters.getTranslation().getX());
+        SmartDashboard.putNumber("goalY", goal.poseMeters.getTranslation().getY());
 
         return Constants.kDriveKinematics.toWheelSpeeds(targetSpeeds);
     }
@@ -96,13 +100,13 @@ public class PathFollower {
 
       private Trajectory getDriveBackAndShootTrajectory(TrajectoryConfig config) {
 
-        return TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(0)),
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(6.549, 2.078, new Rotation2d(-2.582993338246244)),
         // Pass through these two interior waypoints, making an 's' curve path
         List.of(
-            new Translation2d(-1.63, .56)
+            new Translation2d(5.728, 2.090)
         ),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(-3, 0, new Rotation2d(-.785)),
+        new Pose2d(5.12, 1.9, new Rotation2d(-2.7716865861332294)),
         // Pass config
         config);
       }
