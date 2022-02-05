@@ -45,9 +45,17 @@ public class PathFollower {
     {
         _currentPath = generateTestTrajectory(config);
     }
-    public void setDriveBackAndShootPath(TrajectoryConfig config)
+    public void setDriveForwardAndShootPath(TrajectoryConfig config)
     {
-        _currentPath = getDriveBackAndShootTrajectory(config);
+        _currentPath = getDriveForwardAndShootTrajectory(config);
+    }
+    public void setCollectTwoFromTerminalPath(TrajectoryConfig config, Rotation2d startingPose)
+    {
+        _currentPath = getCollectTwoFromTerminalTrajectory(config, startingPose);
+    }
+    public void setDriveBackFromTerminalPath(TrajectoryConfig config, Rotation2d startingPose)
+    {
+        _currentPath = getDriveBackFromTerminalTrajectory(config, startingPose);
     }
 
     public Trajectory getCurrentTrajectory()
@@ -98,7 +106,7 @@ public class PathFollower {
         config);
       }
 
-      private Trajectory getDriveBackAndShootTrajectory(TrajectoryConfig config) {
+      private Trajectory getDriveForwardAndShootTrajectory(TrajectoryConfig config) {
 
         return TrajectoryGenerator.generateTrajectory(new Pose2d(6.549, 2.078, new Rotation2d(-2.582993338246244)),
         // Pass through these two interior waypoints, making an 's' curve path
@@ -110,6 +118,33 @@ public class PathFollower {
         // Pass config
         config);
       }
+
+      private Trajectory getCollectTwoFromTerminalTrajectory(TrajectoryConfig config, Rotation2d startingPose) {
+
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(5.12, 1.9, startingPose),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(
+            new Translation2d(2.882, 2.180)
+        ),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(1.173, 2.000, new Rotation2d(-2.442932828868268)),
+        // Pass config
+        config);
+      }
+      
+      private Trajectory getDriveBackFromTerminalTrajectory(TrajectoryConfig config, Rotation2d startingPose) {
+
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(1.173, 2.000, startingPose),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(
+            new Translation2d(2.882, 2.180)
+        ),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(5.12, 1.9, new Rotation2d(-2.7716865861332294)),
+        // Pass config
+        config);
+      }
+
     //   private Trajectory getTrenchToLineTrajectory(TrajectoryConfig config)
     //   {
     //     return TrajectoryGenerator.generateTrajectory(new Pose2d(Constants.kTrenchPathEndX,Constants.kTrenchPathEndY, new Rotation2d(Constants.kTrenchPathEndAngle)),

@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
   private ArrayList<ISubsystem> _subsystems;
 
   private int _autonomousCase = 0;
+  private int _autonomousLoops = 0;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -97,6 +98,7 @@ public class Robot extends TimedRobot {
     System.out.println("Auto selected: " + m_autoSelected);
     
     _autonomousCase = 0;
+    _autonomousLoops = 0;
     //_drivetrain.resetGyro();
     resetOdometry();
   }
@@ -123,6 +125,7 @@ public class Robot extends TimedRobot {
         // Put default auto code here
         break;
     }
+    _autonomousLoops++;
   }
 
   public void testAuto()
@@ -153,7 +156,7 @@ public class Robot extends TimedRobot {
     switch(_autonomousCase)
     {
       case 0:
-        _drivetrain.setDriveBackAndShootPath();
+        _drivetrain.setDriveForwardAndShootPath();
         _drivetrain.startPath();
         _autonomousCase++;
         break;
@@ -162,10 +165,54 @@ public class Robot extends TimedRobot {
         
         if (_drivetrain.isPathFinished())
         {
+          _autonomousLoops = 0;
           _autonomousCase++;
         }
         break;
       case 2:
+        _drivetrain.tankDriveVolts(0, 0);
+        _drivetrain.setCollectTwoFromTerminalPath();
+        _autonomousCase++;
+        break;
+      case 3:
+        _drivetrain.tankDriveVolts(0, 0);
+        if (_autonomousLoops >= 100)
+        {
+          _drivetrain.startPath();
+          _autonomousCase++;
+        }
+        break;
+      case 4:
+        _drivetrain.followPath();
+
+        if (_drivetrain.isPathFinished())
+        {
+          _autonomousLoops = 0;
+          _autonomousCase++;
+        }
+        break;
+      case 5:
+        _drivetrain.tankDriveVolts(0, 0);
+        _drivetrain.setDriveBackFromTerminalPath();
+        _autonomousCase++;
+        break;
+      case 6:
+        _drivetrain.tankDriveVolts(0, 0);
+        if (_autonomousLoops >= 150)
+        {
+          _drivetrain.startPath();
+          _autonomousCase++;
+        }
+        break;
+      case 7:
+        _drivetrain.followPath();
+
+        if (_drivetrain.isPathFinished())
+        {
+          _autonomousCase++;
+        }
+        break;
+      default:
         _drivetrain.tankDriveVolts(0, 0);
         break;
     }
