@@ -30,6 +30,10 @@ public final class Constants {
     public static final double ksVolts = 0.149;
     public static final double kvVoltSecondsPerMeter = 2.86;
     public static final double kaVoltSecondsSquaredPerMeter = 0.252;
+
+    // public static final double ksVolts = 0.20123;
+    // public static final double kvVoltSecondsPerMeter = 11.282;
+    // public static final double kaVoltSecondsSquaredPerMeter = 0.79494;
     
     //
     public static final double kTrackwidthMeters = 0.6223;
@@ -38,8 +42,8 @@ public final class Constants {
     //public static final double kMaxSpeedMetersPerSecond = 1.25;
     //public static final double kMaxAccelerationMetersPerSecondSquared = 1.25;
 
-    public static final double kMaxSpeedMetersPerSecond = 2.25;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 2.25;
+    public static final double kMaxSpeedMetersPerSecond = 1.5;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
 
     //Path Following
     public static final double kPathFollowingkP = 4.5;
