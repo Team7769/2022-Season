@@ -121,8 +121,8 @@ public class Robot extends TimedRobot {
         break;
       case kDefaultAuto:
       default:
-        turnTest();
-        //driveBackAndShootAuto();
+        //turnTest();
+        driveBackAndShootAuto();
         //fiveBallAuto();
         // Put default auto code here
         break;
@@ -197,6 +197,7 @@ public class Robot extends TimedRobot {
         _drivetrain.tankDriveVolts(0, 0);
         _drivetrain.setCollectTwoFromTerminalPath();
         _autonomousCase++;
+        //_autonomousCase = 9000;
         break;
       case 3:
         _drivetrain.tankDriveVolts(0, 0);

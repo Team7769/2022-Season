@@ -262,12 +262,12 @@ public class Drivetrain implements ISubsystem {
 
     public void setCollectTwoFromTerminalPath()
     {
-        _pathFollower.setCollectTwoFromTerminalPath(getTrajectoryConfig(false), getPose().getRotation());
+        _pathFollower.setCollectTwoFromTerminalPath(getTrajectoryConfig(false), getPose());
     }
 
     public void setDriveBackFromTerminalPath()
     {
-        _pathFollower.setDriveBackFromTerminalPath(getTrajectoryConfig(true), getPose().getRotation());
+        _pathFollower.setDriveBackFromTerminalPath(getTrajectoryConfig(true), getPose());
     }
 
     public void setFiveBallPartOnePath()
