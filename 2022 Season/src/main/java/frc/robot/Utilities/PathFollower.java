@@ -49,13 +49,25 @@ public class PathFollower {
     {
         _currentPath = getDriveForwardAndShootTrajectory(config);
     }
-    public void setCollectTwoFromTerminalPath(TrajectoryConfig config, Rotation2d startingPose)
+    public void setCollectTwoFromTerminalPath(TrajectoryConfig config, Pose2d startingPose)
     {
         _currentPath = getCollectTwoFromTerminalTrajectory(config, startingPose);
     }
-    public void setDriveBackFromTerminalPath(TrajectoryConfig config, Rotation2d startingPose)
+    public void setDriveBackFromTerminalPath(TrajectoryConfig config, Pose2d startingPose)
     {
         _currentPath = getDriveBackFromTerminalTrajectory(config, startingPose);
+    }
+    public void setFiveBallPartOnePath(TrajectoryConfig config)
+    {
+        _currentPath = getFiveBallPartOneTrajectory(config);
+    }
+    public void setFiveBallPartTwoToTerminalPath(TrajectoryConfig config, Rotation2d startingPose)
+    {
+        _currentPath = getFiveBallPartTwoToTerminalTrajectory(config, startingPose);
+    }
+    public void setFiveBallPartTwoFromTerminalPath(TrajectoryConfig config, Rotation2d startingPose)
+    {
+        _currentPath = getFiveBallPartTwoFromTerminalTrajectory(config, startingPose);
     }
 
     public Trajectory getCurrentTrajectory()
@@ -108,39 +120,77 @@ public class PathFollower {
 
       private Trajectory getDriveForwardAndShootTrajectory(TrajectoryConfig config) {
 
-        return TrajectoryGenerator.generateTrajectory(new Pose2d(6.549, 2.078, new Rotation2d(-2.582993338246244)),
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(6.71, 2.440, new Rotation2d(-2.437994417066567)),
         // Pass through these two interior waypoints, making an 's' curve path
         List.of(
-            new Translation2d(5.728, 2.090)
+            new Translation2d(5.874, 2.135)
         ),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(5.12, 1.9, new Rotation2d(-2.7716865861332294)),
+        new Pose2d(5.08, 1.831, new Rotation2d(-2.7716865861332294)),
         // Pass config
         config);
       }
 
-      private Trajectory getCollectTwoFromTerminalTrajectory(TrajectoryConfig config, Rotation2d startingPose) {
+      private Trajectory getCollectTwoFromTerminalTrajectory(TrajectoryConfig config, Pose2d currentPose) {
 
-        return TrajectoryGenerator.generateTrajectory(new Pose2d(5.12, 1.9, startingPose),
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(currentPose.getX(), currentPose.getY(), currentPose.getRotation()),
         // Pass through these two interior waypoints, making an 's' curve path
         List.of(
-            new Translation2d(2.882, 2.180)
+            new Translation2d(2.6, 2.078)
         ),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(1.173, 2.000, new Rotation2d(-2.442932828868268)),
+        new Pose2d(1.128, 1.156, new Rotation2d(-2.442932828868268)),
         // Pass config
         config);
       }
       
-      private Trajectory getDriveBackFromTerminalTrajectory(TrajectoryConfig config, Rotation2d startingPose) {
+      private Trajectory getDriveBackFromTerminalTrajectory(TrajectoryConfig config, Pose2d currentPose) {
 
-        return TrajectoryGenerator.generateTrajectory(new Pose2d(1.173, 2.000, startingPose),
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(currentPose.getX(), currentPose.getY(), currentPose.getRotation()),
         // Pass through these two interior waypoints, making an 's' curve path
         List.of(
-            new Translation2d(2.882, 2.180)
+            new Translation2d(2.6, 2.078)
         ),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(5.12, 1.9, new Rotation2d(-2.7716865861332294)),
+        new Pose2d(5.08, 1.83, new Rotation2d(-2.7716865861332294)),
+        // Pass config
+        config);
+      }
+
+      private Trajectory getFiveBallPartOneTrajectory(TrajectoryConfig config) {
+
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(8.663, 1.730, new Rotation2d(-1.1722738811284743)),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(
+            new Translation2d(7.707, 0.054),
+            new Translation2d(6.886, 0.740)
+        ),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(5.818, 0.864, new Rotation2d(-2.4346845928296763)),
+        // Pass config
+        config);
+      }
+
+      private Trajectory getFiveBallPartTwoToTerminalTrajectory(TrajectoryConfig config, Rotation2d startingPose) {
+
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(5.818, 0.864, startingPose),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(
+        ),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(1.173, 2, new Rotation2d(-2.442932828868268)),
+        // Pass config
+        config);
+      }
+
+      private Trajectory getFiveBallPartTwoFromTerminalTrajectory(TrajectoryConfig config, Rotation2d startingPose) {
+
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(1.173, 2, startingPose),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(
+        ),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(5.975, 1.156, new Rotation2d(-2.5878351309802463)),
         // Pass config
         config);
       }

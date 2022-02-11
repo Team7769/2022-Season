@@ -29,17 +29,23 @@ public final class Constants {
     //Drive Characteristics
     public static final double ksVolts = 0.149;
     public static final double kvVoltSecondsPerMeter = 2.86;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.252;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.0;
+
+    // public static final double ksVolts = 0.20123;
+    // public static final double kvVoltSecondsPerMeter = 3;
+    // public static final double kaVoltSecondsSquaredPerMeter = 0.0;
     
     //
-    public static final double kTrackwidthMeters = 0.6223;
+    //public static final double kTrackwidthMeters = 0.6223;
+    //public static final double kTrackwidthMeters = 0.9081;
+    public static final double kTrackwidthMeters = 1.4;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
 
     //public static final double kMaxSpeedMetersPerSecond = 1.25;
     //public static final double kMaxAccelerationMetersPerSecondSquared = 1.25;
 
-    public static final double kMaxSpeedMetersPerSecond = 2.25;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 2.25;
+    public static final double kMaxSpeedMetersPerSecond = 1.5;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
 
     //Path Following
     public static final double kPathFollowingkP = 4.5;

@@ -38,6 +38,7 @@ public class Drivetrain implements ISubsystem {
     
     private PIDController _leftDriveVelocityPID;
     private PIDController _rightDriveVelocityPID;
+    private PIDController _turnPID;
 
     private static Drivetrain _instance;
 
@@ -68,12 +69,16 @@ public class Drivetrain implements ISubsystem {
 
         _leftDriveEncoder = new Encoder(Constants.kLeftEncoderPortA, Constants.kLeftEncoderPortB, true);
         _leftDriveEncoder.setDistancePerPulse(Constants.kDriveDistancePerPulse);
+        _leftDriveEncoder.setSamplesToAverage(5);
 
         _rightDriveEncoder = new Encoder(Constants.kRightEncoderPortA, Constants.kRightEncoderPortB, false);
         _rightDriveEncoder.setDistancePerPulse(Constants.kDriveDistancePerPulse);
+        _leftDriveEncoder.setSamplesToAverage(5);
 
         _leftDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
         _rightDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
+
+        _turnPID = new PIDController(0.067, 0.0, 0.0035);
 
         _robotDrive = new DifferentialDrive(_leftFrontMotor, _rightFrontMotor);
         
@@ -128,7 +133,10 @@ public class Drivetrain implements ISubsystem {
      */
     public void tankDriveVolts(double leftVolts, double rightVolts) {
         _rightFrontMotor.setIdleMode(IdleMode.kBrake);
+        _rightRearMotor.setIdleMode(IdleMode.kBrake);
         _leftFrontMotor.setIdleMode(IdleMode.kBrake);
+        _rightRearMotor.setIdleMode(IdleMode.kBrake);
+
         _leftFrontMotor.setVoltage(leftVolts);
         _rightFrontMotor.setVoltage(rightVolts);
         _robotDrive.feed();
@@ -138,6 +146,13 @@ public class Drivetrain implements ISubsystem {
     {
         _rightFrontMotor.setIdleMode(IdleMode.kCoast);
         _leftFrontMotor.setIdleMode(IdleMode.kCoast);
+        _robotDrive.arcadeDrive(throttle, turn);
+    }
+
+    public void driveBrake(double throttle, double turn)
+    {
+        _rightFrontMotor.setIdleMode(IdleMode.kBrake);
+        _leftFrontMotor.setIdleMode(IdleMode.kBrake);
         _robotDrive.arcadeDrive(throttle, turn);
     }
     
@@ -247,12 +262,27 @@ public class Drivetrain implements ISubsystem {
 
     public void setCollectTwoFromTerminalPath()
     {
-        _pathFollower.setCollectTwoFromTerminalPath(getTrajectoryConfig(false), getPose().getRotation());
+        _pathFollower.setCollectTwoFromTerminalPath(getTrajectoryConfig(false), getPose());
     }
 
     public void setDriveBackFromTerminalPath()
     {
-        _pathFollower.setDriveBackFromTerminalPath(getTrajectoryConfig(true), getPose().getRotation());
+        _pathFollower.setDriveBackFromTerminalPath(getTrajectoryConfig(true), getPose());
+    }
+
+    public void setFiveBallPartOnePath()
+    {
+        _pathFollower.setFiveBallPartOnePath(getTrajectoryConfig(false));
+    }
+
+    public void setFiveBallPartTwoToTerminalPath()
+    {
+        _pathFollower.setFiveBallPartTwoToTerminalPath(getTrajectoryConfig(false), getPose().getRotation());
+    }
+
+    public void setFiveBallPartTwoFromTerminalPath()
+    {
+        _pathFollower.setFiveBallPartTwoFromTerminalPath(getTrajectoryConfig(true), getPose().getRotation());
     }
 
     public void startPath()
@@ -282,6 +312,32 @@ public class Drivetrain implements ISubsystem {
     public boolean isPathFinished()
     {
       return _pathFollower.isPathFinished();
+    }
+
+    public void turnToAngle(double angle)
+    {
+        var output = _turnPID.calculate(getHeading(), angle);
+
+        if (Math.abs(output) > 0.5)
+        {
+            if (output > 0)
+            {
+                output = 0.5;
+            } else {
+                output = -0.5;
+            }
+        }
+        driveBrake(0, -output);
+    }
+
+    public boolean isTurnFinished()
+    {
+        return _turnPID.atSetpoint();
+    }
+
+    public void resetPID()
+    {
+        _turnPID.reset();
     }
 
     public void LogTelemetry() {

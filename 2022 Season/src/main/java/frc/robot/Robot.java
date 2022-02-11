@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
     
     _autonomousCase = 0;
     _autonomousLoops = 0;
-    //_drivetrain.resetGyro();
+    _drivetrain.resetGyro();
     resetOdometry();
   }
   
@@ -121,7 +121,9 @@ public class Robot extends TimedRobot {
         break;
       case kDefaultAuto:
       default:
+        //turnTest();
         driveBackAndShootAuto();
+        //fiveBallAuto();
         // Put default auto code here
         break;
     }
@@ -150,6 +152,28 @@ public class Robot extends TimedRobot {
         break;
     }
   }
+
+  public void turnTest()
+  {
+    switch (_autonomousCase)
+    {
+      case 0:
+        _drivetrain.resetPID();
+        _autonomousCase++;
+        break;
+      case 1:
+        _drivetrain.turnToAngle(90);
+
+        if (_drivetrain.isTurnFinished())
+        {
+          _autonomousCase++;
+        }
+        break;
+      default:
+        _drivetrain.tankDriveVolts(0, 0);
+        break;
+    }
+  }
   
   public void driveBackAndShootAuto()
   {
@@ -173,6 +197,7 @@ public class Robot extends TimedRobot {
         _drivetrain.tankDriveVolts(0, 0);
         _drivetrain.setCollectTwoFromTerminalPath();
         _autonomousCase++;
+        //_autonomousCase = 9000;
         break;
       case 3:
         _drivetrain.tankDriveVolts(0, 0);
@@ -218,6 +243,74 @@ public class Robot extends TimedRobot {
     }
   }
 
+  public void fiveBallAuto()
+  {
+    switch (_autonomousCase)
+    {
+      case 0:
+        _drivetrain.setFiveBallPartOnePath();
+        _drivetrain.startPath();
+        _autonomousCase++;
+        break;
+      case 1:
+        _drivetrain.followPath();
+
+        if (_drivetrain.isPathFinished())
+        {
+          _autonomousLoops = 0;
+          _autonomousCase++;
+        }
+        break;
+      case 2:
+        _drivetrain.tankDriveVolts(0, 0);
+        _drivetrain.setFiveBallPartTwoToTerminalPath();
+        _autonomousCase++;
+        break;
+      case 3:
+        _drivetrain.tankDriveVolts(0, 0);
+
+        if (_autonomousLoops >= 100)
+        {
+          _drivetrain.startPath();
+          _autonomousCase++;
+        }
+        break;
+      case 4:
+        _drivetrain.followPath();
+
+        if (_drivetrain.isPathFinished())
+        {
+          _autonomousLoops = 0;
+          _autonomousCase++;
+        }
+        break;
+      case 5:
+        _drivetrain.tankDriveVolts(0, 0);
+        _drivetrain.setFiveBallPartTwoFromTerminalPath();
+        _autonomousCase++;
+        break;
+      case 6:
+        _drivetrain.tankDriveVolts(0, 0);
+
+        if (_autonomousLoops >= 50)
+        {
+          _drivetrain.startPath();
+          _autonomousCase++;
+        }
+        break;
+      case 7:
+        _drivetrain.followPath();
+
+        if (_drivetrain.isPathFinished())
+        {
+          _autonomousCase++;
+        }
+        break;
+      default:
+        _drivetrain.tankDriveVolts(0, 0);
+        break;
+    }
+  }
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {}
