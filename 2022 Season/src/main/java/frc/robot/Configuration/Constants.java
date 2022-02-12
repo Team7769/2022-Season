@@ -13,6 +13,7 @@ public final class Constants {
     public static final int kLeftRearDriveDeviceId = 3;
     public static final int kRightFrontDriveDeviceId = 4;
     public static final int kRightRearDriveDeviceId = 5;
+    public static final int kCollectMotorDeviceId = 13;
     public static final int kHoodMotorDeviceId = 10; 
     
     
@@ -125,4 +126,6 @@ public final class Constants {
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     public static final double kRamseteB = 2;
     public static final double kRamseteZeta = 0.7;
+
+
 }
