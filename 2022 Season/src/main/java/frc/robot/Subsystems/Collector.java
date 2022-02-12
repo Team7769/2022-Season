@@ -22,7 +22,7 @@ private static Collector _instance;
 
     public Collector() 
     { 
-        _collectorMotor = new CANSparkMax(Constants.collectMotorCanSparkMaxId, MotorType.kBrushless);
+        _collectorMotor = new CANSparkMax(Constants.kCollectMotorDeviceId, MotorType.kBrushless);
         _collectorMotor.setInverted(true);
         _collectorMotor.setIdleMode(IdleMode.kBrake);
     }

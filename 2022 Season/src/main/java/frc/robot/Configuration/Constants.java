@@ -55,5 +55,5 @@ public final class Constants {
     public static final double kRamseteZeta = 0.7;
 
     // Collector Constants
-    public static final int collectMotorCanSparkMaxId = 13;
+    public static final int kCollectMotorDeviceId = 13;
 }
