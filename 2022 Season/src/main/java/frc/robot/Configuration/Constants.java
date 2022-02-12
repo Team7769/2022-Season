@@ -85,14 +85,13 @@ public final class Constants {
     public static final int kRightEncoderPortA = 2;
     public static final int kRightEncoderPortB = 3;
     public static final int kHoodEncoderPort = 4;
+    public static final int kMagneticLimitSwitchPort = 5;
 
     //Hood PID Values
     public static final double kHoodKp= 4.5; 
     public static final double kHoodKi= 0;
     public static final double kHoodKd= 0;
 
-    // Magnetic Limit Switch Id 
-    public static final int magneticLimitSwitchPort = 5;
 
     // Test Robot Configuration
     public static final int kDriveEncoderTicksPerRevolution = 2048;

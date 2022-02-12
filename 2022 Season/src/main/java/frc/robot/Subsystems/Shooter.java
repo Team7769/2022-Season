@@ -49,7 +49,7 @@ public class Shooter implements ISubsystem {
         _hoodMotor.setIdleMode(IdleMode.kBrake);
 
         _hoodEncoder = new DutyCycleEncoder(Constants.kHoodEncoderPort);
-        _limitSwitch = new MagneticLimitSwitch(Constants.magneticLimitSwitchId);
+        _limitSwitch = new MagneticLimitSwitch(Constants.kMagneticLimitSwitchPort);
 
         _leftMotorConfig = new TalonFXConfiguration();
         _rightMotorConfig = new TalonFXConfiguration();
