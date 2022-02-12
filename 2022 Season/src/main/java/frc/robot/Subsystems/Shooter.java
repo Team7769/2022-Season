@@ -8,7 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
+import frc.robot.Configuration.Constants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -42,21 +42,21 @@ public class Shooter implements ISubsystem {
      * Constructor for implementing Shooter
     */
     public Shooter() {
-        _leftMotor = new TalonFX(15);
-        _rightMotor = new TalonFX(14);
-        _hoodMotor = new CANSparkMax(10, MotorType.kBrushless);
+        _leftMotor = new TalonFX(Constants.kLeftShooterMotorDeviceId);
+        _rightMotor = new TalonFX(Constants.kRightShooterMotorDeviceId);
+        _hoodMotor = new CANSparkMax(Constants.kHoodMotorDeviceId, MotorType.kBrushless);
         _hoodMotor.setInverted(true);
         _hoodMotor.setIdleMode(IdleMode.kBrake);
 
-        _hoodEncoder = new DutyCycleEncoder(4);
-        _limitSwitch = new MagneticLimitSwitch(5);
+        _hoodEncoder = new DutyCycleEncoder(Constants.kHoodEncoderDeviceId);
+        _limitSwitch = new MagneticLimitSwitch(Constants.magneticLimitSwitchId);
 
         _leftMotorConfig = new TalonFXConfiguration();
         _rightMotorConfig = new TalonFXConfiguration();
         
         _leftMotorConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor; //Local Feedback Source
-        _leftMotorConfig.slot0.kP = .015;
-        _leftMotorConfig.slot0.kF = .0473;
+        _leftMotorConfig.slot0.kP = Constants.kLeftMotorKp;
+        _leftMotorConfig.slot0.kF = Constants.kLeftMotorKf;
 
 		/* Configure the Remote (Left) Talon's selected sensor as a remote sensor for the right Talon */
 		_rightMotorConfig.remoteFilter0.remoteSensorDeviceID = _leftMotor.getDeviceID(); //Device ID of Remote Source
@@ -69,7 +69,7 @@ public class Shooter implements ISubsystem {
         _leftMotor.configAllSettings(_leftMotorConfig);
         _rightMotor.configAllSettings(_rightMotorConfig);
 
-        _hoodPID = new PIDController(4.5, 0, 0);
+        _hoodPID = new PIDController(Constants.hoodKp, Constants.hoodKi, Constants.hoodKd);
         _hoodPID.setTolerance(0.05);
 
         _hoodTarget = 0;
@@ -95,17 +95,17 @@ public class Shooter implements ISubsystem {
 
     public void setHalfShot()
     {
-        _hoodTarget = 0.5;
+        _hoodTarget = Constants.kHalfShotValue;
     }
 
     public void setQuarterShot()
     {
-        _hoodTarget = 0.25;
+        _hoodTarget = Constants.kQuarterShotValue;
     }
 
     public void setThreeQuarterShot()
     {
-        _hoodTarget = 0.75;
+        _hoodTarget = Constants.kThreeQuarterShotValue;
     }
 
     public void stop()
