@@ -48,15 +48,15 @@ public class Shooter implements ISubsystem {
         _hoodMotor.setInverted(true);
         _hoodMotor.setIdleMode(IdleMode.kBrake);
 
-        _hoodEncoder = new DutyCycleEncoder(Constants.kHoodEncoderDeviceId);
+        _hoodEncoder = new DutyCycleEncoder(Constants.kHoodEncoderPort);
         _limitSwitch = new MagneticLimitSwitch(Constants.magneticLimitSwitchId);
 
         _leftMotorConfig = new TalonFXConfiguration();
         _rightMotorConfig = new TalonFXConfiguration();
         
         _leftMotorConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor; //Local Feedback Source
-        _leftMotorConfig.slot0.kP = Constants.kLeftMotorKp;
-        _leftMotorConfig.slot0.kF = Constants.kLeftMotorKf;
+        _leftMotorConfig.slot0.kP = Constants.kShooterKp;
+        _leftMotorConfig.slot0.kF = Constants.kShooterKf;
 
 		/* Configure the Remote (Left) Talon's selected sensor as a remote sensor for the right Talon */
 		_rightMotorConfig.remoteFilter0.remoteSensorDeviceID = _leftMotor.getDeviceID(); //Device ID of Remote Source
@@ -69,7 +69,7 @@ public class Shooter implements ISubsystem {
         _leftMotor.configAllSettings(_leftMotorConfig);
         _rightMotor.configAllSettings(_rightMotorConfig);
 
-        _hoodPID = new PIDController(Constants.hoodKp, Constants.hoodKi, Constants.hoodKd);
+        _hoodPID = new PIDController(Constants.kHoodKp, Constants.kHoodKi, Constants.kHoodKd);
         _hoodPID.setTolerance(0.05);
 
         _hoodTarget = 0;

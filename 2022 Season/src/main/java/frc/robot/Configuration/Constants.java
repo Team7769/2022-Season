@@ -14,22 +14,22 @@ public final class Constants {
     public static final int kRightFrontDriveDeviceId = 4;
     public static final int kRightRearDriveDeviceId = 5;
     public static final int kHoodMotorDeviceId = 10; 
-    public static final int kHoodEncoderDeviceId = 4;
+    
     
     // Talon FX Device Ids
     public static final int kLeftShooterMotorDeviceId = 15; 
     public static final int kRightShooterMotorDeviceId= 14;
 
     // Left Shooter Motor Config Values
-    public static final double kLeftMotorKp= .015;
-    public static final double kLeftMotorKf= .0473;
+    public static final double kShooterKp= .015;
+    public static final double kShooterKf= .0473;
     // Hood Target Points
     public static final double kHalfShotValue = 0.5;
     public static final double kQuarterShotValue = 0.25;
-    public static final double kThreeQuarterShotValue =0.75;
+    public static final double kThreeQuarterShotValue = 0.75;
     // Drive Forward and Shoot Values
-    public static final double kDriveForwardStartx= 6.71;
-    public static final double kDriveForwardStarty= 2.440;
+    public static final double kDriveForwardStartX= 6.71;
+    public static final double kDriveForwardStartY= 2.440;
     public static final double kDriveForwardStartRotation= -2.437994417066567;
     public static final double kDriveForwardMidX = 5.874;
     public static final double kDriveForwardMidY= 2.135;
@@ -84,14 +84,15 @@ public final class Constants {
     public static final int kLeftEncoderPortB = 1;
     public static final int kRightEncoderPortA = 2;
     public static final int kRightEncoderPortB = 3;
+    public static final int kHoodEncoderPort = 4;
 
     //Hood PID Values
-    public static final double hoodKp= 4.5; 
-    public static final double hoodKi= 0;
-    public static final double hoodKd= 0;
+    public static final double kHoodKp= 4.5; 
+    public static final double kHoodKi= 0;
+    public static final double kHoodKd= 0;
 
     // Magnetic Limit Switch Id 
-    public static final int magneticLimitSwitchId = 5;
+    public static final int magneticLimitSwitchPort = 5;
 
     // Test Robot Configuration
     public static final int kDriveEncoderTicksPerRevolution = 2048;
