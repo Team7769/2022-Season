@@ -13,6 +13,7 @@ public final class Constants {
     public static final int kLeftRearDriveDeviceId = 3;
     public static final int kRightFrontDriveDeviceId = 4;
     public static final int kRightRearDriveDeviceId = 5;
+    public static final int kCollectMotorDeviceId = 13;
     
     //DIO
     public static final int kLeftEncoderPortA = 0;
@@ -54,6 +55,5 @@ public final class Constants {
     public static final double kRamseteB = 2;
     public static final double kRamseteZeta = 0.7;
 
-    // Collector Constants
-    public static final int kCollectMotorDeviceId = 13;
+
 }
