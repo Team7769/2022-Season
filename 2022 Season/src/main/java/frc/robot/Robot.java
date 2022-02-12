@@ -15,6 +15,7 @@ import frc.robot.Subsystems.Climber;
 import frc.robot.Subsystems.Collector;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.ISubsystem;
+import frc.robot.Subsystems.Shooter;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -33,6 +34,7 @@ public class Robot extends TimedRobot {
   private static Drivetrain _drivetrain;
   private static Collector _collector;
   private static Climber _climber;
+  private static Shooter _shooter;
   private ArrayList<ISubsystem> _subsystems;
 
   private int _autonomousCase = 0;
@@ -52,12 +54,14 @@ public class Robot extends TimedRobot {
     _drivetrain = Drivetrain.GetInstance();
     _collector = Collector.GetInstance();
     _climber = Climber.GetInstance();
+    _shooter = Shooter.GetInstance();
 
     _subsystems = new ArrayList<ISubsystem>();
 
     _subsystems.add(_drivetrain);
     _subsystems.add(_collector);
     _subsystems.add(_climber);
+    _subsystems.add(_shooter);
   }
 
   /**
@@ -73,6 +77,7 @@ public class Robot extends TimedRobot {
 
     m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     _drivetrain.updatePose();
+    _shooter.zeroHood();
 
     _subsystems.forEach(s -> {
       s.LogTelemetry();
@@ -319,6 +324,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     teleopDrive();
+    teleopShoot();
   }
 
   /** This function is called once when the robot is disabled. */
@@ -343,5 +349,27 @@ public class Robot extends TimedRobot {
     var turn = _driverController.getRightX();
     
     _drivetrain.drive(throttle, turn);
+  }
+
+  private void teleopShoot() {
+    if (_operatorController.getAButtonPressed())
+    {
+      _shooter.setQuarterShot();
+    } else if (_operatorController.getXButtonPressed())
+    {
+      _shooter.setHalfShot();
+    } else if (_operatorController.getYButtonPressed())
+    {
+      _shooter.setThreeQuarterShot();
+    }
+
+    if (_driverController.getLeftTriggerAxis() >= 0.5)
+    {
+      _shooter.readyShot();
+    } else {
+      _shooter.stop();
+    }
+
+
   }
 }
