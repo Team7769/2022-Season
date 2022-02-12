@@ -3,12 +3,13 @@ package frc.robot.Subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import frc.robot.Configuration.Constants;
 
 public class Collector implements ISubsystem {
 
 private static Collector _instance;   
     
-    private CANSparkMax _CollectorMotor;
+    private CANSparkMax _collectorMotor;
 
     public static Collector GetInstance()
     {
@@ -21,9 +22,9 @@ private static Collector _instance;
 
     public Collector() 
     { 
-        _CollectorMotor = new CANSparkMax(13, MotorType.kBrushless);
-        _CollectorMotor.setInverted(true);
-        _CollectorMotor.setIdleMode(IdleMode.kBrake);
+        _collectorMotor = new CANSparkMax(Constants.collectMotorCanSparkMaxId, MotorType.kBrushless);
+        _collectorMotor.setInverted(true);
+        _collectorMotor.setIdleMode(IdleMode.kBrake);
     }
 
     /** 
@@ -31,14 +32,14 @@ private static Collector _instance;
      * @param speed - Speed you want to set motor to
     */
     public void moveCollect(double speed) {
-        _CollectorMotor.set(speed);
+        _collectorMotor.set(speed);
     }
 
     /**
      * Stops the collect motor from moving
      */
     public void stopCollect() {
-        _CollectorMotor.set(0.0);
+        _collectorMotor.set(0.0);
     }
 
     public void LogTelemetry() {
