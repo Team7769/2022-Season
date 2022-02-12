@@ -77,6 +77,7 @@ public class Robot extends TimedRobot {
 
     m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     _drivetrain.updatePose();
+    _shooter.zeroHood();
 
     _subsystems.forEach(s -> {
       s.LogTelemetry();

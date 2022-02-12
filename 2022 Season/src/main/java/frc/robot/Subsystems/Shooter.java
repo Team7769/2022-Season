@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Lib.MagneticLimitSwitch;
 
 public class Shooter implements ISubsystem {
 
@@ -19,6 +20,7 @@ public class Shooter implements ISubsystem {
     private TalonFX _rightMotor;
     private CANSparkMax _hoodMotor;
     private DutyCycleEncoder _hoodEncoder;
+    private MagneticLimitSwitch _limitSwitch;
 
     private PIDController _hoodPID;
     private TalonFXConfiguration _leftMotorConfig;
@@ -47,6 +49,7 @@ public class Shooter implements ISubsystem {
         _hoodMotor.setIdleMode(IdleMode.kBrake);
 
         _hoodEncoder = new DutyCycleEncoder(4);
+        _limitSwitch = new MagneticLimitSwitch(5);
 
         _leftMotorConfig = new TalonFXConfiguration();
         _rightMotorConfig = new TalonFXConfiguration();
@@ -70,6 +73,14 @@ public class Shooter implements ISubsystem {
         _hoodPID.setTolerance(0.05);
 
         _hoodTarget = 0;
+    }
+
+    public void zeroHood()
+    {
+        if (_limitSwitch.isBlocked())
+        {
+            _hoodEncoder.reset();
+        }
     }
 
     public void manualHood(double speed)
@@ -130,6 +141,8 @@ public class Shooter implements ISubsystem {
         SmartDashboard.putNumber("hoodPosition", _hoodEncoder.get());
         SmartDashboard.putNumber("hoodOffset", _hoodEncoder.getPositionOffset());
         SmartDashboard.putNumber("hoodFrequency", _hoodEncoder.getFrequency());
+        SmartDashboard.putBoolean("limitSwitchBlocked", _limitSwitch.isBlocked());
+        SmartDashboard.putNumber("hoodDistance", _hoodEncoder.getDistance());
         SmartDashboard.putNumber("hoodTarget", _hoodTarget);
     }
 
