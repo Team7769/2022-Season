@@ -349,7 +349,13 @@ public class Robot extends TimedRobot {
     var turn = _driverController.getRightX();
     
     _drivetrain.drive(throttle, turn);
+    //_operatorController.getAButtonPressed(); Climber (Start's Automated Climbing Method)
+    //_operatorController.getLeftY(); Raise & Lower Collector 
+    
   }
+
+  
+
 
   private void teleopShoot() {
     if (_operatorController.getAButtonPressed())
@@ -368,8 +374,16 @@ public class Robot extends TimedRobot {
       _shooter.readyShot();
     } else {
       _shooter.stop();
-    }
+    } 
+    if (_operatorController.getLeftBumperPressed()) { // Intake }
+    
+    if (_operatorController.getRightBumperPressed()) { // Eject}
+    
+    //if (_operatorController.getRightTriggerAxis()) { // Rise Cargo}
 
+   //if (_operatorController.getLeftTriggerAxis()) { // Lower Cargo}
 
+  }
+}
   }
 }
