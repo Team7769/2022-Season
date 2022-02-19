@@ -349,8 +349,8 @@ public class Robot extends TimedRobot {
     var turn = _driverController.getRightX();
     
     _drivetrain.drive(throttle, turn);
-    //_operatorController.getAButtonPressed(); Climber (Start's Automated Climbing Method)
-    //_operatorController.getLeftY(); Raise & Lower Collector 
+    //_driverController.getStartButtonPressed(); Climber (Start's Automated Climbing Method)
+    //_driverController.getBackButtonPressed(); Climber (Start's Manual Climbing Method)
     
   }
 
@@ -375,15 +375,23 @@ public class Robot extends TimedRobot {
     } else {
       _shooter.stop();
     } 
-    if (_operatorController.getLeftBumperPressed()) { // Intake }
+    if (_operatorController.getLeftBumperPressed()) { // Intake & Lower Collector)
     
-    if (_operatorController.getRightBumperPressed()) { // Eject}
-    
-    //if (_operatorController.getRightTriggerAxis()) { // Rise Cargo}
+    }
 
-   //if (_operatorController.getLeftTriggerAxis()) { // Lower Cargo}
+    if (_operatorController.getBButtonPressed()) { // Other Shot}
+    
+    if (_operatorController.getRightBumperPressed()) { // Eject
+    }
+    
+    //if (_operatorController.getRightTriggerAxis()) { // Raise Collector
+     
+    }
+    //if (_driverController.getRightTriggerAxis())  { // Shoot}
+    
+    //if (_driverController.getLeftTriggerAxis()) { // Aim + Ready Shot}
+
+
+  
 
   }
-}
-  }
-}
