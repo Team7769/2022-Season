@@ -354,9 +354,6 @@ public class Robot extends TimedRobot {
     
   }
 
-  
-
-
   private void teleopShoot() {
     if (_operatorController.getAButtonPressed())
     {
@@ -368,7 +365,6 @@ public class Robot extends TimedRobot {
     {
       _shooter.setThreeQuarterShot();
     }
-
     if (_driverController.getLeftTriggerAxis() >= 0.5)
     {
       _shooter.readyShot();
@@ -382,14 +378,13 @@ public class Robot extends TimedRobot {
     else {
       // Stop collector
     }
-    if (_operatorController.getBButtonPressed()) { // Other Shot}
-    if (_operatorController.getRightTriggerAxis() > 0.5) { // Raise Collector }
+    if (_operatorController.getBButtonPressed()) { // Other Shot
+    }
+    if (_operatorController.getRightTriggerAxis() > 0.5) { // Raise Collector 
+    }
     if (_driverController.getLeftTriggerAxis() > 0.5) { // Aim + Ready Shot
-      if (_driverController.getRightTriggerAxis() > 0.5 )  { // Shoot}
+      if (_driverController.getRightTriggerAxis() > 0.5 )  { // Shoot
+      }
     }
   }
-    }
   }
-}
-}
-
