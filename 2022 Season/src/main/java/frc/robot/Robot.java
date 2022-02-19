@@ -16,6 +16,7 @@ import frc.robot.Subsystems.Collector;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.ISubsystem;
 import frc.robot.Subsystems.Shooter;
+import frc.robot.Utilities.Limelight;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -35,6 +36,7 @@ public class Robot extends TimedRobot {
   private static Collector _collector;
   private static Climber _climber;
   private static Shooter _shooter;
+  private static Limelight _limelight;
   private ArrayList<ISubsystem> _subsystems;
 
   private int _autonomousCase = 0;
@@ -52,16 +54,19 @@ public class Robot extends TimedRobot {
     _driverController = new XboxController(Constants.kDriverControllerUsbSlot);
     _operatorController = new XboxController(Constants.kOperatorControllerUsbSlot);
     _drivetrain = Drivetrain.GetInstance();
-    _collector = Collector.GetInstance();
+    //_collector = Collector.GetInstance();
     _climber = Climber.GetInstance();
-    _shooter = Shooter.GetInstance();
+    //_shooter = Shooter.GetInstance();
+    _limelight = Limelight.getInstance();
 
     _subsystems = new ArrayList<ISubsystem>();
 
     _subsystems.add(_drivetrain);
-    _subsystems.add(_collector);
-    _subsystems.add(_climber);
-    _subsystems.add(_shooter);
+    //_subsystems.add(_collector);
+    //_subsystems.add(_climber);
+    //_subsystems.add(_shooter);
+
+    _limelight.setDashcam();
   }
 
   /**
@@ -77,12 +82,15 @@ public class Robot extends TimedRobot {
 
     m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     _drivetrain.updatePose();
-    _shooter.zeroHood();
+    //_shooter.zeroHood();
 
     _subsystems.forEach(s -> {
       s.LogTelemetry();
       s.ReadDashboardData();
     });
+    
+    SmartDashboard.putNumber("limelightX", _limelight.getAngleToTarget());
+    SmartDashboard.putBoolean("limelightValidTarget", _limelight.hasTarget());
   }
 
   /**
@@ -324,7 +332,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     teleopDrive();
-    teleopShoot();
+    //teleopShoot();
   }
 
   /** This function is called once when the robot is disabled. */
@@ -333,7 +341,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    _limelight.setAimbot();
+  }
 
   /** This function is called once when test mode is enabled. */
   @Override
@@ -345,10 +355,29 @@ public class Robot extends TimedRobot {
 
   private void teleopDrive() {
 
+    var augmentTurn = 0.0;
+
     var throttle = -_driverController.getLeftY();
     var turn = _driverController.getRightX();
+
+    if (Math.abs(_driverController.getLeftTriggerAxis()) > 0.05)
+    {
+      _limelight.setAimbot();
+      augmentTurn = _drivetrain.followTarget();
+    } else {
+      _limelight.setDashcam();
+    }
     
-    _drivetrain.drive(throttle, turn);
+    _drivetrain.drive(throttle, turn + augmentTurn);
+    
+    if (_drivetrain.isTurnFinished())
+      {
+        SmartDashboard.putBoolean("lockedOn", true);
+        //_ledController.setOnTargetState();
+      } else {
+        SmartDashboard.putBoolean("lockedOn", false);
+        //_ledController.setTrackingTargetState();
+      }
   }
 
   private void teleopShoot() {

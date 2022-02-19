@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Configuration.Constants;
+import frc.robot.Utilities.Limelight;
 import frc.robot.Utilities.PathFollower;
 
 public class Drivetrain implements ISubsystem {
@@ -32,6 +33,7 @@ public class Drivetrain implements ISubsystem {
     private AHRS _gyro;
     private PathFollower _pathFollower;
     private SimpleMotorFeedforward _feedForward;
+    private Limelight _limelight;
     
     // Odometry class for tracking robot pose
     private final DifferentialDriveOdometry _odometry;
@@ -90,6 +92,8 @@ public class Drivetrain implements ISubsystem {
         Constants.kvVoltSecondsPerMeter,
         Constants.kaVoltSecondsSquaredPerMeter);
         _pathFollower = new PathFollower();
+
+        _limelight = Limelight.getInstance();
     }
     
     /**
@@ -312,6 +316,35 @@ public class Drivetrain implements ISubsystem {
     public boolean isPathFinished()
     {
       return _pathFollower.isPathFinished();
+    }
+
+    public double followTarget()
+    {
+      if (!_limelight.hasTarget())
+      {
+        return 0;
+      }
+
+      var limelightTargetAngle = _limelight.getAngleToTarget();
+
+      var targetAngle = getHeading() - limelightTargetAngle;
+
+      //_turnPID.setP(SmartDashboard.getNumber("turnP", 0));
+      //_turnPID.setI(SmartDashboard.getNumber("turnI", 0));
+      //_turnPID.setD(SmartDashboard.getNumber("turnD", 0));
+
+      var output = _turnPID.calculate(getHeading(), targetAngle);
+      SmartDashboard.putNumber("turnOutput", output);
+      if (Math.abs(output) > 0.5)
+      {
+        if (output > 0)
+        {
+          output = 0.5;
+        } else {
+          output = -0.5;
+        }
+      }
+      return -output;
     }
 
     public void turnToAngle(double angle)
