@@ -379,12 +379,18 @@ public class Robot extends TimedRobot {
     
     }
 
+
+    else if   (_operatorController.getRightBumperPressed()) { // Eject
+
+    }
+    else {
+      // Stop collector
+    }
     if (_operatorController.getBButtonPressed()) { // Other Shot}
     
-    if (_operatorController.getRightBumperPressed()) { // Eject
-    }
+        
     
-    if (_operatorController.getRightTriggerAxis()> 0.5) { // Raise Collector
+    if (_operatorController.getRightTriggerAxis() > 0.5) { // Raise Collector
      
     }
     if (_driverController.getRightTriggerAxis() > 0.5 )  { // Shoot}
