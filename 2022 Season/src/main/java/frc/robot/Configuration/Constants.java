@@ -25,6 +25,8 @@ public final class Constants {
     public static final int kRightFrontDriveDeviceId = 4;
     public static final int kRightRearDriveDeviceId = 5;
     public static final int kCollectMotorDeviceId = 13;
+    public static final int kChamberBackMotorDeviceId = 12;
+    public static final int kChamberFrontMotorDeviceId = 11;
     public static final int kHoodMotorDeviceId = 10; 
     
     

@@ -41,6 +41,7 @@ public class Robot extends TimedRobot {
 
   private int _autonomousCase = 0;
   private int _autonomousLoops = 0;
+  private boolean _shooting = false;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -385,9 +386,13 @@ public class Robot extends TimedRobot {
   }
 
   private void teleopShoot() {
+
+
     if (_operatorController.getAButtonPressed())
     {
       _shooter.setQuarterShot();
+    } else if (_operatorController.getBButtonPressed()) { 
+      // Other Shot
     } else if (_operatorController.getXButtonPressed())
     {
       _shooter.setHalfShot();
@@ -395,26 +400,37 @@ public class Robot extends TimedRobot {
     {
       _shooter.setThreeQuarterShot();
     }
+
     if (_driverController.getLeftTriggerAxis() >= 0.5)
     {
       _shooter.readyShot();
+      
+      if (_driverController.getRightTriggerAxis() > 0.5 )  {
+        _shooting = true; 
+        _collector.feed();
+        // Shoot
+      } else {
+        _shooting = false;
+      }
     } else {
+      _shooting = false;
       _shooter.stop();
     } 
-    if (_operatorController.getLeftBumperPressed()) { // Intake & Lower Collector)  
+
+    if (_operatorController.getLeftBumperPressed()) { 
+      _collector.intake();
+      // Intake & Lower Collector)  
     }
-    else if   (_operatorController.getRightBumperPressed()) { // Eject
+    else if (_operatorController.getRightBumperPressed()) { // Eject
+      _collector.eject();
     }
-    else {
+    else if (!_shooting) {
+      _collector.stopCollect();
       // Stop collector
     }
-    if (_operatorController.getBButtonPressed()) { // Other Shot
-    }
-    if (_operatorController.getRightTriggerAxis() > 0.5) { // Raise Collector 
-    }
-    if (_driverController.getLeftTriggerAxis() > 0.5) { // Aim + Ready Shot
-      if (_driverController.getRightTriggerAxis() > 0.5 )  { // Shoot
-      }
+
+    if (_operatorController.getRightTriggerAxis() > 0.5) { 
+      // Raise Collector 
     }
   }
-  }
+}

@@ -3,6 +3,8 @@ package frc.robot.Subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Configuration.Constants;
 
 public class Collector implements ISubsystem {
@@ -10,6 +12,11 @@ public class Collector implements ISubsystem {
 private static Collector _instance;   
     
     private CANSparkMax _collectorMotor;
+    private CANSparkMax _frontChamberMotor;
+    private CANSparkMax _backChamberMotor;
+
+    private double _collectorSpeed = 0;
+    private double _chamberSpeed = 0;
 
     public static Collector GetInstance()
     {
@@ -25,6 +32,15 @@ private static Collector _instance;
         _collectorMotor = new CANSparkMax(Constants.kCollectMotorDeviceId, MotorType.kBrushless);
         _collectorMotor.setInverted(true);
         _collectorMotor.setIdleMode(IdleMode.kBrake);
+
+        _frontChamberMotor = new CANSparkMax(Constants.kChamberFrontMotorDeviceId, MotorType.kBrushless);
+        _frontChamberMotor.setIdleMode(IdleMode.kBrake);
+
+        _backChamberMotor = new CANSparkMax(Constants.kChamberBackMotorDeviceId, MotorType.kBrushless);
+        _backChamberMotor.setIdleMode(IdleMode.kBrake);
+        _backChamberMotor.setInverted(true);
+
+        _backChamberMotor.follow(_frontChamberMotor);
     }
 
     /** 
@@ -40,16 +56,34 @@ private static Collector _instance;
      */
     public void stopCollect() {
         _collectorMotor.set(0.0);
+        _frontChamberMotor.set(0.0);
+    }
+
+    public void intake() {
+        _collectorMotor.set(_collectorSpeed);
+    }
+
+    public void eject() {
+        _collectorMotor.set(-_collectorSpeed);
+        _frontChamberMotor.set(-_chamberSpeed);
+    }
+    
+    public void feed() {
+        _frontChamberMotor.set(_chamberSpeed);
     }
 
     public void LogTelemetry() {
         // TODO Auto-generated method stub
         
+        SmartDashboard.putNumber("collectorSpeed", _collectorSpeed);
+        SmartDashboard.putNumber("chamberSpeed", _chamberSpeed);
     }
 
     public void ReadDashboardData() {
         // TODO Auto-generated method stub
-        
+
+        _collectorSpeed = SmartDashboard.getNumber("collectorSpeed", 0);
+        _chamberSpeed = SmartDashboard.getNumber("chamberSpeed", 0);
     }
 
 }
