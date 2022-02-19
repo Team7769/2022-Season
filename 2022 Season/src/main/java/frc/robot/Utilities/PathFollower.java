@@ -120,7 +120,7 @@ public class PathFollower {
 
       private Trajectory getDriveForwardAndShootTrajectory(TrajectoryConfig config) {
 
-        return TrajectoryGenerator.generateTrajectory(new Pose2d(Constants.kDriveForwardStartx, Constants.kDriveForwardStarty, new Rotation2d(Constants.kDriveForwardStartRotation)),
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(Constants.kDriveForwardStartX, Constants.kDriveForwardStartY, new Rotation2d(Constants.kDriveForwardStartRotation)),
         // Pass through these two interior waypoints, making an 's' curve path
         List.of(
             new Translation2d(Constants.kDriveForwardMidX, Constants.kDriveForwardMidY)
