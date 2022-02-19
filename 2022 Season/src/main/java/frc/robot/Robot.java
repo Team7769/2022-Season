@@ -393,11 +393,18 @@ public class Robot extends TimedRobot {
     if (_operatorController.getRightTriggerAxis() > 0.5) { // Raise Collector
      
     }
-    if (_driverController.getRightTriggerAxis() > 0.5 )  { // Shoot}
     
-    if (_driverController.getLeftTriggerAxis() > 0.5) { // Aim + Ready Shot}
+    
+    if (_driverController.getLeftTriggerAxis() > 0.5) { // Aim + Ready Shot
+     
+      if (_driverController.getRightTriggerAxis() > 0.5 )  { // Shoot}
+    }
+    
 
 
   
 
   }
+    }
+  }
+}
