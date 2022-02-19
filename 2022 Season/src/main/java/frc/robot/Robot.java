@@ -370,6 +370,10 @@ public class Robot extends TimedRobot {
     
     _drivetrain.drive(throttle, turn + augmentTurn);
     
+    _drivetrain.drive(throttle, turn);
+    //_driverController.getStartButtonPressed(); Climber (Start's Automated Climbing Method)
+    //_driverController.getBackButtonPressed(); Climber (Start's Manual Climbing Method)
+    
     if (_drivetrain.isTurnFinished())
       {
         SmartDashboard.putBoolean("lockedOn", true);
@@ -391,14 +395,26 @@ public class Robot extends TimedRobot {
     {
       _shooter.setThreeQuarterShot();
     }
-
     if (_driverController.getLeftTriggerAxis() >= 0.5)
     {
       _shooter.readyShot();
     } else {
       _shooter.stop();
+    } 
+    if (_operatorController.getLeftBumperPressed()) { // Intake & Lower Collector)  
     }
-
-
+    else if   (_operatorController.getRightBumperPressed()) { // Eject
+    }
+    else {
+      // Stop collector
+    }
+    if (_operatorController.getBButtonPressed()) { // Other Shot
+    }
+    if (_operatorController.getRightTriggerAxis() > 0.5) { // Raise Collector 
+    }
+    if (_driverController.getLeftTriggerAxis() > 0.5) { // Aim + Ready Shot
+      if (_driverController.getRightTriggerAxis() > 0.5 )  { // Shoot
+      }
+    }
   }
-}
+  }
