@@ -4,6 +4,17 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 
 public final class Constants {
 
+    // Limelight Constants
+    public static final int kLEDOff = 1;
+    public static final int kLEDOn = 3;
+    public static final int kCamModeVisionProcessing = 0;
+    public static final int kCamModeDriver = 1;
+    public static final String kTableName = "limelight";
+    public static final String kValidTargetKey = "tv";
+    public static final String kLEDModeKey = "ledMode";
+    public static final String kCamModeKey = "camMode";
+    public static final String kTargetAngleXKey = "tx";
+
     // Usb Slots
     public static final int kDriverControllerUsbSlot = 0;
     public static final int kOperatorControllerUsbSlot = 1;
