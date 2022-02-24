@@ -1,9 +1,14 @@
 package frc.robot.Subsystems;
 
+import java.nio.channels.Channel;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Configuration.Constants;
 
@@ -14,6 +19,7 @@ private static Collector _instance;
     private CANSparkMax _collectorMotor;
     private CANSparkMax _frontChamberMotor;
     private CANSparkMax _backChamberMotor;
+    private Solenoid _collectorSolenoid;
 
     private double _collectorSpeed = 0;
     private double _chamberSpeed = 0;
@@ -41,6 +47,8 @@ private static Collector _instance;
         _backChamberMotor.setInverted(true);
 
         _backChamberMotor.follow(_frontChamberMotor);
+
+        _collectorSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Constants.kCollectorSolenoidChannel);
     }
 
     /** 
@@ -60,16 +68,26 @@ private static Collector _instance;
     }
 
     public void intake() {
+        _collectorSolenoid.set(true);
         _collectorMotor.set(_collectorSpeed);
     }
 
     public void eject() {
+        _collectorSolenoid.set(true);
         _collectorMotor.set(-_collectorSpeed);
         _frontChamberMotor.set(-_chamberSpeed);
     }
     
     public void feed() {
         _frontChamberMotor.set(_chamberSpeed);
+    }
+
+    public void collectorDown() {
+        _collectorSolenoid.set(true);
+    }
+
+    public void collectorUp() {
+        _collectorSolenoid.set(false);
     }
 
     public void LogTelemetry() {

@@ -34,6 +34,13 @@ public final class Constants {
     // Talon FX Device Ids
     public static final int kLeftShooterMotorDeviceId = 15; 
     public static final int kRightShooterMotorDeviceId= 14;
+
+    // Solenoids
+    public static final int kCollectorSolenoidChannel = 0;
+    public static final int kClimberSolenoidForwardChannel = 1;
+    public static final int kClimberSolenoidReverseChannel = 2;
+    public static final int kRatchetSolenoidForwardChannel = 1;
+    public static final int kRatchetSolenoidReverseChannel = 2;
     
     //DIO
     public static final int kLeftEncoderPortA = 0;

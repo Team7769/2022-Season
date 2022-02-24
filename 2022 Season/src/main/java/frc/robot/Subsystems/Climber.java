@@ -1,7 +1,16 @@
 package frc.robot.Subsystems;
 
+import java.lang.invoke.ConstantCallSite;
+
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import frc.robot.Configuration.Constants;
+
 public class Climber implements ISubsystem {
 
+    private DoubleSolenoid _climber;
+    private DoubleSolenoid _ratchet;
     private static Climber _instance;
 
     /** 
@@ -19,7 +28,10 @@ public class Climber implements ISubsystem {
     /** 
      * Constructor for climber
     */
-    public Climber(){}
+    public Climber(){
+        _climber = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.kClimberSolenoidForwardChannel, Constants.kClimberSolenoidReverseChannel);
+        _ratchet = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.kRatchetSolenoidForwardChannel, Constants.kClimberSolenoidReverseChannel);
+    }
 
     public void LogTelemetry() {
         // TODO Auto-generated method stub

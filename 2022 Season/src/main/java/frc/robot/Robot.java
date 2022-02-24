@@ -348,6 +348,7 @@ public class Robot extends TimedRobot {
 
     if (Constants.kCompetitionRobot)
     {
+      teleopCollect();
       teleopShoot();
     }
   }
@@ -402,8 +403,6 @@ public class Robot extends TimedRobot {
   }
 
   private void teleopShoot() {
-
-
     if (_operatorController.getAButtonPressed())
     {
       _shooter.setQuarterShot();
@@ -431,11 +430,13 @@ public class Robot extends TimedRobot {
     } else {
       _shooting = false;
       _shooter.stop();
-    } 
+    }
+  }
 
+  private void teleopCollect()
+  {
     if (_operatorController.getLeftBumperPressed()) { 
       _collector.intake();
-      // Intake & Lower Collector)  
     }
     else if (_operatorController.getRightBumperPressed()) { // Eject
       _collector.eject();
@@ -446,7 +447,10 @@ public class Robot extends TimedRobot {
     }
 
     if (_operatorController.getRightTriggerAxis() > 0.5) { 
-      // Raise Collector 
+      _collector.collectorUp();
+    } else if (_operatorController.getLeftTriggerAxis() > 0.5) {
+      _collector.collectorDown();
     }
+
   }
 }
