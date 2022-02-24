@@ -14,25 +14,34 @@ public final class Constants {
     public static final String kLEDModeKey = "ledMode";
     public static final String kCamModeKey = "camMode";
     public static final String kTargetAngleXKey = "tx";
-
+    
     // Usb Slots
     public static final int kDriverControllerUsbSlot = 0;
     public static final int kOperatorControllerUsbSlot = 1;
     
     // CAN Device Ids
     public static final int kLeftFrontDriveDeviceId = 2;
-    public static final int kLeftRearDriveDeviceId = 3;
-    public static final int kRightFrontDriveDeviceId = 4;
-    public static final int kRightRearDriveDeviceId = 5;
+    public static final int kLeftMiddleDriveDeviceId = 3;
+    public static final int kLeftRearDriveDeviceId = 4;
+    public static final int kRightFrontDriveDeviceId = 5;
+    public static final int kRightMiddleDriveDeviceId = 6;
+    public static final int kRightRearDriveDeviceId = 7;
     public static final int kCollectMotorDeviceId = 13;
     public static final int kChamberBackMotorDeviceId = 12;
     public static final int kChamberFrontMotorDeviceId = 11;
     public static final int kHoodMotorDeviceId = 10; 
     
-    
     // Talon FX Device Ids
     public static final int kLeftShooterMotorDeviceId = 15; 
     public static final int kRightShooterMotorDeviceId= 14;
+    
+    //DIO
+    public static final int kLeftEncoderPortA = 0;
+    public static final int kLeftEncoderPortB = 1;
+    public static final int kRightEncoderPortA = 2;
+    public static final int kRightEncoderPortB = 3;
+    public static final int kHoodEncoderPort = 4;
+    public static final int kMagneticLimitSwitchPort = 5;
 
     // Left Shooter Motor Config Values
     public static final double kShooterKp= .015;
@@ -41,6 +50,7 @@ public final class Constants {
     public static final double kHalfShotValue = 0.5;
     public static final double kQuarterShotValue = 0.25;
     public static final double kThreeQuarterShotValue = 0.75;
+    
     // Drive Forward and Shoot Values
     public static final double kDriveForwardStartX= 6.71;
     public static final double kDriveForwardStartY= 2.440;
@@ -93,21 +103,40 @@ public final class Constants {
     public static final double kFiveBallPartTwoFromTerminalEndX= 5.975;
     public static final double kFiveBallPartTwoFromTerminalEndY= 1.156;
     public static final double kFiveBallPartTwoFromTerminalEndRotation= -2.5878351309802463;
-    //DIO
-    public static final int kLeftEncoderPortA = 0;
-    public static final int kLeftEncoderPortB = 1;
-    public static final int kRightEncoderPortA = 2;
-    public static final int kRightEncoderPortB = 3;
-    public static final int kHoodEncoderPort = 4;
-    public static final int kMagneticLimitSwitchPort = 5;
 
     //Hood PID Values
     public static final double kHoodKp= 4.5; 
     public static final double kHoodKi= 0;
     public static final double kHoodKd= 0;
-
-
+    
+    // Test Robot
     // Test Robot Configuration
+    // public static final boolean kCompetitionRobot = false;
+    // public static final int kDriveEncoderTicksPerRevolution = 2048;
+    // public static final double kDriveWheelDiameter = 0.15;
+    // public static final double kDriveDistancePerPulse = (kDriveWheelDiameter * Math.PI) / kDriveEncoderTicksPerRevolution;
+    
+    // //Drive Characteristics
+    // public static final double ksVolts = 0.149;
+    // public static final double kvVoltSecondsPerMeter = 2.86;
+    // public static final double kaVoltSecondsSquaredPerMeter = 0.0;
+    // public static final double kTrackwidthMeters = 1.4;
+    // public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
+
+    // public static final double kMaxSpeedMetersPerSecond = 1.5;
+    // public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
+
+    // //Path Following
+    // public static final double kPathFollowingkP = 4.5;
+
+    // // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
+    // public static final double kRamseteB = 2;
+    // public static final double kRamseteZeta = 0.7;
+
+
+    // Competition Robot
+    public static final boolean kCompetitionRobot = true;
+    // Robot Configuration
     public static final int kDriveEncoderTicksPerRevolution = 2048;
     public static final double kDriveWheelDiameter = 0.15;
     public static final double kDriveDistancePerPulse = (kDriveWheelDiameter * Math.PI) / kDriveEncoderTicksPerRevolution;
@@ -116,19 +145,8 @@ public final class Constants {
     public static final double ksVolts = 0.149;
     public static final double kvVoltSecondsPerMeter = 2.86;
     public static final double kaVoltSecondsSquaredPerMeter = 0.0;
-
-    // public static final double ksVolts = 0.20123;
-    // public static final double kvVoltSecondsPerMeter = 3;
-    // public static final double kaVoltSecondsSquaredPerMeter = 0.0;
-    
-    //
-    //public static final double kTrackwidthMeters = 0.6223;
-    //public static final double kTrackwidthMeters = 0.9081;
     public static final double kTrackwidthMeters = 1.4;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
-
-    //public static final double kMaxSpeedMetersPerSecond = 1.25;
-    //public static final double kMaxAccelerationMetersPerSecondSquared = 1.25;
 
     public static final double kMaxSpeedMetersPerSecond = 1.5;
     public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
@@ -139,6 +157,4 @@ public final class Constants {
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     public static final double kRamseteB = 2;
     public static final double kRamseteZeta = 0.7;
-
-
 }

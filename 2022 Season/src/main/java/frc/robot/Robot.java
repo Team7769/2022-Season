@@ -58,17 +58,21 @@ public class Robot extends TimedRobot {
     _driverController = new XboxController(Constants.kDriverControllerUsbSlot);
     _operatorController = new XboxController(Constants.kOperatorControllerUsbSlot);
     _drivetrain = Drivetrain.GetInstance();
-    //_collector = Collector.GetInstance();
-    _climber = Climber.GetInstance();
-    //_shooter = Shooter.GetInstance();
     _limelight = Limelight.getInstance();
 
     _subsystems = new ArrayList<ISubsystem>();
 
     _subsystems.add(_drivetrain);
-    //_subsystems.add(_collector);
-    //_subsystems.add(_climber);
-    //_subsystems.add(_shooter);
+
+    if (Constants.kCompetitionRobot) {
+      _collector = Collector.GetInstance();
+      _shooter = Shooter.GetInstance();
+      _climber = Climber.GetInstance();
+
+      _subsystems.add(_collector);
+      _subsystems.add(_climber);
+      _subsystems.add(_shooter);
+    }
 
     _limelight.setDashcam();
     _compressor = new Compressor(PneumaticsModuleType.CTREPCM);
@@ -88,12 +92,15 @@ public class Robot extends TimedRobot {
 
     m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     _drivetrain.updatePose();
-    //_shooter.zeroHood();
 
     _subsystems.forEach(s -> {
       s.LogTelemetry();
       s.ReadDashboardData();
     });
+
+    if (Constants.kCompetitionRobot) {
+      _shooter.zeroHood();
+    }
     
     _compressor.enableDigital();
     SmartDashboard.putNumber("limelightX", _limelight.getAngleToTarget());
@@ -127,7 +134,6 @@ public class Robot extends TimedRobot {
   {
     //_drivetrain.resetOdometry();
     _drivetrain.resetEncoders();
-    //_drivetrain.updatePose();
     //_drivetrain.resetPIDControllers();
   }
 
@@ -339,7 +345,11 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     teleopDrive();
-    //teleopShoot();
+
+    if (Constants.kCompetitionRobot)
+    {
+      teleopShoot();
+    }
   }
 
   /** This function is called once when the robot is disabled. */

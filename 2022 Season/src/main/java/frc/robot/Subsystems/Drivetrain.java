@@ -24,8 +24,10 @@ import frc.robot.Utilities.PathFollower;
 public class Drivetrain implements ISubsystem {
     
     private CANSparkMax _leftFrontMotor;
+    private CANSparkMax _leftMiddleMotor;
     private CANSparkMax _leftRearMotor;
     private CANSparkMax _rightFrontMotor;
+    private CANSparkMax _rightMiddleMotor;
     private CANSparkMax _rightRearMotor;
     private DifferentialDrive _robotDrive;
     private Encoder _leftDriveEncoder;
@@ -66,6 +68,16 @@ public class Drivetrain implements ISubsystem {
 
         _leftRearMotor.follow(_leftFrontMotor);
         _rightRearMotor.follow(_rightFrontMotor);
+
+        if (Constants.kCompetitionRobot) {
+
+            _leftMiddleMotor = new CANSparkMax(Constants.kLeftMiddleDriveDeviceId, MotorType.kBrushless);
+            _rightMiddleMotor = new CANSparkMax(Constants.kRightMiddleDriveDeviceId, MotorType.kBrushless);
+            _rightMiddleMotor.setInverted(true);
+            
+            _leftMiddleMotor.follow(_leftFrontMotor);
+            _rightMiddleMotor.follow(_rightFrontMotor);
+        }
 
         _gyro = new AHRS(Port.kMXP);
 
@@ -328,10 +340,6 @@ public class Drivetrain implements ISubsystem {
       var limelightTargetAngle = _limelight.getAngleToTarget();
 
       var targetAngle = getHeading() - limelightTargetAngle;
-
-      //_turnPID.setP(SmartDashboard.getNumber("turnP", 0));
-      //_turnPID.setI(SmartDashboard.getNumber("turnI", 0));
-      //_turnPID.setD(SmartDashboard.getNumber("turnD", 0));
 
       var output = _turnPID.calculate(getHeading(), targetAngle);
       SmartDashboard.putNumber("turnOutput", output);
