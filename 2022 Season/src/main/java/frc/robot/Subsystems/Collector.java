@@ -21,8 +21,8 @@ private static Collector _instance;
     private CANSparkMax _backChamberMotor;
     private Solenoid _collectorSolenoid;
 
-    private double _collectorSpeed = 0;
-    private double _chamberSpeed = 0;
+    private double _collectorSpeed = 0.75;
+    private double _chamberSpeed = 1.0;
 
     public static Collector GetInstance()
     {
@@ -44,9 +44,6 @@ private static Collector _instance;
 
         _backChamberMotor = new CANSparkMax(Constants.kChamberBackMotorDeviceId, MotorType.kBrushless);
         _backChamberMotor.setIdleMode(IdleMode.kBrake);
-        _backChamberMotor.setInverted(true);
-
-        _backChamberMotor.follow(_frontChamberMotor);
 
         _collectorSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Constants.kCollectorSolenoidChannel);
     }
@@ -65,21 +62,24 @@ private static Collector _instance;
     public void stopCollect() {
         _collectorMotor.set(0.0);
         _frontChamberMotor.set(0.0);
+        _backChamberMotor.set(0.0);
     }
 
     public void intake() {
         _collectorSolenoid.set(true);
-        _collectorMotor.set(_collectorSpeed);
+        _collectorMotor.set(-_collectorSpeed);
     }
 
     public void eject() {
         _collectorSolenoid.set(true);
-        _collectorMotor.set(-_collectorSpeed);
-        _frontChamberMotor.set(-_chamberSpeed);
+        _collectorMotor.set(_collectorSpeed);
+        _frontChamberMotor.set(_chamberSpeed);
+        _backChamberMotor.set(-_chamberSpeed);
     }
     
     public void feed() {
-        _frontChamberMotor.set(_chamberSpeed);
+        _frontChamberMotor.set(-_chamberSpeed);
+        _backChamberMotor.set(_chamberSpeed);
     }
 
     public void collectorDown() {
@@ -93,15 +93,19 @@ private static Collector _instance;
     public void LogTelemetry() {
         // TODO Auto-generated method stub
         
-        SmartDashboard.putNumber("collectorSpeed", _collectorSpeed);
-        SmartDashboard.putNumber("chamberSpeed", _chamberSpeed);
+        // SmartDashboard.putNumber("collectorSpeed", _collectorSpeed);
+        // SmartDashboard.putNumber("chamberSpeed", _chamberSpeed);
+        SmartDashboard.putNumber("frontChamberOutput", _frontChamberMotor.get());
+        SmartDashboard.putNumber("backChamberOutput", _backChamberMotor.get());
     }
 
     public void ReadDashboardData() {
         // TODO Auto-generated method stub
 
-        _collectorSpeed = SmartDashboard.getNumber("collectorSpeed", 0);
-        _chamberSpeed = SmartDashboard.getNumber("chamberSpeed", 0);
+        //_collectorSpeed = SmartDashboard.getNumber("collectorSpeed", 0);
+        //_chamberSpeed = SmartDashboard.getNumber("chamberSpeed", 0);
+
+        
     }
 
 }

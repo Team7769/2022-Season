@@ -7,6 +7,7 @@ package frc.robot;
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -34,7 +35,7 @@ public class Robot extends TimedRobot {
 
   private XboxController _driverController;
   private XboxController _operatorController;
-  private Compressor _compressor;
+  private PneumaticHub _ph;
   private static Drivetrain _drivetrain;
   private static Collector _collector;
   private static Climber _climber;
@@ -75,8 +76,8 @@ public class Robot extends TimedRobot {
     }
 
     _limelight.setDashcam();
-    _compressor = new Compressor(PneumaticsModuleType.CTREPCM);
-    _compressor.enableDigital();
+    _ph = new PneumaticHub(1);
+    _ph.enableCompressorAnalog(70, 100);
   }
 
   /**
@@ -99,10 +100,12 @@ public class Robot extends TimedRobot {
     });
 
     if (Constants.kCompetitionRobot) {
-      _shooter.zeroHood();
+     // _shooter.zeroHood();
     }
     
-    _compressor.enableDigital();
+    _ph.enableCompressorAnalog(70, 100);
+    
+    //_compressor.enableDigital();
     SmartDashboard.putNumber("limelightX", _limelight.getAngleToTarget());
     SmartDashboard.putBoolean("limelightValidTarget", _limelight.hasTarget());
   }
@@ -337,9 +340,13 @@ public class Robot extends TimedRobot {
         break;
     }
   }
+  
+  
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    _shooter.zeroHood();
+  }
 
   /** This function is called periodically during operator control. */
   @Override
@@ -350,6 +357,7 @@ public class Robot extends TimedRobot {
     {
       teleopCollect();
       teleopShoot();
+      teleopClimb();
     }
   }
 
@@ -376,7 +384,7 @@ public class Robot extends TimedRobot {
     var augmentTurn = 0.0;
 
     var throttle = -_driverController.getLeftY();
-    var turn = _driverController.getRightX();
+    var turn = _driverController.getRightX() *.5;
 
     if (Math.abs(_driverController.getLeftTriggerAxis()) > 0.05)
     {
@@ -386,9 +394,8 @@ public class Robot extends TimedRobot {
       _limelight.setDashcam();
     }
     
-    _drivetrain.drive(throttle, turn + augmentTurn);
+    _drivetrain.drive(throttle * 0.75, turn + augmentTurn);
     
-    _drivetrain.drive(throttle, turn);
     //_driverController.getStartButtonPressed(); Climber (Start's Automated Climbing Method)
     //_driverController.getBackButtonPressed(); Climber (Start's Manual Climbing Method)
     
@@ -405,22 +412,22 @@ public class Robot extends TimedRobot {
   private void teleopShoot() {
     if (_operatorController.getAButtonPressed())
     {
-      _shooter.setQuarterShot();
+      _shooter.setCloseShot();
     } else if (_operatorController.getBButtonPressed()) { 
       // Other Shot
     } else if (_operatorController.getXButtonPressed())
     {
-      _shooter.setHalfShot();
+      _shooter.setZoneShot();
     } else if (_operatorController.getYButtonPressed())
     {
-      _shooter.setThreeQuarterShot();
+      _shooter.setFarShot();
     }
 
     if (_driverController.getLeftTriggerAxis() >= 0.5)
     {
       _shooter.readyShot();
       
-      if (_driverController.getRightTriggerAxis() > 0.5 )  {
+      if (_driverController.getRightTriggerAxis() > 0.5 && _shooter.goShoot())  {
         _shooting = true; 
         _collector.feed();
         // Shoot
@@ -435,10 +442,10 @@ public class Robot extends TimedRobot {
 
   private void teleopCollect()
   {
-    if (_operatorController.getLeftBumperPressed()) { 
+    if (_operatorController.getLeftBumper()) { 
       _collector.intake();
     }
-    else if (_operatorController.getRightBumperPressed()) { // Eject
+    else if (_operatorController.getRightBumper()) { // Eject
       _collector.eject();
     }
     else if (!_shooting) {
@@ -452,5 +459,24 @@ public class Robot extends TimedRobot {
       _collector.collectorDown();
     }
 
+  }
+
+  private void teleopClimb()
+  {
+    if (_driverController.getAButtonPressed())
+    {
+      _climber.setClimberForward();
+    } else if (_driverController.getBButtonPressed())
+    {
+      _climber.setClimberReverse();
+    }
+
+    if (_driverController.getXButtonPressed())
+    {
+      _climber.setRatchetForward();
+    } else if (_driverController.getYButtonPressed())
+    {
+      _climber.setRatchetReverse();
+    }
   }
 }

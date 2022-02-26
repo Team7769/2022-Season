@@ -36,11 +36,11 @@ public final class Constants {
     public static final int kRightShooterMotorDeviceId= 14;
 
     // Solenoids
-    public static final int kCollectorSolenoidChannel = 0;
-    public static final int kClimberSolenoidForwardChannel = 1;
-    public static final int kClimberSolenoidReverseChannel = 2;
-    public static final int kRatchetSolenoidForwardChannel = 1;
-    public static final int kRatchetSolenoidReverseChannel = 2;
+    public static final int kCollectorSolenoidChannel = 12;
+    public static final int kClimberSolenoidForwardChannel = 14;
+    public static final int kClimberSolenoidReverseChannel = 13;
+    public static final int kRatchetSolenoidForwardChannel = 11;
+    public static final int kRatchetSolenoidReverseChannel = 15;
     
     //DIO
     public static final int kLeftEncoderPortA = 0;
@@ -54,9 +54,13 @@ public final class Constants {
     public static final double kShooterKp= .015;
     public static final double kShooterKf= .0473;
     // Hood Target Points
-    public static final double kHalfShotValue = 0.5;
-    public static final double kQuarterShotValue = 0.25;
-    public static final double kThreeQuarterShotValue = 0.75;
+    public static final double kHalfShotValue = 0.125;
+    public static final double kQuarterShotValue = .0825;
+    public static final double kThreeQuarterShotValue = 0.25;
+
+    public static final double kCloseShotSpeed = 11625;
+    public static final double kZoneShotSpeed = 12000;
+    public static final double kFarShotSpeed = 13750;
     
     // Drive Forward and Shoot Values
     public static final double kDriveForwardStartX= 6.71;

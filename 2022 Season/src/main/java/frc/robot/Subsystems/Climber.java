@@ -5,6 +5,7 @@ import java.lang.invoke.ConstantCallSite;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.Configuration.Constants;
 
 public class Climber implements ISubsystem {
@@ -30,7 +31,37 @@ public class Climber implements ISubsystem {
     */
     public Climber(){
         _climber = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.kClimberSolenoidForwardChannel, Constants.kClimberSolenoidReverseChannel);
-        _ratchet = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.kRatchetSolenoidForwardChannel, Constants.kClimberSolenoidReverseChannel);
+        _ratchet = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.kRatchetSolenoidForwardChannel, Constants.kRatchetSolenoidReverseChannel);
+    }
+
+    public void setClimberForward()
+    {
+        _climber.set(Value.kForward);
+    }
+
+    public void setClimberReverse()
+    {
+        _climber.set(Value.kReverse);
+    }
+
+    public void setClimberOff()
+    {
+        _climber.set(Value.kOff);
+    }
+
+    public void setRatchetForward()
+    {
+        _ratchet.set(Value.kForward);
+    }
+
+    public void setRatchetReverse()
+    {
+        _ratchet.set(Value.kReverse);
+    }
+
+    public void setRatchetOff()
+    {
+        _climber.set(Value.kOff);
     }
 
     public void LogTelemetry() {
