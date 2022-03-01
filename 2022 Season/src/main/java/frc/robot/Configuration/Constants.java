@@ -26,10 +26,12 @@ public final class Constants {
     public static final int kRightFrontDriveDeviceId = 5;
     public static final int kRightMiddleDriveDeviceId = 6;
     public static final int kRightRearDriveDeviceId = 7;
-    public static final int kCollectMotorDeviceId = 13;
-    public static final int kChamberBackMotorDeviceId = 12;
-    public static final int kChamberFrontMotorDeviceId = 11;
+    public static final int kLeftClimbMotorDeviceId = 8;
+    public static final int kRightClimbMotorDeviceId = 9;
     public static final int kHoodMotorDeviceId = 10; 
+    public static final int kChamberFrontMotorDeviceId = 11;
+    public static final int kChamberBackMotorDeviceId = 12;
+    public static final int kCollectMotorDeviceId = 13;
     
     // Talon FX Device Ids
     public static final int kLeftShooterMotorDeviceId = 15; 
@@ -48,7 +50,7 @@ public final class Constants {
     public static final int kRightEncoderPortA = 2;
     public static final int kRightEncoderPortB = 3;
     public static final int kHoodEncoderPort = 4;
-    public static final int kMagneticLimitSwitchPort = 5;
+    public static final int kClimbEncoderPort = 5;
 
     // Left Shooter Motor Config Values
     public static final double kShooterKp= .015;
@@ -68,16 +70,16 @@ public final class Constants {
     public static final double kDriveForwardStartRotation= -2.437994417066567;
     public static final double kDriveForwardMidX = 5.874;
     public static final double kDriveForwardMidY= 2.135;
-    public static final double kDriveForwardEndX= 5.08;
-    public static final double kDriveForwardEndY= 1.831;
-    public static final double kDriveForwardEndRotation= -2.7716865861332294;
+    public static final double kDriveForwardEndX= 5.019;
+    public static final double kDriveForwardEndY= 1.910;
+    public static final double kDriveForwardEndRotation= -2.9;
 
     // Collect Two From Terminal Values
     public static final double kCollectTwoWayPointX = 2.6;
     public static final double kCollectTwoWayPointY = 2.078;
-    public static final double kCollectTwoEndPointX= 1.128;
-    public static final double kCollectTwoEndPointY= 1.156;
-    public static final double kCollectTwoEndRotation= -2.442932828868268;
+    public static final double kCollectTwoEndPointX= 1.533;
+    public static final double kCollectTwoEndPointY= 2.022;
+    public static final double kCollectTwoEndRotation= -2.5712743268771217;
    
     // Drive Back From Terminal Values
     public static final double kDriveBackWayPointX= 2.6;
@@ -96,7 +98,7 @@ public final class Constants {
     public static final double kFiveBallPartOneSecondX= 6.886;
     public static final double kFiveBallPartOneSecondY= 0.740;
     
-    public static final double kFiveBallPartOneEndX= 5.818; 
+    public static final double kFiveBallPartOneEndX= 5.064; 
     public static final double kFiveBallPartOneEndY= 0.864; 
     public static final double kFiveBallPartOneEndRotation= -2.4346845928296763;
     
@@ -149,18 +151,18 @@ public final class Constants {
     public static final boolean kCompetitionRobot = true;
     // Robot Configuration
     public static final int kDriveEncoderTicksPerRevolution = 2048;
-    public static final double kDriveWheelDiameter = 0.15;
+    public static final double kDriveWheelDiameter = 0.10;
     public static final double kDriveDistancePerPulse = (kDriveWheelDiameter * Math.PI) / kDriveEncoderTicksPerRevolution;
     
     //Drive Characteristics
     public static final double ksVolts = 0.149;
     public static final double kvVoltSecondsPerMeter = 2.86;
     public static final double kaVoltSecondsSquaredPerMeter = 0.0;
-    public static final double kTrackwidthMeters = 1.4;
+    public static final double kTrackwidthMeters = .75;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
 
-    public static final double kMaxSpeedMetersPerSecond = 1.5;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 1.5;
+    public static final double kMaxSpeedMetersPerSecond = 3.25;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 2.5;
 
     //Path Following
     public static final double kPathFollowingkP = 4.5;

@@ -252,7 +252,7 @@ public class Robot extends TimedRobot {
         break;
       case 6:
         _drivetrain.tankDriveVolts(0, 0);
-        if (_autonomousLoops >= 150)
+        if (_autonomousLoops >= 50)
         {
           _drivetrain.startPath();
           _autonomousCase++;
@@ -477,6 +477,16 @@ public class Robot extends TimedRobot {
     } else if (_driverController.getYButtonPressed())
     {
       _climber.setRatchetReverse();
+    }
+
+    if (_driverController.getLeftBumper())
+    {
+      _climber.setClimberMotor(1.0);
+    } else if (_driverController.getRightBumper())
+    {
+      _climber.setClimberMotor(-1.0);
+    } else {
+      _climber.setClimberMotor(0.0);
     }
   }
 }
