@@ -114,6 +114,12 @@ public class Shooter implements ISubsystem {
         return shooterAtSpeed && _hoodPID.atSetpoint();
     }
 
+    public void setPukeShot()
+    {
+        _shooterTarget = Constants.kPukeShotSpeed;
+        _hoodTarget = Constants.kThreeQuarterShotValue;
+    }
+    
     public void setZoneShot()
     {
         _shooterTarget = Constants.kZoneShotSpeed;

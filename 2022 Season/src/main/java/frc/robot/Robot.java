@@ -211,11 +211,13 @@ public class Robot extends TimedRobot {
       case 0:
         _drivetrain.setDriveForwardAndShootPath();
         _drivetrain.startPath();
+        _collector.intake();
+        _shooter.readyShot();
         _autonomousCase++;
         break;
       case 1:
         _drivetrain.followPath();
-        
+
         if (_drivetrain.isPathFinished())
         {
           _autonomousLoops = 0;
@@ -230,13 +232,22 @@ public class Robot extends TimedRobot {
         break;
       case 3:
         _drivetrain.tankDriveVolts(0, 0);
+        if (_shooter.goShoot())
+        {
+          _collector.feed();
+        } else {
+          _collector.stopChamber();
+        }
         if (_autonomousLoops >= 100)
         {
+          _shooter.stop();
           _drivetrain.startPath();
+          _collector.stopChamber();
           _autonomousCase++;
         }
         break;
       case 4:
+        _collector.chamberUp();
         _drivetrain.followPath();
 
         if (_drivetrain.isPathFinished())
@@ -246,6 +257,7 @@ public class Robot extends TimedRobot {
         }
         break;
       case 5:
+        _collector.stopChamber();
         _drivetrain.tankDriveVolts(0, 0);
         _drivetrain.setDriveBackFromTerminalPath();
         _autonomousCase++;
@@ -254,16 +266,27 @@ public class Robot extends TimedRobot {
         _drivetrain.tankDriveVolts(0, 0);
         if (_autonomousLoops >= 50)
         {
+          _collector.collectorUp();
           _drivetrain.startPath();
           _autonomousCase++;
         }
         break;
       case 7:
+        _shooter.readyShot();
         _drivetrain.followPath();
 
         if (_drivetrain.isPathFinished())
         {
           _autonomousCase++;
+        }
+        break;
+      case 8:
+        _drivetrain.tankDriveVolts(0, 0);
+        if (_shooter.goShoot())
+        {
+          _collector.feed();
+        } else {
+          _collector.stopChamber();
         }
         break;
       default:

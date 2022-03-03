@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Configuration.Constants;
+import frc.robot.Lib.Photoeye;
 
 public class Collector implements ISubsystem {
 
@@ -20,9 +21,14 @@ private static Collector _instance;
     private CANSparkMax _frontChamberMotor;
     private CANSparkMax _backChamberMotor;
     private Solenoid _collectorSolenoid;
+    private Photoeye _chamberBottomSensor;
+    private Photoeye _chamberTopSensor;
 
     private double _collectorSpeed = 0.75;
     private double _chamberSpeed = 1.0;
+    private int _ballCount = 0;
+    private boolean _bottomChamberState = false;
+    private boolean _topChamberState = false;
 
     public static Collector GetInstance()
     {
@@ -46,6 +52,8 @@ private static Collector _instance;
         _backChamberMotor.setIdleMode(IdleMode.kBrake);
 
         _collectorSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Constants.kCollectorSolenoidChannel);
+    
+        _chamberBottomSensor = new Photoeye(Constants.kChamberBottomPort);
     }
 
     /** 
@@ -65,6 +73,11 @@ private static Collector _instance;
         _backChamberMotor.set(0.0);
     }
 
+    public void stopChamber() {
+        _frontChamberMotor.set(0.0);
+        _backChamberMotor.set(0.0);
+    }
+
     public void intake() {
         _collectorSolenoid.set(true);
         _collectorMotor.set(-_collectorSpeed);
@@ -78,6 +91,44 @@ private static Collector _instance;
     }
     
     public void feed() {
+        _frontChamberMotor.set(-_chamberSpeed);
+        _backChamberMotor.set(_chamberSpeed);
+    }
+
+    public void setBallCount(int ballCount)
+    {
+        _ballCount = ballCount;
+    }
+
+    public void index()
+    {
+        if (_chamberTopSensor.isBlocked())
+        {
+            stopChamber();
+        } else {
+            if (_ballCount >= 2 || _chamberBottomSensor.isBlocked())
+            {
+                chamberUp();
+            } else {
+                stopChamber();
+            }
+        }
+
+        if (!_chamberTopSensor.isBlocked() && _topChamberState)
+        {
+            _ballCount--;
+        }
+
+        if (_chamberBottomSensor.isBlocked() && !_bottomChamberState)
+        {
+            _ballCount++;
+        }
+
+        _topChamberState = _chamberTopSensor.isBlocked();
+        _bottomChamberState = _chamberBottomSensor.isBlocked();
+    }
+
+    public void chamberUp() {
         _frontChamberMotor.set(-_chamberSpeed);
         _backChamberMotor.set(_chamberSpeed);
     }

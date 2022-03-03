@@ -2,9 +2,9 @@ package frc.robot.Lib;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
-public class MagneticLimitSwitch extends DigitalInput {
+public class Photoeye extends DigitalInput {
     
-    public MagneticLimitSwitch(int port)
+    public Photoeye(int port)
     {
         super(port);
     }

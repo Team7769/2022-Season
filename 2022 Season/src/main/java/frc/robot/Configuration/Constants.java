@@ -51,6 +51,8 @@ public final class Constants {
     public static final int kRightEncoderPortB = 3;
     public static final int kHoodEncoderPort = 4;
     public static final int kClimbEncoderPort = 5;
+    public static final int kChamberBottomPort = 6;
+    public static final int kChamberTopPort = 7;
 
     // Left Shooter Motor Config Values
     public static final double kShooterKp= .015;
@@ -60,6 +62,7 @@ public final class Constants {
     public static final double kQuarterShotValue = .0825;
     public static final double kThreeQuarterShotValue = 0.25;
 
+    public static final double kPukeShotSpeed = 6000;
     public static final double kCloseShotSpeed = 11625;
     public static final double kZoneShotSpeed = 12000;
     public static final double kFarShotSpeed = 13750;
