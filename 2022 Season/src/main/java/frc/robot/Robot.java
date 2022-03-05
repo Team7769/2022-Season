@@ -450,7 +450,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("throttle", throttle);
     SmartDashboard.putNumber("turn", turn);
     SmartDashboard.putNumber("augmentTurn", augmentTurn);
-    _drivetrain.drive(throttle, turn + augmentTurn);
+    _drivetrain.drive(throttle, (turn * .75) + augmentTurn);
     
     //_driverController.getStartButtonPressed(); Climber (Start's Automated Climbing Method)
     //_driverController.getBackButtonPressed(); Climber (Start's Manual Climbing Method)
@@ -499,7 +499,8 @@ public class Robot extends TimedRobot {
 
   private void teleopCollect()
   {
-    if (_operatorController.getLeftBumper()) { 
+    if (_operatorController.getLeftBumper()) {
+      _collector.index(); 
       _collector.intake();
     }
     else if (_operatorController.getRightBumper()) { // Eject

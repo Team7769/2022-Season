@@ -149,9 +149,11 @@ public class Drivetrain implements ISubsystem {
      */
     public void tankDriveVolts(double leftVolts, double rightVolts) {
         _rightFrontMotor.setIdleMode(IdleMode.kBrake);
+        _rightMiddleMotor.setIdleMode(IdleMode.kBrake);
         _rightRearMotor.setIdleMode(IdleMode.kBrake);
         _leftFrontMotor.setIdleMode(IdleMode.kBrake);
-        _rightRearMotor.setIdleMode(IdleMode.kBrake);
+        _leftMiddleMotor.setIdleMode(IdleMode.kBrake);
+        _leftRearMotor.setIdleMode(IdleMode.kBrake);
 
         _leftFrontMotor.setVoltage(leftVolts);
         _rightFrontMotor.setVoltage(rightVolts);
@@ -160,20 +162,25 @@ public class Drivetrain implements ISubsystem {
     
     public void drive(double throttle, double turn)
     {
-        setRampRate();
         _rightFrontMotor.setIdleMode(IdleMode.kCoast);
         _leftFrontMotor.setIdleMode(IdleMode.kCoast);
+
+        if (Math.abs(throttle) <= .1) {
+            setRampRate(0);
+        } else {
+            setRampRate(.25);
+        }
         _robotDrive.arcadeDrive(throttle, turn);
     }
 
-    public void setRampRate()
+    public void setRampRate(double rate)
     {
-        _leftFrontMotor.setOpenLoopRampRate(2);
-        _leftMiddleMotor.setOpenLoopRampRate(2);
-        _leftRearMotor.setOpenLoopRampRate(2);
-        _rightFrontMotor.setOpenLoopRampRate(2);
-        _rightMiddleMotor.setOpenLoopRampRate(2);
-        _rightRearMotor.setOpenLoopRampRate(2);
+        _leftFrontMotor.setOpenLoopRampRate(rate);
+        _leftMiddleMotor.setOpenLoopRampRate(rate);
+        _leftRearMotor.setOpenLoopRampRate(rate);
+        _rightFrontMotor.setOpenLoopRampRate(rate);
+        _rightMiddleMotor.setOpenLoopRampRate(rate);
+        _rightRearMotor.setOpenLoopRampRate(rate);
     }
 
     public void driveBrake(double throttle, double turn)
