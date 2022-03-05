@@ -54,6 +54,7 @@ private static Collector _instance;
         _collectorSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Constants.kCollectorSolenoidChannel);
     
         _chamberBottomSensor = new Photoeye(Constants.kChamberBottomPort);
+        _chamberTopSensor = new Photoeye(Constants.kChamberTopPort);
     }
 
     /** 
@@ -69,8 +70,6 @@ private static Collector _instance;
      */
     public void stopCollect() {
         _collectorMotor.set(0.0);
-        _frontChamberMotor.set(0.0);
-        _backChamberMotor.set(0.0);
     }
 
     public void stopChamber() {
@@ -81,6 +80,9 @@ private static Collector _instance;
     public void intake() {
         _collectorSolenoid.set(true);
         _collectorMotor.set(-_collectorSpeed);
+    }
+    public void spit() {
+        _collectorMotor.set(_collectorSpeed);
     }
 
     public void eject() {
@@ -93,6 +95,23 @@ private static Collector _instance;
     public void feed() {
         _frontChamberMotor.set(-_chamberSpeed);
         _backChamberMotor.set(_chamberSpeed);
+        
+        if (!_chamberTopSensor.isBlocked() && _topChamberState)
+        {
+            if (_ballCount > 0)
+                _ballCount--;
+        }
+
+        if (_chamberBottomSensor.isBlocked() && !_bottomChamberState)
+        {
+            _ballCount++;
+            if (_ballCount >= 2) {
+                _ballCount = 2;
+            }
+        }
+
+        _topChamberState = _chamberTopSensor.isBlocked();
+        _bottomChamberState = _chamberBottomSensor.isBlocked();
     }
 
     public void setBallCount(int ballCount)
@@ -116,12 +135,16 @@ private static Collector _instance;
 
         if (!_chamberTopSensor.isBlocked() && _topChamberState)
         {
-            _ballCount--;
+            if (_ballCount > 0)
+                _ballCount--;
         }
 
         if (_chamberBottomSensor.isBlocked() && !_bottomChamberState)
         {
             _ballCount++;
+            if (_ballCount >= 2) {
+                _ballCount = 2;
+            }
         }
 
         _topChamberState = _chamberTopSensor.isBlocked();
@@ -148,6 +171,9 @@ private static Collector _instance;
         // SmartDashboard.putNumber("chamberSpeed", _chamberSpeed);
         SmartDashboard.putNumber("frontChamberOutput", _frontChamberMotor.get());
         SmartDashboard.putNumber("backChamberOutput", _backChamberMotor.get());
+        SmartDashboard.putBoolean("bottomChamberSensor", _chamberBottomSensor.isBlocked());
+        SmartDashboard.putBoolean("topChamberSensor", _chamberTopSensor.isBlocked());
+        SmartDashboard.putNumber("ballCount", _ballCount);
     }
 
     public void ReadDashboardData() {

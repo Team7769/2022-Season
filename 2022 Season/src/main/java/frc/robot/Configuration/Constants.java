@@ -60,12 +60,12 @@ public final class Constants {
     // Hood Target Points
     public static final double kHalfShotValue = 0.125;
     public static final double kQuarterShotValue = .0825;
-    public static final double kThreeQuarterShotValue = 0.25;
+    public static final double kThreeQuarterShotValue = 0.325;
 
     public static final double kPukeShotSpeed = 6000;
     public static final double kCloseShotSpeed = 11625;
     public static final double kZoneShotSpeed = 12000;
-    public static final double kFarShotSpeed = 13750;
+    public static final double kFarShotSpeed = 15000;
     
     // Drive Forward and Shoot Values
     public static final double kDriveForwardStartX= 6.71;
@@ -78,15 +78,15 @@ public final class Constants {
     public static final double kDriveForwardEndRotation= -2.9;
 
     // Collect Two From Terminal Values
-    public static final double kCollectTwoWayPointX = 2.6;
-    public static final double kCollectTwoWayPointY = 2.078;
+    public static final double kCollectTwoWayPointX = 2.747;
+    public static final double kCollectTwoWayPointY = 2.382;
     public static final double kCollectTwoEndPointX= 1.533;
     public static final double kCollectTwoEndPointY= 2.022;
     public static final double kCollectTwoEndRotation= -2.5712743268771217;
    
     // Drive Back From Terminal Values
-    public static final double kDriveBackWayPointX= 2.6;
-    public static final double kDriveBackWayPointY= 2.078;
+    public static final double kDriveBackWayPointX= 2.747;
+    public static final double kDriveBackWayPointY= 2.382;
     public static final double kDriveBackEndPointX= 5.08;
     public static final double kDriveBackEndPointY= 1.83;
     public static final double kDriveBackEndPointRotation= -2.7716865861332294;
@@ -158,14 +158,17 @@ public final class Constants {
     public static final double kDriveDistancePerPulse = (kDriveWheelDiameter * Math.PI) / kDriveEncoderTicksPerRevolution;
     
     //Drive Characteristics
+    // public static final double ksVolts = 0.7201;
+    // public static final double kvVoltSecondsPerMeter = 10.433;
+    // public static final double kaVoltSecondsSquaredPerMeter = 0.0;
     public static final double ksVolts = 0.149;
     public static final double kvVoltSecondsPerMeter = 2.86;
     public static final double kaVoltSecondsSquaredPerMeter = 0.0;
-    public static final double kTrackwidthMeters = .75;
+    public static final double kTrackwidthMeters = .715;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
 
     public static final double kMaxSpeedMetersPerSecond = 3.25;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 2.5;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1.75;
 
     //Path Following
     public static final double kPathFollowingkP = 4.5;

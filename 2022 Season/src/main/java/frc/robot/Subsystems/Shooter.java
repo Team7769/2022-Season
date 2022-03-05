@@ -86,9 +86,9 @@ public class Shooter implements ISubsystem {
     {
         if (_limitSwitch.isPressed())
         {
-            //_hoodEncoder.reset();
+            _hoodEncoder.reset();
         }
-        _hoodEncoder.reset();
+        //_hoodEncoder.reset();
     }
 
     public void manualHood(double speed)
@@ -119,7 +119,7 @@ public class Shooter implements ISubsystem {
         _shooterTarget = Constants.kPukeShotSpeed;
         _hoodTarget = Constants.kThreeQuarterShotValue;
     }
-    
+
     public void setZoneShot()
     {
         _shooterTarget = Constants.kZoneShotSpeed;

@@ -160,9 +160,20 @@ public class Drivetrain implements ISubsystem {
     
     public void drive(double throttle, double turn)
     {
+        setRampRate();
         _rightFrontMotor.setIdleMode(IdleMode.kCoast);
         _leftFrontMotor.setIdleMode(IdleMode.kCoast);
         _robotDrive.arcadeDrive(throttle, turn);
+    }
+
+    public void setRampRate()
+    {
+        _leftFrontMotor.setOpenLoopRampRate(2);
+        _leftMiddleMotor.setOpenLoopRampRate(2);
+        _leftRearMotor.setOpenLoopRampRate(2);
+        _rightFrontMotor.setOpenLoopRampRate(2);
+        _rightMiddleMotor.setOpenLoopRampRate(2);
+        _rightRearMotor.setOpenLoopRampRate(2);
     }
 
     public void driveBrake(double throttle, double turn)
@@ -340,6 +351,10 @@ public class Drivetrain implements ISubsystem {
       var limelightTargetAngle = _limelight.getAngleToTarget();
 
       var targetAngle = getHeading() - limelightTargetAngle;
+      if (Math.abs(targetAngle) <= 2)
+      {
+        return 0;
+      }
 
       var output = _turnPID.calculate(getHeading(), targetAngle);
       SmartDashboard.putNumber("turnOutput", output);
