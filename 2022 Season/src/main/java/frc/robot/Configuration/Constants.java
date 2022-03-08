@@ -3,7 +3,6 @@ package frc.robot.Configuration;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 
 public final class Constants {
-
     // Limelight Constants
     public static final int kLEDOff = 1;
     public static final int kLEDOn = 3;
@@ -39,10 +38,10 @@ public final class Constants {
 
     // Solenoids
     public static final int kCollectorSolenoidChannel = 12;
-    public static final int kClimberSolenoidForwardChannel = 14;
-    public static final int kClimberSolenoidReverseChannel = 13;
-    public static final int kRatchetSolenoidForwardChannel = 11;
-    public static final int kRatchetSolenoidReverseChannel = 15;
+    public static final int kClimberSolenoidForwardChannel = 11;
+    public static final int kClimberSolenoidReverseChannel = 15;
+    public static final int kRatchetSolenoidForwardChannel = 14;
+    public static final int kRatchetSolenoidReverseChannel = 13;
     
     //DIO
     public static final int kLeftEncoderPortA = 0;
@@ -124,6 +123,15 @@ public final class Constants {
     public static final double kHoodKp= 4.5; 
     public static final double kHoodKi= 0;
     public static final double kHoodKd= 0;
+
+    //Climber PID Values
+    public static final double kClimbKp = 2;
+    public static final double kClimbKi = 0;
+    public static final double kClimbD = 0;
+
+    public static final double kClimbPullUpPosition = 6;
+    public static final double kClimbExtendedPosition = 11.5;
+    //public static final double kClimbF = 0.35;
     
     // Test Robot
     // Test Robot Configuration

@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxLimitSwitch.Type;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
@@ -25,6 +26,8 @@ public class Climber implements ISubsystem {
     private DutyCycleEncoder _climbEncoder;
     private SparkMaxLimitSwitch _climbLimitSwitch;
     private static Climber _instance;
+
+    private double _climbTarget;
 
     /** 
      * Used to get Instance of the Climber
@@ -55,6 +58,49 @@ public class Climber implements ISubsystem {
         _climbEncoder = new DutyCycleEncoder(Constants.kClimbEncoderPort);
 
         _climbLimitSwitch = _leftClimbMotor.getForwardLimitSwitch(Type.kNormallyOpen);
+
+        _climbTarget = Constants.kClimbPullUpPosition;
+    }
+
+    public void resetClimbEncoder()
+    {
+        if (isLimitSwitchPressed())
+        {
+            _climbEncoder.reset();
+        }
+    }
+
+    public boolean isLimitSwitchPressed()
+    {
+        return _climbLimitSwitch.isPressed();
+    }
+
+    public void setClimbPosition(double position)
+    {
+        _climbTarget = position;
+    }
+
+    public void extend()
+    {
+        _leftClimbMotor.set(-1);
+        _rightClimbMotor.set(-1);
+    }
+
+    public void climb()
+    {
+        _leftClimbMotor.set(1.0);
+        _rightClimbMotor.set(1.0);
+    }
+
+    public void stopClimb()
+    {
+        _leftClimbMotor.set(0);
+        _rightClimbMotor.set(0);
+    }
+
+    public boolean isExtendFinished()
+    {
+        return _climbEncoder.get() >= _climbTarget;
     }
 
     public void setClimberMotor(double speed)
@@ -78,14 +124,14 @@ public class Climber implements ISubsystem {
         _climber.set(Value.kOff);
     }
 
-    public void setRatchetForward()
-    {
-        _ratchet.set(Value.kForward);
-    }
-
-    public void setRatchetReverse()
+    public void engageRatchet()
     {
         _ratchet.set(Value.kReverse);
+    }
+
+    public void disengageRatchet()
+    {
+        _ratchet.set(Value.kForward);
     }
 
     public void setRatchetOff()

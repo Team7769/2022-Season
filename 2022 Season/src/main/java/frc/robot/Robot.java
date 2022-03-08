@@ -13,12 +13,14 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Configuration.AutonomousMode;
 import frc.robot.Configuration.Constants;
 import frc.robot.Subsystems.Climber;
 import frc.robot.Subsystems.Collector;
 import frc.robot.Subsystems.Drivetrain;
 import frc.robot.Subsystems.ISubsystem;
 import frc.robot.Subsystems.Shooter;
+import frc.robot.Utilities.LEDController;
 import frc.robot.Utilities.Limelight;
 
 /**
@@ -28,10 +30,6 @@ import frc.robot.Utilities.Limelight;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   private XboxController _driverController;
   private XboxController _operatorController;
@@ -41,10 +39,15 @@ public class Robot extends TimedRobot {
   private static Climber _climber;
   private static Shooter _shooter;
   private static Limelight _limelight;
+  private static LEDController _ledController;
   private ArrayList<ISubsystem> _subsystems;
 
+  private int _autonomousMode = AutonomousMode.kDoNothing;
   private int _autonomousCase = 0;
   private int _autonomousLoops = 0;
+  private int _climbingCase = 0;
+  private int _climberCurrentRung = 2;
+  private boolean _climbing = false;
   private boolean _shooting = false;
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -52,10 +55,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
-
     _driverController = new XboxController(Constants.kDriverControllerUsbSlot);
     _operatorController = new XboxController(Constants.kOperatorControllerUsbSlot);
     _drivetrain = Drivetrain.GetInstance();
@@ -73,6 +72,8 @@ public class Robot extends TimedRobot {
       _subsystems.add(_collector);
       _subsystems.add(_climber);
       _subsystems.add(_shooter);
+
+      _ledController = LEDController.GetInstance();
     }
 
     _limelight.setDashcam();
@@ -93,8 +94,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     // This is the robot periodic method.
-
-    m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     _drivetrain.updatePose();
 
     _subsystems.forEach(s -> {
@@ -108,7 +107,6 @@ public class Robot extends TimedRobot {
     
     _ph.enableCompressorAnalog(70, 100);
     
-    //_compressor.enableDigital();
     SmartDashboard.putNumber("limelightX", _limelight.getAngleToTarget());
     SmartDashboard.putBoolean("limelightValidTarget", _limelight.hasTarget());
   }
@@ -125,10 +123,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    // m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kCustomAuto);
-    m_autoSelected = kDefaultAuto;
-    System.out.println("Auto selected: " + m_autoSelected);
+
     
     _autonomousCase = 0;
     _autonomousLoops = 0;
@@ -146,68 +141,36 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
+    switch (_autonomousMode) {
+      case AutonomousMode.kDoNothing:
         // Put custom auto code here
-        testAuto();
+        doNothing();
         break;
-      case kDefaultAuto:
+      case AutonomousMode.kDriveForwardAndShoot:
+        doNothing();
+        break;
+      case AutonomousMode.kFourBall:
+        fourBallAuto();
+        break;
       default:
-        //turnTest();
-        driveBackAndShootAuto();
-        //fiveBallAuto();
-        // Put default auto code here
+        // Do nothing
+        doNothing();
         break;
     }
     _autonomousLoops++;
   }
 
-  public void testAuto()
+  public void doNothing()
   {
     switch(_autonomousCase)
     {
-      case 0:
-        _drivetrain.setTestPath();
-        _drivetrain.startPath();
-        _autonomousCase++;
-        break;
-      case 1:
-        _drivetrain.followPath();
-        
-        if (_drivetrain.isPathFinished())
-        {
-          _autonomousCase++;
-        }
-        break;
-      case 2:
-        _drivetrain.tankDriveVolts(0, 0);
-        break;
-    }
-  }
-
-  public void turnTest()
-  {
-    switch (_autonomousCase)
-    {
-      case 0:
-        _drivetrain.resetPID();
-        _autonomousCase++;
-        break;
-      case 1:
-        _drivetrain.turnToAngle(90);
-
-        if (_drivetrain.isTurnFinished())
-        {
-          _autonomousCase++;
-        }
-        break;
       default:
         _drivetrain.tankDriveVolts(0, 0);
         break;
     }
   }
-  
-  public void driveBackAndShootAuto()
+
+  public void fourBallAuto()
   {
     switch(_autonomousCase)
     {
@@ -399,17 +362,25 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     //_shooter.zeroHood();
+    _climbing = false;
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    teleopDrive();
+    if (!_climbing){
+      teleopDrive();
 
-    if (Constants.kCompetitionRobot)
-    {
-      teleopCollect();
-      teleopShoot();
+      if (Constants.kCompetitionRobot)
+      
+      {
+        teleopCollect();
+        teleopShoot();
+        //teleopClimb();
+      }
+    }
+    else {
+      stopAll();
       teleopClimb();
     }
   }
@@ -422,6 +393,9 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledPeriodic() {
     _limelight.setDashcam();
+
+    _climber.resetClimbEncoder();
+    _autonomousMode = (int) SmartDashboard.getNumber("autonomousMode", 0);
   }
 
   /** This function is called once when test mode is enabled. */
@@ -451,9 +425,20 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("turn", turn);
     SmartDashboard.putNumber("augmentTurn", augmentTurn);
     _drivetrain.drive(throttle, (turn * .75) + augmentTurn);
-    
-    //_driverController.getStartButtonPressed(); Climber (Start's Automated Climbing Method)
-    //_driverController.getBackButtonPressed(); Climber (Start's Manual Climbing Method)
+
+    if (_driverController.getBackButton() && _driverController.getStartButton() && _climber.isExtendFinished()){
+      _climbing = true;
+    } else if (_driverController.getBackButton() && !_climber.isExtendFinished())
+    {
+      _collector.collectorUp();
+      _climber.disengageRatchet();
+      _climber.setClimbPosition(Constants.kClimbPullUpPosition);
+      _climber.extend();
+    } else if (_climber.isExtendFinished())
+    {
+      _climber.engageRatchet();
+      _climber.stopClimb();
+    }
     
     if (_drivetrain.isTurnFinished())
       {
@@ -520,32 +505,119 @@ public class Robot extends TimedRobot {
 
   }
 
+  private void logClimbState(String message)
+  {
+    SmartDashboard.putString("climbState", message);
+  }
+
   private void teleopClimb()
   {
-    if (_driverController.getAButtonPressed())
-    {
-      _climber.setClimberForward();
-    } else if (_driverController.getBButtonPressed())
-    {
-      _climber.setClimberReverse();
-    }
+    switch (_climbingCase) {
+      case 0:
+        _climber.engageRatchet();
+        logClimbState("Engage Ratchet");
+        _climbingCase++;
+        break;
+      case 1:
+        _climber.climb();
 
-    if (_driverController.getXButtonPressed())
-    {
-      _climber.setRatchetForward();
-    } else if (_driverController.getYButtonPressed())
-    {
-      _climber.setRatchetReverse();
-    }
+        logClimbState("Climbing");
+        if (_climber.isLimitSwitchPressed())
+        {
+          logClimbState("Stop climbing");
+          _climber.stopClimb();
+          _climbingCase++;
+        }
+        break;
+      case 2:
+        logClimbState("Waiting for confirmation.");
+        _ledController.setWaitingForConfirmation();
+        if (_driverController.getStartButtonPressed()){
 
-    if (_driverController.getLeftBumper())
-    {
-      _climber.setClimberMotor(1.0);
-    } else if (_driverController.getRightBumper())
-    {
-      _climber.setClimberMotor(-1.0);
-    } else {
-      _climber.setClimberMotor(0.0);
+          _ledController.setFire();
+          logClimbState("Set climber foward.");
+          _climber.setClimberForward();
+          _climber.disengageRatchet();
+          _climber.setClimbPosition(Constants.kClimbExtendedPosition);
+          _climbingCase++;
+        }
+        break;
+      case 3:
+        _climber.extend();
+
+        if (!_climber.isExtendFinished()) {
+          logClimbState("Extending.");
+        }
+
+        if (_climber.isExtendFinished())
+        {
+          _climber.stopClimb();
+          _climber.setClimberReverse();
+          _climber.engageRatchet();
+          _climbingCase++;
+        }
+        break;
+      case 4:
+        logClimbState("Waiting for confirmation.");
+        _ledController.setWaitingForConfirmation();
+        if (_driverController.getStartButtonPressed()){
+          _ledController.setFire();
+          _climbingCase++;
+        }
+        break;
+      case 5:
+        _climber.climb();
+        
+        if (_climber.isLimitSwitchPressed())
+        {
+          logClimbState("Stop climbing");
+          _climberCurrentRung++;
+          _climber.stopClimb();
+
+          if (_climberCurrentRung >= 4)
+          {
+            _climbingCase++;
+          } else {
+            _climbingCase = 2;
+          }
+        }
+        break;
+      default:
+        _climber.engageRatchet();
+        logClimbState("Done climbing");
+        break;
     }
+    // if (_driverController.getAButtonPressed())
+    // {
+    //   _climber.engageRatchet();
+    // } else if (_driverController.getBButtonPressed())
+    // {
+    //   _climber.disengageRatchet();
+    // }
+
+    // if (_driverController.getXButtonPressed())
+    // {
+    //   _climber.setClimberForward();
+    // } else if (_driverController.getYButtonPressed())
+    // {
+    //   _climber.setClimberReverse();
+    // }
+
+    // if (_driverController.getLeftBumper())
+    // {
+    //   _climber.setClimberMotor(1.0);
+    // } else if (_driverController.getRightBumper())
+    // {
+    //   _climber.setClimberMotor(-1.0);
+    // } else {
+    //   _climber.setClimberMotor(0.0);
+    // }
+  }
+
+  private void stopAll() {
+    _drivetrain.drive(0, 0);
+    _collector.stopChamber();
+    _collector.stopCollect();
+    _shooter.stop();
   }
 }
