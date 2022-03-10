@@ -306,7 +306,7 @@ public class Robot extends TimedRobot {
         _drivetrain.setDriveForwardAndShootPath();
         _drivetrain.startPath();
         _collector.intake();
-        _shooter.setFarShot();
+        _shooter.setPukeShot();
         _shooter.readyShot();
         _autonomousCase++;
         break;
