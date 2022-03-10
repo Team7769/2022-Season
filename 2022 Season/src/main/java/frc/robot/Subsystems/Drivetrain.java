@@ -318,7 +318,10 @@ public class Drivetrain implements ISubsystem {
     {
         _pathFollower.setFiveBallPartTwoFromTerminalPath(getTrajectoryConfig(true), getPose().getRotation());
     }
-
+    public void setFourBallFarPartOnePath()
+    {
+        _pathFollower.setFourBallFarPartOneTrajectory(getTrajectoryConfig(false));
+    }
     public void startPath()
     {
         _leftDriveVelocityPID.reset();

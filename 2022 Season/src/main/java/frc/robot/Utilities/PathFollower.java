@@ -18,7 +18,7 @@ public class PathFollower {
     private RamseteController _controller;
     private Trajectory _currentPath;
     private Timer _timer;
-
+    
     public PathFollower()
     {
         _controller = new RamseteController();
@@ -69,7 +69,10 @@ public class PathFollower {
     {
         _currentPath = getFiveBallPartTwoFromTerminalTrajectory(config, startingPose);
     }
-
+    public void setFourBallFarPartOneTrajectory(TrajectoryConfig config)
+    {
+        _currentPath = getFourBallFarPartOneTarejctory(config);
+    }
     public Trajectory getCurrentTrajectory()
     {
         return _currentPath;
@@ -194,7 +197,18 @@ public class PathFollower {
         // Pass config
         config);
       }
-
+      private Trajectory getFourBallFarPartOneTarejctory(TrajectoryConfig config)
+      { 
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(Constants.kFourBallFarPartOneStartX, Constants.kFourBallFarPartOneStartX, new Rotation2d(Constants.kFourBallFarPartOneStartRotation)),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(
+            new Translation2d(Constants.kFourBallFarPartOneMidX, Constants.kFourBallFarPartOneMidY)
+        ),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(Constants.kFourBallFarPartOneEndX, Constants.kFourBallFarPartOneEndY, new Rotation2d(Constants.kFourBallFarPartOneEndRotation)),
+        // Pass config
+        config);
+      }
     //   private Trajectory getTrenchToLineTrajectory(TrajectoryConfig config)
     //   {
     //     return TrajectoryGenerator.generateTrajectory(new Pose2d(Constants.kTrenchPathEndX,Constants.kTrenchPathEndY, new Rotation2d(Constants.kTrenchPathEndAngle)),
