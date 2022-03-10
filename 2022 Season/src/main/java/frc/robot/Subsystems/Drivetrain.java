@@ -163,7 +163,11 @@ public class Drivetrain implements ISubsystem {
     public void drive(double throttle, double turn)
     {
         _rightFrontMotor.setIdleMode(IdleMode.kCoast);
+        _rightMiddleMotor.setIdleMode(IdleMode.kCoast);
+        _rightRearMotor.setIdleMode(IdleMode.kCoast);
         _leftFrontMotor.setIdleMode(IdleMode.kCoast);
+        _leftMiddleMotor.setIdleMode(IdleMode.kCoast);
+        _leftRearMotor.setIdleMode(IdleMode.kCoast);
 
         if (Math.abs(throttle) <= .1) {
             setRampRate(0);

@@ -13,6 +13,10 @@ public class LEDController {
     public final double kFireLarge = -.57;
     public final double kBlueHeartBeat = -.23;
     public final double kRedHeartBeat = -.25;
+    public final double color1HeartBeat = .07;
+    public final double color2HeartBeat = .27;
+    public final double bpmParty = -.67;
+    public final double kYellow = .69;
     
     public LEDController()
     {

@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    
+    _ledController.setUpperLED(_ledController.color1HeartBeat);
     _autonomousCase = 0;
     _autonomousLoops = 0;
     _drivetrain.resetGyro();
@@ -208,16 +208,7 @@ public class Robot extends TimedRobot {
       case 3:
         _collector.collectorUp();
         _collector.stopCollect();
-        _shooter.readyShot();
         _limelight.setAimbot();
-        
-        _drivetrain.drive(0, _drivetrain.followTarget());
-        if (_shooter.goShoot())
-        {
-          _collector.feed();
-        } else {
-          _collector.stopChamber();
-        }
 
         if (_autonomousLoops >= 150)
         {
@@ -227,9 +218,21 @@ public class Robot extends TimedRobot {
 
           if (!onlyTwo) 
           {
+            _ledController.setUpperLED(_ledController.color2HeartBeat);
             _drivetrain.startPath();
             _autonomousCase++;
           }
+        } else {
+
+          if (_shooter.goShoot()) {
+            _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
+            _collector.feed();
+          } else {
+            _ledController.setUpperLED(_ledController.kYellow);
+            _collector.stopChamber();
+          }
+          _drivetrain.drive(0, _drivetrain.followTarget());
+          _shooter.readyShot();
         }
         break;
       case 4:
@@ -287,8 +290,10 @@ public class Robot extends TimedRobot {
         _drivetrain.drive(0, _drivetrain.followTarget());
         if (_shooter.goShoot())
         {
+          _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
           _collector.feed();
         } else {
+          _ledController.setUpperLED(_ledController.kYellow);
           _collector.stopChamber();
         }
         break;
@@ -337,13 +342,16 @@ public class Robot extends TimedRobot {
         _drivetrain.drive(0, _drivetrain.followTarget());
         if (_shooter.goShoot())
         {
+          _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
           _collector.feed();
         } else {
+          _ledController.setUpperLED(_ledController.kYellow);
           _collector.stopChamber();
         }
 
         if (_autonomousLoops >= 150)
         {
+          _ledController.setUpperLED(_ledController.color2HeartBeat);
           _shooter.stop();
           _drivetrain.startPath();
           _collector.stopChamber();
@@ -405,8 +413,10 @@ public class Robot extends TimedRobot {
         _drivetrain.drive(0, _drivetrain.followTarget());
         if (_shooter.goShoot())
         {
+          _ledController.setWaitingForConfirmation();
           _collector.feed();
         } else {
+          _ledController.setUpperLED(_ledController.kYellow);
           _collector.stopChamber();
         }
         break;
@@ -492,6 +502,7 @@ public class Robot extends TimedRobot {
     _climbing = false;
     _climbingCase = 0;
     _ratchetCounter = 0;
+    _ledController.setUpperLED(_ledController.bpmParty);
     
     var alliance = DriverStation.getAlliance();
     if (alliance == Alliance.Blue) {
@@ -625,7 +636,14 @@ public class Robot extends TimedRobot {
       } else {
         _shooting = false;
       }
+
+      if (_shooter.goShoot()){
+        _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
+      } else {
+        _ledController.setUpperLED(_ledController.kYellow);
+      }
     } else {
+      _ledController.setUpperLED(_ledController.bpmParty);
       _shooting = false;
       _shooter.stop();
     }

@@ -209,9 +209,7 @@ public class PathFollower {
       { 
         return TrajectoryGenerator.generateTrajectory(new Pose2d(Constants.kFourBallFarPartOneStartX, Constants.kFourBallFarPartOneStartX, new Rotation2d(Constants.kFourBallFarPartOneStartRotation)),
         // Pass through these two interior waypoints, making an 's' curve path
-        List.of(
-            new Translation2d(Constants.kFourBallFarPartOneMidX, Constants.kFourBallFarPartOneMidY)
-        ),
+        List.of(),
         // End 3 meters straight ahead of where we started, facing forward
         new Pose2d(Constants.kFourBallFarPartOneEndX, Constants.kFourBallFarPartOneEndY, new Rotation2d(Constants.kFourBallFarPartOneEndRotation)),
         // Pass config
@@ -236,10 +234,10 @@ public class PathFollower {
         return TrajectoryGenerator.generateTrajectory(new Pose2d(currentPose.getX(), currentPose.getY(), currentPose.getRotation()),
         // Pass through these two interior waypoints, making an 's' curve path
         List.of(
-            new Translation2d(Constants.kFourBallFarPartTwoMidX, Constants.kFourBallFarPartTwoMidY)
+            new Translation2d(Constants.kFourBallFarPartTwoBackMidX, Constants.kFourBallFarPartTwoBackMidY)
         ),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(Constants.kFourBallFarPartTwoStartX, Constants.kFourBallFarPartTwoStartY, new Rotation2d(Constants.kFourBallFarPartOneEndRotation)),
+        new Pose2d(Constants.kFourBallFarPartTwoBackEndPointX, Constants.kFourBallFarPartTwoBackEndPointY, new Rotation2d(Constants.kFourBallFarPartTwoBackEndRotation)),
         // Pass config
         config);
       }
