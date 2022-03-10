@@ -118,6 +118,7 @@ public final class Constants {
     public static final double kFiveBallPartTwoFromTerminalEndX= 5.975;
     public static final double kFiveBallPartTwoFromTerminalEndY= 1.156;
     public static final double kFiveBallPartTwoFromTerminalEndRotation= -2.5878351309802463;
+    
     // Four Ball Far Part One Values
     public static final double kFourBallFarPartOneStartX= 5.932;
     public static final double kFourBallFarPartOneStartY= 5.197; 
@@ -129,6 +130,18 @@ public final class Constants {
     public static final double kFourBallFarPartOneEndX= 4.818;
     public static final double kFourBallFarPartOneEndY= 6.399;
     public static final double kFourBallFarPartOneEndRotation= 2.3334711293507033;
+
+    // Four Ball Far Part Two Values    
+    public static final double kFourBallFarPartTwoStartX= 4.818;
+    public static final double kFourBallFarPartTwoStartY= 6.399;
+
+    public static final double kFourBallFarPartTwoMidX= 3.977; 
+    public static final double kFourBallFarPartTwoMidY= 5.478; 
+    
+    public static final double kFourBallFarPartTwoEndPointX= 1.533;
+    public static final double kFourBallFarPartTwoEndPointY= 2.022;
+    public static final double kFourBallFarPartTwoEndRotation= -2.5712743268771217;
+
     //Hood PID Values
     public static final double kHoodKp= 4.5; 
     public static final double kHoodKi= 0;

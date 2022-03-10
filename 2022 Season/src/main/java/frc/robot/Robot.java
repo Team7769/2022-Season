@@ -147,13 +147,15 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     switch (_autonomousMode) {
       case AutonomousMode.kDoNothing:
-        // Put custom auto code here
         doNothing();
         break;
-      case AutonomousMode.kDriveForwardAndShoot:
-        doNothing();
+      case AutonomousMode.kTwoBallFar:
+        farFourBallAuto(true);
         break;
-      case AutonomousMode.kFourBall:
+      case AutonomousMode.kFourBallFar:
+        farFourBallAuto(false);
+        break;
+      case AutonomousMode.kFourBallClose:
         fourBallAuto();
         break;
       default:
@@ -168,6 +170,128 @@ public class Robot extends TimedRobot {
   {
     switch(_autonomousCase)
     {
+      default:
+        _drivetrain.tankDriveVolts(0, 0);
+        break;
+    }
+  }
+  
+  public void farFourBallAuto(boolean onlyTwo)
+  {
+    switch(_autonomousCase)
+    {
+      case 0:
+        _drivetrain.setFourBallFarPartOnePath();
+        _drivetrain.startPath();
+        _collector.intake();
+        _shooter.setPukeShot();
+        _shooter.readyShot();
+        _autonomousCase++;
+        break;
+      case 1:
+        _collector.intake();
+        _shooter.readyShot();
+        _drivetrain.followPath();
+
+        if (_drivetrain.isPathFinished())
+        {
+          _autonomousLoops = 0;
+          _autonomousCase++;
+        }
+        break;
+      case 2:
+        _drivetrain.tankDriveVolts(0, 0);
+        _drivetrain.setFourBallFarPartTwoOutPath();
+        _shooter.readyShot();
+        _autonomousCase++;
+        break;
+      case 3:
+        _collector.collectorUp();
+        _collector.stopCollect();
+        _shooter.readyShot();
+        _limelight.setAimbot();
+        
+        _drivetrain.drive(0, _drivetrain.followTarget());
+        if (_shooter.goShoot())
+        {
+          _collector.feed();
+        } else {
+          _collector.stopChamber();
+        }
+
+        if (_autonomousLoops >= 150)
+        {
+          _drivetrain.drive(0, 0);
+          _shooter.stop();
+          _collector.stopChamber();
+
+          if (!onlyTwo) 
+          {
+            _drivetrain.startPath();
+            _autonomousCase++;
+          }
+        }
+        break;
+      case 4:
+        _collector.index();
+        _drivetrain.followPath();
+        _collector.intake();
+
+        if (_drivetrain.isPathFinished())
+        {
+          _autonomousLoops = 0;
+          _autonomousCase++;
+        }
+        break;
+      case 5:
+        _collector.stopChamber();
+        _drivetrain.tankDriveVolts(0, 0);
+        _drivetrain.setFourBallFarPartTwoBackPath();
+        _autonomousCase++;
+        break;
+      case 6:
+      _collector.index();
+        _drivetrain.tankDriveVolts(0, 0);
+        if (_autonomousLoops >= 50)
+        {
+          _autonomousLoops = 0;
+          _drivetrain.startPath();
+          _autonomousCase++;
+        }
+        break;
+      case 7:
+        _collector.index();
+        _shooter.readyShot();
+        _drivetrain.followPath();
+        if (_autonomousLoops <= 50)
+        {
+          _collector.intake();
+        }
+
+        if (_autonomousLoops > 50) {
+          _collector.stopCollect();
+          _collector.collectorUp();
+        }
+        if (_autonomousLoops >= 100) {
+          _collector.collectorDown();
+        }
+
+        if (_drivetrain.isPathFinished())
+        {
+          _autonomousCase++;
+        }
+        break;
+      case 8:
+        _limelight.setAimbot();
+        _shooter.readyShot();
+        _drivetrain.drive(0, _drivetrain.followTarget());
+        if (_shooter.goShoot())
+        {
+          _collector.feed();
+        } else {
+          _collector.stopChamber();
+        }
+        break;
       default:
         _drivetrain.tankDriveVolts(0, 0);
         break;

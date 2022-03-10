@@ -73,6 +73,14 @@ public class PathFollower {
     {
         _currentPath = getFourBallFarPartOneTarejctory(config);
     }
+    public void setFourBallFarPartTwoOutPath(TrajectoryConfig config, Pose2d startingPose)
+    {
+        _currentPath = getFourBallFarPartTwoOutTrajectory(config, startingPose);
+    }
+    public void setFourBallFarPartTwoBackPath(TrajectoryConfig config, Pose2d startingPose)
+    {
+        _currentPath = getFourBallFarPartTwoBackTrajectory(config, startingPose);
+    }
     public Trajectory getCurrentTrajectory()
     {
         return _currentPath;
@@ -206,6 +214,32 @@ public class PathFollower {
         ),
         // End 3 meters straight ahead of where we started, facing forward
         new Pose2d(Constants.kFourBallFarPartOneEndX, Constants.kFourBallFarPartOneEndY, new Rotation2d(Constants.kFourBallFarPartOneEndRotation)),
+        // Pass config
+        config);
+      }
+
+      private Trajectory getFourBallFarPartTwoOutTrajectory(TrajectoryConfig config, Pose2d currentPose)
+      { 
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(currentPose.getX(), currentPose.getY(), currentPose.getRotation()),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(
+            new Translation2d(Constants.kFourBallFarPartTwoMidX, Constants.kFourBallFarPartTwoMidY)
+        ),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(Constants.kFourBallFarPartTwoEndPointX, Constants.kFourBallFarPartTwoEndPointY, new Rotation2d(Constants.kFourBallFarPartTwoEndRotation)),
+        // Pass config
+        config);
+      }
+
+      private Trajectory getFourBallFarPartTwoBackTrajectory(TrajectoryConfig config, Pose2d currentPose)
+      { 
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(currentPose.getX(), currentPose.getY(), currentPose.getRotation()),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(
+            new Translation2d(Constants.kFourBallFarPartTwoMidX, Constants.kFourBallFarPartTwoMidY)
+        ),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(Constants.kFourBallFarPartTwoStartX, Constants.kFourBallFarPartTwoStartY, new Rotation2d(Constants.kFourBallFarPartOneEndRotation)),
         // Pass config
         config);
       }
