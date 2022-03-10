@@ -7,10 +7,12 @@ package frc.robot;
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Configuration.AutonomousMode;
@@ -47,6 +49,7 @@ public class Robot extends TimedRobot {
   private int _autonomousLoops = 0;
   private int _climbingCase = 0;
   private int _climberCurrentRung = 2;
+  private int _ratchetCounter = 0;
   private boolean _climbing = false;
   private boolean _shooting = false;
   /**
@@ -103,6 +106,7 @@ public class Robot extends TimedRobot {
 
     if (Constants.kCompetitionRobot) {
      _shooter.zeroHood();
+     _climber.resetClimbEncoder();
     }
     
     _ph.enableCompressorAnalog(70, 100);
@@ -361,22 +365,31 @@ public class Robot extends TimedRobot {
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
-    //_shooter.zeroHood();
     _climbing = false;
+    _climbingCase = 0;
+    _ratchetCounter = 0;
+    
+    var alliance = DriverStation.getAlliance();
+    if (alliance == Alliance.Blue) {
+      _ledController.setLowerLED(_ledController.kBlueHeartBeat);
+    } else {
+      _ledController.setLowerLED(_ledController.kRedHeartBeat);
+    }
+    _climber.disengageRatchet();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
     if (!_climbing){
+      
       teleopDrive();
 
       if (Constants.kCompetitionRobot)
-      
       {
+        //manualClimb();
         teleopCollect();
         teleopShoot();
-        //teleopClimb();
       }
     }
     else {
@@ -387,7 +400,14 @@ public class Robot extends TimedRobot {
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    var alliance = DriverStation.getAlliance();
+    if (alliance == Alliance.Blue) {
+      _ledController.setLowerLED(_ledController.kBlueHeartBeat);
+    } else {
+      _ledController.setLowerLED(_ledController.kRedHeartBeat);
+    }
+  }
 
   /** This function is called periodically when disabled. */
   @Override
@@ -436,7 +456,12 @@ public class Robot extends TimedRobot {
       _climber.extend();
     } else if (_climber.isExtendFinished())
     {
-      _climber.engageRatchet();
+      if (_ratchetCounter < 50) {
+        _ratchetCounter++;
+      } else {
+        _climber.engageRatchet();
+      }
+
       _climber.stopClimb();
     }
     
@@ -516,7 +541,7 @@ public class Robot extends TimedRobot {
       case 0:
         _climber.engageRatchet();
         logClimbState("Engage Ratchet");
-        _climbingCase++;
+        _climbingCase = 1;
         break;
       case 1:
         _climber.climb();
@@ -526,46 +551,63 @@ public class Robot extends TimedRobot {
         {
           logClimbState("Stop climbing");
           _climber.stopClimb();
-          _climbingCase++;
+          _climbingCase = 2;
         }
         break;
       case 2:
+        
         logClimbState("Waiting for confirmation.");
         _ledController.setWaitingForConfirmation();
-        if (_driverController.getStartButtonPressed()){
-
+        SmartDashboard.putBoolean("driver start", _driverController.getAButton());
+        if (_driverController.getAButton()){
           _ledController.setFire();
           logClimbState("Set climber foward.");
-          _climber.setClimberForward();
           _climber.disengageRatchet();
+          _climber.setClimberForward();
           _climber.setClimbPosition(Constants.kClimbExtendedPosition);
-          _climbingCase++;
+          _ratchetCounter = 0;
+          _climbingCase = 3;
         }
         break;
       case 3:
-        _climber.extend();
+        _ratchetCounter++;
 
-        if (!_climber.isExtendFinished()) {
-          logClimbState("Extending.");
+        if (_ratchetCounter >= 100)
+        {
+          _climbingCase = 4;
         }
+        break;
+      case 4:
+        _climber.extend();
 
         if (_climber.isExtendFinished())
         {
           _climber.stopClimb();
-          _climber.setClimberReverse();
-          _climber.engageRatchet();
-          _climbingCase++;
+          _ratchetCounter = 0;
+          _climbingCase = 5;
+        } else {
+          logClimbState("Extending.");
         }
-        break;
-      case 4:
-        logClimbState("Waiting for confirmation.");
-        _ledController.setWaitingForConfirmation();
-        if (_driverController.getStartButtonPressed()){
-          _ledController.setFire();
-          _climbingCase++;
-        }
+
         break;
       case 5:
+        _climber.stopClimb();
+        _ratchetCounter++;
+        if (_ratchetCounter >= 25) {
+          _climber.engageRatchet();
+          _climber.setClimberReverse();
+          _climbingCase = 6;
+        }
+        break;
+      case 6:
+        logClimbState("Waiting for confirmation.");
+        _ledController.setWaitingForConfirmation();
+        if (_driverController.getAButton()){
+          _ledController.setFire();
+          _climbingCase = 7;
+        }
+        break;
+      case 7:
         _climber.climb();
         
         if (_climber.isLimitSwitchPressed())
@@ -576,7 +618,7 @@ public class Robot extends TimedRobot {
 
           if (_climberCurrentRung >= 4)
           {
-            _climbingCase++;
+            _climbingCase = 8;
           } else {
             _climbingCase = 2;
           }
@@ -587,31 +629,34 @@ public class Robot extends TimedRobot {
         logClimbState("Done climbing");
         break;
     }
-    // if (_driverController.getAButtonPressed())
-    // {
-    //   _climber.engageRatchet();
-    // } else if (_driverController.getBButtonPressed())
-    // {
-    //   _climber.disengageRatchet();
-    // }
+  }
+  private void manualClimb(){
+    
+    if (_driverController.getAButtonPressed())
+    {
+      _climber.engageRatchet();
+    } else if (_driverController.getBButtonPressed())
+    {
+      _climber.disengageRatchet();
+    }
 
-    // if (_driverController.getXButtonPressed())
-    // {
-    //   _climber.setClimberForward();
-    // } else if (_driverController.getYButtonPressed())
-    // {
-    //   _climber.setClimberReverse();
-    // }
+    if (_driverController.getXButtonPressed())
+    {
+      _climber.setClimberForward();
+    } else if (_driverController.getYButtonPressed())
+    {
+      _climber.setClimberReverse();
+    }
 
-    // if (_driverController.getLeftBumper())
-    // {
-    //   _climber.setClimberMotor(1.0);
-    // } else if (_driverController.getRightBumper())
-    // {
-    //   _climber.setClimberMotor(-1.0);
-    // } else {
-    //   _climber.setClimberMotor(0.0);
-    // }
+    if (_driverController.getLeftBumper())
+    {
+      _climber.setClimberMotor(1.0);
+    } else if (_driverController.getRightBumper())
+    {
+      _climber.setClimberMotor(-1.0);
+    } else {
+      _climber.setClimberMotor(0.0);
+    }
   }
 
   private void stopAll() {

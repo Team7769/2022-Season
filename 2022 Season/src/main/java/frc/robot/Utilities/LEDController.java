@@ -11,11 +11,13 @@ public class LEDController {
     public final double kOnTarget = -0.23;
     public final double kWaitingForConfirmation = .77;
     public final double kFireLarge = -.57;
+    public final double kBlueHeartBeat = -.23;
+    public final double kRedHeartBeat = -.25;
     
     public LEDController()
     {
-        _lowerBlinkin = new Spark(0);
-        _upperBlinkin = new Spark(1);
+        _lowerBlinkin = new Spark(1);
+        _upperBlinkin = new Spark(0);
     }
     public static LEDController GetInstance()
     {

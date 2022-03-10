@@ -49,10 +49,10 @@ public class Climber implements ISubsystem {
         _ratchet = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.kRatchetSolenoidForwardChannel, Constants.kRatchetSolenoidReverseChannel);
         
         _leftClimbMotor = new CANSparkMax(Constants.kLeftClimbMotorDeviceId, MotorType.kBrushless);
-        _leftClimbMotor.setIdleMode(IdleMode.kCoast);
+        _leftClimbMotor.setIdleMode(IdleMode.kBrake);
 
         _rightClimbMotor = new CANSparkMax(Constants.kRightClimbMotorDeviceId, MotorType.kBrushless);
-        _rightClimbMotor.setIdleMode(IdleMode.kCoast);
+        _rightClimbMotor.setIdleMode(IdleMode.kBrake);
         _rightClimbMotor.setInverted(true);
 
         _climbEncoder = new DutyCycleEncoder(Constants.kClimbEncoderPort);
@@ -144,6 +144,8 @@ public class Climber implements ISubsystem {
         
         SmartDashboard.putNumber("climbEncoderDistance", _climbEncoder.get());
         SmartDashboard.putBoolean("climbLimitSwitchPressed", _climbLimitSwitch.isPressed());
+        SmartDashboard.putNumber("leftClimbCurrent", _leftClimbMotor.getOutputCurrent());
+        SmartDashboard.putNumber("rightClimbCurrent", _rightClimbMotor.getOutputCurrent());
     }
 
     public void ReadDashboardData() {
