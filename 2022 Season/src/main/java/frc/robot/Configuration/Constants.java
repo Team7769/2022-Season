@@ -119,6 +119,40 @@ public final class Constants {
     public static final double kFiveBallPartTwoFromTerminalEndY= 1.156;
     public static final double kFiveBallPartTwoFromTerminalEndRotation= -2.5878351309802463;
 
+    // Four Ball Far Part One Values
+    public static final double kFourBallFarPartOneStartX= 5.705;
+    public static final double kFourBallFarPartOneStartY= 4.912; 
+    public static final double kFourBallFarPartOneStartRotation= 2.3334711293507033;
+
+    public static final double kFourBallFarPartOneMidX= 5.315; 
+    public static final double kFourBallFarPartOneMidY= 5.862; 
+    
+    public static final double kFourBallFarPartOneEndX= 4.974;
+    public static final double kFourBallFarPartOneEndY= 6.363;
+    public static final double kFourBallFarPartOneEndRotation= 2.2565258377011546;
+
+    // Four Ball Far Part Two Values    
+    public static final double kFourBallFarPartTwoStartX= 4.974;
+    public static final double kFourBallFarPartTwoStartY= 6.363;
+
+    public static final double kFourBallFarPartTwoMidX= 3.977; 
+    public static final double kFourBallFarPartTwoMidY= 5.478; 
+    
+    public static final double kFourBallFarPartTwoEndPointX= 1.533;
+    public static final double kFourBallFarPartTwoEndPointY= 2.022;
+    public static final double kFourBallFarPartTwoEndRotation= -2.5712743268771217;
+    
+    // Four Ball Far Part Two Back Values
+    public static final double kFourBallFarPartTwoBackStartX= 1.533;
+    public static final double kFourBallFarPartTwoBackStartY= 2.022;
+
+    public static final double kFourBallFarPartTwoBackMidX= 3.175; 
+    public static final double kFourBallFarPartTwoBackMidY= 2.202; 
+    
+    public static final double kFourBallFarPartTwoBackEndPointX= 4.918;
+    public static final double kFourBallFarPartTwoBackEndPointY= 2.697;
+    public static final double kFourBallFarPartTwoBackEndRotation= -2.7716865861332294;
+
     //Hood PID Values
     public static final double kHoodKp= 4.5; 
     public static final double kHoodKi= 0;

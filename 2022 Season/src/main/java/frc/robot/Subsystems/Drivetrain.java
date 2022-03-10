@@ -163,7 +163,11 @@ public class Drivetrain implements ISubsystem {
     public void drive(double throttle, double turn)
     {
         _rightFrontMotor.setIdleMode(IdleMode.kCoast);
+        _rightMiddleMotor.setIdleMode(IdleMode.kCoast);
+        _rightRearMotor.setIdleMode(IdleMode.kCoast);
         _leftFrontMotor.setIdleMode(IdleMode.kCoast);
+        _leftMiddleMotor.setIdleMode(IdleMode.kCoast);
+        _leftRearMotor.setIdleMode(IdleMode.kCoast);
 
         if (Math.abs(throttle) <= .1) {
             setRampRate(0);
@@ -317,6 +321,19 @@ public class Drivetrain implements ISubsystem {
     public void setFiveBallPartTwoFromTerminalPath()
     {
         _pathFollower.setFiveBallPartTwoFromTerminalPath(getTrajectoryConfig(true), getPose().getRotation());
+    }
+    public void setFourBallFarPartOnePath()
+    {
+        _pathFollower.setFourBallFarPartOneTrajectory(getTrajectoryConfig(false));
+    }
+    public void setFourBallFarPartTwoOutPath()
+    {
+        _pathFollower.setFourBallFarPartTwoOutPath(getTrajectoryConfig(false), getPose());
+    }
+    
+    public void setFourBallFarPartTwoBackPath()
+    {
+        _pathFollower.setFourBallFarPartTwoBackPath(getTrajectoryConfig(true), getPose());
     }
 
     public void startPath()

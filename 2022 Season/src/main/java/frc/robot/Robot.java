@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    
+    _ledController.setUpperLED(_ledController.color1HeartBeat);
     _autonomousCase = 0;
     _autonomousLoops = 0;
     _drivetrain.resetGyro();
@@ -147,13 +147,15 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     switch (_autonomousMode) {
       case AutonomousMode.kDoNothing:
-        // Put custom auto code here
         doNothing();
         break;
-      case AutonomousMode.kDriveForwardAndShoot:
-        doNothing();
+      case AutonomousMode.kTwoBallFar:
+        farFourBallAuto(true);
         break;
-      case AutonomousMode.kFourBall:
+      case AutonomousMode.kFourBallFar:
+        farFourBallAuto(false);
+        break;
+      case AutonomousMode.kFourBallClose:
         fourBallAuto();
         break;
       default:
@@ -173,6 +175,133 @@ public class Robot extends TimedRobot {
         break;
     }
   }
+  
+  public void farFourBallAuto(boolean onlyTwo)
+  {
+    switch(_autonomousCase)
+    {
+      case 0:
+        _drivetrain.setFourBallFarPartOnePath();
+        _drivetrain.startPath();
+        _collector.intake();
+        _shooter.setPukeShot();
+        _shooter.readyShot();
+        _autonomousCase++;
+        break;
+      case 1:
+        _collector.intake();
+        _shooter.readyShot();
+        _drivetrain.followPath();
+
+        if (_drivetrain.isPathFinished())
+        {
+          _autonomousLoops = 0;
+          _autonomousCase++;
+        }
+        break;
+      case 2:
+        _drivetrain.tankDriveVolts(0, 0);
+        _drivetrain.setFourBallFarPartTwoOutPath();
+        _shooter.readyShot();
+        _autonomousCase++;
+        break;
+      case 3:
+        _collector.collectorUp();
+        _collector.stopCollect();
+        _limelight.setAimbot();
+
+        if (_autonomousLoops >= 150)
+        {
+          _drivetrain.drive(0, 0);
+          _shooter.stop();
+          _collector.stopChamber();
+
+          if (!onlyTwo) 
+          {
+            _ledController.setUpperLED(_ledController.color2HeartBeat);
+            _drivetrain.startPath();
+            _autonomousCase++;
+          }
+        } else {
+
+          if (_shooter.goShoot()) {
+            _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
+            _collector.feed();
+          } else {
+            _ledController.setUpperLED(_ledController.kYellow);
+            _collector.stopChamber();
+          }
+          _drivetrain.drive(0, _drivetrain.followTarget());
+          _shooter.readyShot();
+        }
+        break;
+      case 4:
+        _collector.index();
+        _drivetrain.followPath();
+        _collector.intake();
+
+        if (_drivetrain.isPathFinished())
+        {
+          _autonomousLoops = 0;
+          _autonomousCase++;
+        }
+        break;
+      case 5:
+        _collector.stopChamber();
+        _drivetrain.tankDriveVolts(0, 0);
+        _drivetrain.setFourBallFarPartTwoBackPath();
+        _autonomousCase++;
+        break;
+      case 6:
+      _collector.index();
+        _drivetrain.tankDriveVolts(0, 0);
+        if (_autonomousLoops >= 50)
+        {
+          _autonomousLoops = 0;
+          _drivetrain.startPath();
+          _autonomousCase++;
+        }
+        break;
+      case 7:
+        _collector.index();
+        _shooter.readyShot();
+        _drivetrain.followPath();
+        if (_autonomousLoops <= 50)
+        {
+          _collector.intake();
+        }
+
+        if (_autonomousLoops > 50) {
+          _collector.stopCollect();
+          _collector.collectorUp();
+        }
+        if (_autonomousLoops >= 100) {
+          _collector.collectorDown();
+        }
+
+        if (_drivetrain.isPathFinished())
+        {
+          _autonomousCase++;
+        }
+        break;
+      case 8:
+        _limelight.setAimbot();
+        _shooter.readyShot();
+        _drivetrain.drive(0, _drivetrain.followTarget());
+        if (_shooter.goShoot())
+        {
+          _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
+          _collector.feed();
+        } else {
+          _ledController.setUpperLED(_ledController.kYellow);
+          _collector.stopChamber();
+        }
+        break;
+      default:
+        _drivetrain.tankDriveVolts(0, 0);
+        break;
+    }
+  }
 
   public void fourBallAuto()
   {
@@ -182,7 +311,7 @@ public class Robot extends TimedRobot {
         _drivetrain.setDriveForwardAndShootPath();
         _drivetrain.startPath();
         _collector.intake();
-        _shooter.setFarShot();
+        _shooter.setPukeShot();
         _shooter.readyShot();
         _autonomousCase++;
         break;
@@ -213,13 +342,16 @@ public class Robot extends TimedRobot {
         _drivetrain.drive(0, _drivetrain.followTarget());
         if (_shooter.goShoot())
         {
+          _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
           _collector.feed();
         } else {
+          _ledController.setUpperLED(_ledController.kYellow);
           _collector.stopChamber();
         }
 
         if (_autonomousLoops >= 150)
         {
+          _ledController.setUpperLED(_ledController.color2HeartBeat);
           _shooter.stop();
           _drivetrain.startPath();
           _collector.stopChamber();
@@ -281,8 +413,10 @@ public class Robot extends TimedRobot {
         _drivetrain.drive(0, _drivetrain.followTarget());
         if (_shooter.goShoot())
         {
+          _ledController.setWaitingForConfirmation();
           _collector.feed();
         } else {
+          _ledController.setUpperLED(_ledController.kYellow);
           _collector.stopChamber();
         }
         break;
@@ -368,6 +502,7 @@ public class Robot extends TimedRobot {
     _climbing = false;
     _climbingCase = 0;
     _ratchetCounter = 0;
+    _ledController.setUpperLED(_ledController.bpmParty);
     
     var alliance = DriverStation.getAlliance();
     if (alliance == Alliance.Blue) {
@@ -501,7 +636,14 @@ public class Robot extends TimedRobot {
       } else {
         _shooting = false;
       }
+
+      if (_shooter.goShoot()){
+        _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
+      } else {
+        _ledController.setUpperLED(_ledController.kYellow);
+      }
     } else {
+      _ledController.setUpperLED(_ledController.bpmParty);
       _shooting = false;
       _shooter.stop();
     }

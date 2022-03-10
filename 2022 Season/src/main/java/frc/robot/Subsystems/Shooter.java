@@ -32,6 +32,7 @@ public class Shooter implements ISubsystem {
 
     private double _hoodTarget;
     private double _shooterTarget;
+    private String _targetName;
     /** 
      * Gets the shooter instance
     */
@@ -106,9 +107,9 @@ public class Shooter implements ISubsystem {
     {
         boolean shooterAtSpeed = false;
         if (_shooterTarget == Constants.kFarShotSpeed) {
-            shooterAtSpeed = (Math.abs(_leftMotor.getClosedLoopError()) < 1000);
+            shooterAtSpeed = (Math.abs(_leftMotor.getClosedLoopError()) < 1500);
         } else {
-            shooterAtSpeed = (Math.abs(_leftMotor.getClosedLoopError()) < 500);
+            shooterAtSpeed = (Math.abs(_leftMotor.getClosedLoopError()) < 750);
         }
         
         return shooterAtSpeed && _hoodPID.atSetpoint();
@@ -118,24 +119,28 @@ public class Shooter implements ISubsystem {
     {
         _shooterTarget = Constants.kPukeShotSpeed;
         _hoodTarget = Constants.kThreeQuarterShotValue;
+        _targetName = "Puke Shot";
     }
 
     public void setZoneShot()
     {
         _shooterTarget = Constants.kZoneShotSpeed;
         _hoodTarget = Constants.kHalfShotValue;
+        _targetName = "Zone Shot";
     }
 
     public void setCloseShot()
     {
         _shooterTarget = Constants.kCloseShotSpeed;
         _hoodTarget = Constants.kQuarterShotValue;
+        _targetName = "Close Shot";
     }
 
     public void setFarShot()
     {
         _shooterTarget = Constants.kFarShotSpeed;
         _hoodTarget = Constants.kThreeQuarterShotValue;
+        _targetName = "Far Shot";
     }
     
     private void setSpeed(double speed)
@@ -180,6 +185,7 @@ public class Shooter implements ISubsystem {
         SmartDashboard.putBoolean("limitSwitchBlocked", _limitSwitch.isPressed());
         SmartDashboard.putNumber("hoodDistance", _hoodEncoder.getDistance());
         SmartDashboard.putNumber("hoodTarget", _hoodTarget);
+        SmartDashboard.putString("currentShot", _targetName);
     }
 
     public void ReadDashboardData() {
