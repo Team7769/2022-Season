@@ -164,7 +164,7 @@ public final class Constants {
     public static final double kClimbD = 0;
 
     public static final double kClimbPullUpPosition = 5.75;
-    public static final double kClimbExtendedPosition = 5.75;
+    public static final double kClimbExtendedPosition = 7.75;
     //public static final double kClimbF = 0.35;
     
     // Test Robot

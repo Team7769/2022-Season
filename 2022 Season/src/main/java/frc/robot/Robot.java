@@ -81,7 +81,7 @@ public class Robot extends TimedRobot {
 
     _limelight.setDashcam();
     _ph = new PneumaticHub(1);
-    _ph.enableCompressorAnalog(70, 100);
+    _ph.enableCompressorAnalog(100, 110);
 
     _collector.setBallCount(1);
     _drivetrain.resetGyro();
@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
      _climber.resetClimbEncoder();
     }
     
-    _ph.enableCompressorAnalog(70, 100);
+    _ph.enableCompressorAnalog(100, 110);
     
     SmartDashboard.putNumber("limelightX", _limelight.getAngleToTarget());
     SmartDashboard.putBoolean("limelightValidTarget", _limelight.hasTarget());
@@ -184,7 +184,7 @@ public class Robot extends TimedRobot {
         _drivetrain.setFourBallFarPartOnePath();
         _drivetrain.startPath();
         _collector.intake();
-        _shooter.setPukeShot();
+        _shooter.setFarShot();
         _shooter.readyShot();
         _autonomousCase++;
         break;
@@ -311,7 +311,7 @@ public class Robot extends TimedRobot {
         _drivetrain.setDriveForwardAndShootPath();
         _drivetrain.startPath();
         _collector.intake();
-        _shooter.setPukeShot();
+        _shooter.setFarShot();
         _shooter.readyShot();
         _autonomousCase++;
         break;
@@ -502,7 +502,7 @@ public class Robot extends TimedRobot {
     _climbing = false;
     _climbingCase = 0;
     _ratchetCounter = 0;
-    _ledController.setUpperLED(_ledController.bpmParty);
+    _ledController.setTeleopIdle();
     
     var alliance = DriverStation.getAlliance();
     if (alliance == Alliance.Blue) {
@@ -510,7 +510,7 @@ public class Robot extends TimedRobot {
     } else {
       _ledController.setLowerLED(_ledController.kRedHeartBeat);
     }
-    _climber.disengageRatchet();
+    _climber.engageRatchet();
   }
 
   /** This function is called periodically during operator control. */
@@ -588,7 +588,12 @@ public class Robot extends TimedRobot {
       _collector.collectorUp();
       _climber.disengageRatchet();
       _climber.setClimbPosition(Constants.kClimbPullUpPosition);
-      _climber.extend();
+
+      if (_ratchetCounter < 25) {
+        _ratchetCounter++;
+      } else {
+        _climber.extend();
+      }
     } else if (_climber.isExtendFinished())
     {
       if (_ratchetCounter < 50) {
@@ -643,7 +648,7 @@ public class Robot extends TimedRobot {
         _ledController.setUpperLED(_ledController.kYellow);
       }
     } else {
-      _ledController.setUpperLED(_ledController.bpmParty);
+      _ledController.setTeleopIdle();
       _shooting = false;
       _shooter.stop();
     }
@@ -704,7 +709,6 @@ public class Robot extends TimedRobot {
         if (_driverController.getAButton()){
           _ledController.setFire();
           logClimbState("Set climber foward.");
-          _climber.disengageRatchet();
           _climber.setClimberForward();
           _climber.setClimbPosition(Constants.kClimbExtendedPosition);
           _ratchetCounter = 0;
@@ -717,6 +721,8 @@ public class Robot extends TimedRobot {
         if (_ratchetCounter >= 100)
         {
           _climbingCase = 4;
+        } else if (_ratchetCounter >= 50) {
+          _climber.disengageRatchet();
         }
         break;
       case 4:
