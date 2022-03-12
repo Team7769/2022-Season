@@ -223,7 +223,7 @@ public class Robot extends TimedRobot {
             _autonomousCase++;
           }
         } else {
-
+          
           if (_shooter.goShoot()) {
             _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
             _collector.feed();
