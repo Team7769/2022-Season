@@ -33,6 +33,8 @@ public class Shooter implements ISubsystem {
     private double _hoodTarget;
     private double _shooterTarget;
     private String _targetName;
+
+    private double _customHoodPositon = 0;
     /** 
      * Gets the shooter instance
     */
@@ -114,6 +116,12 @@ public class Shooter implements ISubsystem {
         
         return shooterAtSpeed && _hoodPID.atSetpoint();
     }
+    public void setCustomShot()
+    {
+        _hoodTarget = _customHoodPositon;
+        _shooterTarget = Constants.kZoneShotSpeed;
+        _targetName = "Custom";
+    }
 
     public void setPukeShot()
     {
@@ -186,10 +194,13 @@ public class Shooter implements ISubsystem {
         SmartDashboard.putNumber("hoodDistance", _hoodEncoder.getDistance());
         SmartDashboard.putNumber("hoodTarget", _hoodTarget);
         SmartDashboard.putString("currentShot", _targetName);
+
+        SmartDashboard.putNumber("hoodTargetPosition", _customHoodPositon);
     }
 
     public void ReadDashboardData() {
         // TODO Auto-generated method stub
+        _customHoodPositon = SmartDashboard.getNumber("hoodTargetPosition", 0);
         
     }
 }

@@ -81,7 +81,7 @@ public class Robot extends TimedRobot {
 
     _limelight.setDashcam();
     _ph = new PneumaticHub(1);
-    _ph.enableCompressorAnalog(100, 110);
+    _ph.enableCompressorAnalog(70, 110);
 
     _collector.setBallCount(1);
     _drivetrain.resetGyro();
@@ -100,8 +100,8 @@ public class Robot extends TimedRobot {
     _drivetrain.updatePose();
 
     _subsystems.forEach(s -> {
-      s.LogTelemetry();
       s.ReadDashboardData();
+      s.LogTelemetry();
     });
 
     if (Constants.kCompetitionRobot) {
@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
      _climber.resetClimbEncoder();
     }
     
-    _ph.enableCompressorAnalog(100, 110);
+    _ph.enableCompressorAnalog(70, 110);
     
     SmartDashboard.putNumber("limelightX", _limelight.getAngleToTarget());
     SmartDashboard.putBoolean("limelightValidTarget", _limelight.hasTarget());
@@ -625,6 +625,7 @@ public class Robot extends TimedRobot {
     } else if (_operatorController.getXButtonPressed())
     {
       _shooter.setZoneShot();
+      //_shooter.setCustomShot();
     } else if (_operatorController.getYButtonPressed())
     {
       _shooter.setFarShot();
@@ -634,7 +635,7 @@ public class Robot extends TimedRobot {
     {
       _shooter.readyShot();
       
-      if (_driverController.getRightTriggerAxis() > 0.5 && _shooter.goShoot())  {
+      if (_driverController.getRightTriggerAxis() > 0.5)  {
         _shooting = true; 
         _collector.feed();
         // Shoot
