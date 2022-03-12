@@ -109,7 +109,7 @@ public class Shooter implements ISubsystem {
     {
         boolean shooterAtSpeed = false;
         if (_shooterTarget == Constants.kFarShotSpeed) {
-            shooterAtSpeed = (Math.abs(_leftMotor.getClosedLoopError()) < 1500);
+            shooterAtSpeed = (Math.abs(_leftMotor.getClosedLoopError()) < 1000);
         } else {
             shooterAtSpeed = (Math.abs(_leftMotor.getClosedLoopError()) < 750);
         }
