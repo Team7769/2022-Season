@@ -33,6 +33,9 @@ public class Shooter implements ISubsystem {
     private double _hoodTarget;
     private double _shooterTarget;
     private String _targetName;
+
+    private double _customHoodPositon = 0;
+    private double _customShooterSpeed = 0;
     /** 
      * Gets the shooter instance
     */
@@ -107,12 +110,18 @@ public class Shooter implements ISubsystem {
     {
         boolean shooterAtSpeed = false;
         if (_shooterTarget == Constants.kFarShotSpeed) {
-            shooterAtSpeed = (Math.abs(_leftMotor.getClosedLoopError()) < 1500);
+            shooterAtSpeed = (Math.abs(_leftMotor.getClosedLoopError()) < 1000);
         } else {
             shooterAtSpeed = (Math.abs(_leftMotor.getClosedLoopError()) < 750);
         }
         
         return shooterAtSpeed && _hoodPID.atSetpoint();
+    }
+    public void setCustomShot()
+    {
+        _hoodTarget = _customHoodPositon;
+        _shooterTarget = _customShooterSpeed;
+        _targetName = "Custom";
     }
 
     public void setPukeShot()
@@ -186,10 +195,15 @@ public class Shooter implements ISubsystem {
         SmartDashboard.putNumber("hoodDistance", _hoodEncoder.getDistance());
         SmartDashboard.putNumber("hoodTarget", _hoodTarget);
         SmartDashboard.putString("currentShot", _targetName);
+
+        SmartDashboard.putNumber("hoodCustomPosition", _customHoodPositon);
+        SmartDashboard.putNumber("shooterCustomSpeed", _customShooterSpeed);
     }
 
     public void ReadDashboardData() {
         // TODO Auto-generated method stub
+        _customHoodPositon = SmartDashboard.getNumber("hoodCustomPosition", 0);
+        _customShooterSpeed = SmartDashboard.getNumber("shooterCustomSpeed", 0);
         
     }
 }
