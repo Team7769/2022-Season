@@ -57,14 +57,14 @@ public final class Constants {
     public static final double kShooterKp= .015;
     public static final double kShooterKf= .0473;
     // Hood Target Points
-    public static final double kHalfShotValue = 0.125;
+    public static final double kHalfShotValue = 0.29;
     public static final double kQuarterShotValue = .0825;
-    public static final double kThreeQuarterShotValue = 0.325;
+    public static final double kThreeQuarterShotValue = 0.335;
 
     public static final double kPukeShotSpeed = 6000;
     public static final double kCloseShotSpeed = 11625;
-    public static final double kZoneShotSpeed = 12000;
-    public static final double kFarShotSpeed = 15000;
+    public static final double kZoneShotSpeed = 14000;
+    public static final double kFarShotSpeed = 14500;
     
     // Drive Forward and Shoot Values
     public static final double kDriveForwardStartX= 6.71;
@@ -127,24 +127,24 @@ public final class Constants {
     public static final double kFourBallFarPartOneMidX= 5.315; 
     public static final double kFourBallFarPartOneMidY= 5.862; 
     
-    public static final double kFourBallFarPartOneEndX= 4.974;
-    public static final double kFourBallFarPartOneEndY= 6.363;
+    public static final double kFourBallFarPartOneEndX= 4.85;
+    public static final double kFourBallFarPartOneEndY= 6.622;
     public static final double kFourBallFarPartOneEndRotation= 2.2565258377011546;
 
     // Four Ball Far Part Two Values    
-    public static final double kFourBallFarPartTwoStartX= 4.974;
-    public static final double kFourBallFarPartTwoStartY= 6.363;
+    public static final double kFourBallFarPartTwoStartX= 4.85;
+    public static final double kFourBallFarPartTwoStartY= 6.622;
 
     public static final double kFourBallFarPartTwoMidX= 3.977; 
     public static final double kFourBallFarPartTwoMidY= 5.478; 
     
-    public static final double kFourBallFarPartTwoEndPointX= 1.533;
-    public static final double kFourBallFarPartTwoEndPointY= 2.022;
+    public static final double kFourBallFarPartTwoEndPointX= 0.802;
+    public static final double kFourBallFarPartTwoEndPointY= 2.854;
     public static final double kFourBallFarPartTwoEndRotation= -2.5712743268771217;
     
     // Four Ball Far Part Two Back Values
-    public static final double kFourBallFarPartTwoBackStartX= 1.533;
-    public static final double kFourBallFarPartTwoBackStartY= 2.022;
+    public static final double kFourBallFarPartTwoBackStartX= 0.678;
+    public static final double kFourBallFarPartTwoBackStartY= 2.742;
 
     public static final double kFourBallFarPartTwoBackMidX= 3.175; 
     public static final double kFourBallFarPartTwoBackMidY= 2.202; 
@@ -164,7 +164,7 @@ public final class Constants {
     public static final double kClimbD = 0;
 
     public static final double kClimbPullUpPosition = 5.75;
-    public static final double kClimbExtendedPosition = 5.75;
+    public static final double kClimbExtendedPosition = 7.75;
     //public static final double kClimbF = 0.35;
     
     // Test Robot

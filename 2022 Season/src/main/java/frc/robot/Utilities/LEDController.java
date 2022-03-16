@@ -17,6 +17,8 @@ public class LEDController {
     public final double color2HeartBeat = .27;
     public final double bpmParty = -.67;
     public final double kYellow = .69;
+    public final double bpmCustom = 0.43;
+    public final double sinelonCustom = 0.55;
     
     public LEDController()
     {
@@ -49,6 +51,10 @@ public class LEDController {
     public void setOnTargetState()
     {
         _upperBlinkin.set(kOnTarget);
+    }
+    public void setTeleopIdle()
+    {
+        _upperBlinkin.set(sinelonCustom);
     }
 
     public void setWaitingForConfirmation()
