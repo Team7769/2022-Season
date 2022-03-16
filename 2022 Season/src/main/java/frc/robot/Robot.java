@@ -721,9 +721,13 @@ public class Robot extends TimedRobot {
 
         if (_ratchetCounter >= 100)
         {
+          _climber.stopClimb();
           _climbingCase = 4;
-        } else if (_ratchetCounter >= 50) {
+        } else if (_ratchetCounter >= 37) {
+          _climber.stopClimb();
           _climber.disengageRatchet();
+        } else if (_ratchetCounter >= 25) {
+          _climber.climb();
         }
         break;
       case 4:
@@ -753,10 +757,26 @@ public class Robot extends TimedRobot {
         _ledController.setWaitingForConfirmation();
         if (_driverController.getAButton()){
           _ledController.setFire();
+          _ratchetCounter = 0;
           _climbingCase = 7;
         }
         break;
       case 7:
+      if (_ratchetCounter <= 50) {
+        _climber.climb();
+        _ratchetCounter++;
+      } else {
+        _climber.stopClimb();
+        logClimbState("Waiting for confirmation.");
+        _ledController.setWaitingForConfirmation();
+        if (_driverController.getAButton()){
+          _ledController.setFire();
+          _ratchetCounter = 0;
+          _climbingCase = 8;
+        }
+      }
+        break;
+      case 8:
         _climber.climb();
         
         if (_climber.isLimitSwitchPressed())
@@ -767,10 +787,12 @@ public class Robot extends TimedRobot {
 
           if (_climberCurrentRung >= 4)
           {
-            _climbingCase = 8;
+            _climbingCase = 9;
           } else {
             _climbingCase = 2;
           }
+        } else {
+          _ratchetCounter++;
         }
         break;
       default:

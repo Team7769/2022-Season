@@ -138,8 +138,8 @@ public final class Constants {
     public static final double kFourBallFarPartTwoMidX= 3.977; 
     public static final double kFourBallFarPartTwoMidY= 5.478; 
     
-    public static final double kFourBallFarPartTwoEndPointX= 0.678;
-    public static final double kFourBallFarPartTwoEndPointY= 2.742;
+    public static final double kFourBallFarPartTwoEndPointX= 0.802;
+    public static final double kFourBallFarPartTwoEndPointY= 2.854;
     public static final double kFourBallFarPartTwoEndRotation= -2.5712743268771217;
     
     // Four Ball Far Part Two Back Values
