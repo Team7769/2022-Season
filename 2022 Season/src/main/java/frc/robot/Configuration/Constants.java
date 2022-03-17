@@ -13,6 +13,7 @@ public final class Constants {
     public static final String kLEDModeKey = "ledMode";
     public static final String kCamModeKey = "camMode";
     public static final String kTargetAngleXKey = "tx";
+    public static final String kTargetAngleYKey = "ty";
     
     // Usb Slots
     public static final int kDriverControllerUsbSlot = 0;

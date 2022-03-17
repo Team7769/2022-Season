@@ -13,6 +13,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxLimitSwitch.Type;
 
 import frc.robot.Configuration.Constants;
+import frc.robot.Lib.InterpolationTable;
+import frc.robot.Utilities.Limelight;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,6 +30,7 @@ public class Shooter implements ISubsystem {
     private PIDController _hoodPID;
     private TalonFXConfiguration _leftMotorConfig;
     private TalonFXConfiguration _rightMotorConfig;
+    private static Limelight _limelight;
     public static Shooter _instance;
 
     private double _hoodTarget;
@@ -36,6 +39,12 @@ public class Shooter implements ISubsystem {
 
     private double _customHoodPositon = 0;
     private double _customShooterSpeed = 0;
+    
+    public static final InterpolationTable INTERPOLATION_TABLE = new InterpolationTable(new double[][]{
+        {0, 11625, .0825}, // Close
+        {6.66, 14000, 0.29}, // Tarmac
+        {10.5, 14500, 0.335} // Far
+      });
     /** 
      * Gets the shooter instance
     */
@@ -84,6 +93,7 @@ public class Shooter implements ISubsystem {
         _shooterTarget = 0;
 
         setFarShot();
+        _limelight = Limelight.getInstance();
     }
 
     public void zeroHood()
@@ -100,10 +110,26 @@ public class Shooter implements ISubsystem {
         _hoodMotor.set(speed);
     }
 
+    public void resetShot()
+    {
+        _hoodTarget = 0;
+        _shooterTarget = 0;
+    }
+
     public void readyShot()
     {
-        setHoodPosition(_hoodTarget);
-        setSpeed(_shooterTarget);
+        var distance = _limelight.getDistanceToTarget();
+
+        if (distance == 0 || _shooterTarget == Constants.kPukeShotSpeed) {
+            setHoodPosition(_hoodTarget);
+            setSpeed(_shooterTarget);
+        } else {
+            var position = INTERPOLATION_TABLE.sample(distance)[1];
+            var speed = INTERPOLATION_TABLE.sample(distance)[0];
+
+            setHoodPosition(position);
+            setSpeed(speed);
+        }
     }
     
     public boolean goShoot()
@@ -195,6 +221,7 @@ public class Shooter implements ISubsystem {
         SmartDashboard.putNumber("hoodDistance", _hoodEncoder.getDistance());
         SmartDashboard.putNumber("hoodTarget", _hoodTarget);
         SmartDashboard.putString("currentShot", _targetName);
+        SmartDashboard.putNumber("targetDistance", _limelight.getDistanceToTarget());
 
         SmartDashboard.putNumber("hoodCustomPosition", _customHoodPositon);
         SmartDashboard.putNumber("shooterCustomSpeed", _customShooterSpeed);

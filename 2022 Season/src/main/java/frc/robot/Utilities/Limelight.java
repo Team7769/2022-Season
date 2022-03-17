@@ -11,6 +11,10 @@ public class Limelight {
     private NetworkTableEntry _ledMode;
 
     public static Limelight _instance;
+    private double _limelightHeight = 2.91; // Feet
+    private double _goalHeight = 8.66; // Feet
+    private double _measurementHeight = _goalHeight - _limelightHeight; // Feet
+    private double _theta = 30; // Degrees
 
     public static Limelight getInstance()
     {
@@ -32,6 +36,21 @@ public class Limelight {
     public double getAngleToTarget()
     {
         return NetworkTableInstance.getDefault().getTable(Constants.kTableName).getEntry(Constants.kTargetAngleXKey).getDouble(0);
+    }
+
+    public double getDistanceToTarget()
+    {
+        if (hasTarget())
+        {
+            return 0;
+        }
+        
+        var offsetX = NetworkTableInstance.getDefault().getTable(Constants.kTableName).getEntry(Constants.kTargetAngleXKey).getDouble(0);
+        var offsetY = NetworkTableInstance.getDefault().getTable(Constants.kTableName).getEntry(Constants.kTargetAngleYKey).getDouble(0);
+        
+        var distance = _measurementHeight/(Math.tan(Math.toRadians(offsetY + _theta))*Math.cos(Math.toRadians(offsetX)));
+
+        return distance;
     }
 
     public boolean hasTarget()
