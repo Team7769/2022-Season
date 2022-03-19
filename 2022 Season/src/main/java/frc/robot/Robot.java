@@ -224,7 +224,8 @@ public class Robot extends TimedRobot {
           }
         } else {
           
-          if (_shooter.goShoot()) {
+          if ((_shooter.goShoot() && _drivetrain.isTurnFinished()) || _shooting) {
+            _shooting = true;
             _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
             _collector.feed();
           } else {
@@ -236,6 +237,7 @@ public class Robot extends TimedRobot {
         }
         break;
       case 4:
+        _shooting = false;
         _collector.index();
         _drivetrain.followPath();
         _collector.intake();
@@ -288,8 +290,9 @@ public class Robot extends TimedRobot {
         _limelight.setAimbot();
         _shooter.readyShot();
         _drivetrain.drive(0, _drivetrain.followTarget());
-        if (_shooter.goShoot())
+        if ((_shooter.goShoot() && _drivetrain.isTurnFinished()) || _shooting)
         {
+          _shooting = true;
           _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
           _collector.feed();
         } else {
@@ -340,8 +343,9 @@ public class Robot extends TimedRobot {
         _limelight.setAimbot();
         
         _drivetrain.drive(0, _drivetrain.followTarget());
-        if (_shooter.goShoot())
+        if ((_shooter.goShoot() && _drivetrain.isTurnFinished()) || _shooting)
         {
+          _shooting = true;
           _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
           _collector.feed();
         } else {
@@ -359,6 +363,7 @@ public class Robot extends TimedRobot {
         }
         break;
       case 4:
+        _shooting = false;
         _collector.index();
         _drivetrain.followPath();
         _collector.intake();
@@ -411,8 +416,9 @@ public class Robot extends TimedRobot {
         _limelight.setAimbot();
         _shooter.readyShot();
         _drivetrain.drive(0, _drivetrain.followTarget());
-        if (_shooter.goShoot())
+        if ((_shooter.goShoot() && _drivetrain.isTurnFinished()) || _shooting)
         {
+          _shooting = true;
           _ledController.setWaitingForConfirmation();
           _collector.feed();
         } else {
@@ -643,7 +649,7 @@ public class Robot extends TimedRobot {
         _shooting = false;
       }
 
-      if (_shooter.goShoot()){
+      if (_shooter.goShoot() && _drivetrain.isTurnFinished()){
         _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
       } else {
         _ledController.setUpperLED(_ledController.kYellow);

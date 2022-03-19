@@ -14,7 +14,7 @@ public class Limelight {
     private double _limelightHeight = 2.91; // Feet
     private double _goalHeight = 8.66; // Feet
     private double _measurementHeight = _goalHeight - _limelightHeight; // Feet
-    private double _theta = 30; // Degrees
+    private double _theta = 15; // Degrees
 
     public static Limelight getInstance()
     {
@@ -44,7 +44,7 @@ public class Limelight {
         {
             return 0;
         }
-        
+
         var offsetX = NetworkTableInstance.getDefault().getTable(Constants.kTableName).getEntry(Constants.kTargetAngleXKey).getDouble(0);
         var offsetY = NetworkTableInstance.getDefault().getTable(Constants.kTableName).getEntry(Constants.kTargetAngleYKey).getDouble(0);
         

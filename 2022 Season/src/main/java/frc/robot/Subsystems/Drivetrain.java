@@ -93,6 +93,7 @@ public class Drivetrain implements ISubsystem {
         _rightDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
 
         _turnPID = new PIDController(0.067, 0.0, 0.0035);
+        _turnPID.setTolerance(1.0);
 
         _robotDrive = new DifferentialDrive(_leftFrontMotor, _rightFrontMotor);
         
@@ -377,7 +378,7 @@ public class Drivetrain implements ISubsystem {
       var targetAngle = getHeading() - limelightTargetAngle;
       if (Math.abs(targetAngle) <= 2)
       {
-        return 0;
+          targetAngle = getHeading();
       }
 
       var output = _turnPID.calculate(getHeading(), targetAngle);
