@@ -155,7 +155,7 @@ public final class Constants {
     public static final double kFourBallFarPartTwoBackEndRotation= -2.7716865861332294;
 
     //Hood PID Values
-    public static final double kHoodKp= 4.5; 
+    public static final double kHoodKp= 15.0; 
     public static final double kHoodKi= 0;
     public static final double kHoodKd= 0;
 

@@ -85,6 +85,7 @@ public class Robot extends TimedRobot {
 
     _collector.setBallCount(1);
     _drivetrain.resetGyro();
+    _shooter.zeroHood();
   }
 
   /**
@@ -105,7 +106,7 @@ public class Robot extends TimedRobot {
     });
 
     if (Constants.kCompetitionRobot) {
-     _shooter.zeroHood();
+     //_shooter.zeroHood();
      _climber.resetClimbEncoder();
     }
     
@@ -516,6 +517,7 @@ public class Robot extends TimedRobot {
     } else {
       _ledController.setLowerLED(_ledController.kRedHeartBeat);
     }
+    _shooter.zeroHood();
     _climber.engageRatchet();
   }
 
@@ -553,7 +555,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
-    _limelight.setDashcam();
+    _limelight.setAimbot();
 
     _climber.resetClimbEncoder();
     _autonomousMode = (int) SmartDashboard.getNumber("autonomousMode", 0);
@@ -630,8 +632,8 @@ public class Robot extends TimedRobot {
       // Other Shot
     } else if (_operatorController.getXButtonPressed())
     {
-      _shooter.setZoneShot();
-      //_shooter.setCustomShot();
+      //_shooter.setZoneShot();
+      _shooter.setCustomShot();
     } else if (_operatorController.getYButtonPressed())
     {
       _shooter.setFarShot();

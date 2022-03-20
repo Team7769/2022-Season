@@ -36,14 +36,20 @@ public class Shooter implements ISubsystem {
     private double _hoodTarget;
     private double _shooterTarget;
     private String _targetName;
+    private double _previousDistance = 0;
 
     private double _customHoodPositon = 0;
     private double _customShooterSpeed = 0;
     
     public static final InterpolationTable INTERPOLATION_TABLE = new InterpolationTable(new double[][]{
         {0, 11625, .0825}, // Close
-        {6.66, 14000, 0.29}, // Tarmac
-        {10.5, 14500, 0.335} // Far
+        {6, 12500, 0.125}, // Tarmac
+        {7, 12500, 0.125}, // Far
+        {8, 12250, 0.11}, // Tarmac
+        {9, 12850, 0.11}, // Tarmac
+        {10, 14000, 0.17}, // Tarmac
+        {11, 14500, 0.17}, // Tarmac
+        {12, 15000, 0.175}, // Tarmac
       });
     /** 
      * Gets the shooter instance
@@ -87,7 +93,7 @@ public class Shooter implements ISubsystem {
         _rightMotor.configAllSettings(_rightMotorConfig);
 
         _hoodPID = new PIDController(Constants.kHoodKp, Constants.kHoodKi, Constants.kHoodKd);
-        _hoodPID.setTolerance(0.05);
+        _hoodPID.setTolerance(0.005);
 
         _hoodTarget = 0;
         _shooterTarget = 0;
@@ -98,11 +104,11 @@ public class Shooter implements ISubsystem {
 
     public void zeroHood()
     {
-        if (_limitSwitch.isPressed())
-        {
-            _hoodEncoder.reset();
-        }
-        //_hoodEncoder.reset();
+        // if (_limitSwitch.isPressed())
+        // {
+        //     _hoodEncoder.reset();
+        // }
+        _hoodEncoder.reset();
     }
 
     public void manualHood(double speed)
@@ -120,7 +126,11 @@ public class Shooter implements ISubsystem {
     {
         var distance = _limelight.getDistanceToTarget();
 
-        if (distance == 0 || _shooterTarget == Constants.kPukeShotSpeed) {
+        if (distance <= 1) {
+            distance = _previousDistance;
+        }
+
+        if (_targetName == "Custom") {
             setHoodPosition(_hoodTarget);
             setSpeed(_shooterTarget);
         } else {
@@ -130,6 +140,7 @@ public class Shooter implements ISubsystem {
             setHoodPosition(position);
             setSpeed(speed);
         }
+        _previousDistance = distance;
     }
     
     public boolean goShoot()

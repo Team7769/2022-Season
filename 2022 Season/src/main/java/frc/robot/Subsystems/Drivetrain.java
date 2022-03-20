@@ -69,15 +69,15 @@ public class Drivetrain implements ISubsystem {
         _leftRearMotor.follow(_leftFrontMotor);
         _rightRearMotor.follow(_rightFrontMotor);
 
-        // if (Constants.kCompetitionRobot) {
+        if (Constants.kCompetitionRobot) {
 
-        //     _leftMiddleMotor = new CANSparkMax(Constants.kLeftMiddleDriveDeviceId, MotorType.kBrushless);
-        //     _rightMiddleMotor = new CANSparkMax(Constants.kRightMiddleDriveDeviceId, MotorType.kBrushless);
-        //     _rightMiddleMotor.setInverted(true);
+            _leftMiddleMotor = new CANSparkMax(Constants.kLeftMiddleDriveDeviceId, MotorType.kBrushless);
+            _rightMiddleMotor = new CANSparkMax(Constants.kRightMiddleDriveDeviceId, MotorType.kBrushless);
+            _rightMiddleMotor.setInverted(true);
             
-        //     _leftMiddleMotor.follow(_leftFrontMotor);
-        //     _rightMiddleMotor.follow(_rightFrontMotor);
-        // }
+            _leftMiddleMotor.follow(_leftFrontMotor);
+            _rightMiddleMotor.follow(_rightFrontMotor);
+        }
 
         _gyro = new AHRS(Port.kMXP);
 
@@ -93,7 +93,7 @@ public class Drivetrain implements ISubsystem {
         _rightDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
 
         _turnPID = new PIDController(0.067, 0.0, 0.0035);
-        _turnPID.setTolerance(1.0);
+        _turnPID.setTolerance(1.5);
 
         _robotDrive = new DifferentialDrive(_leftFrontMotor, _rightFrontMotor);
         
@@ -150,10 +150,10 @@ public class Drivetrain implements ISubsystem {
      */
     public void tankDriveVolts(double leftVolts, double rightVolts) {
         _rightFrontMotor.setIdleMode(IdleMode.kBrake);
-        //_rightMiddleMotor.setIdleMode(IdleMode.kBrake);
+        _rightMiddleMotor.setIdleMode(IdleMode.kBrake);
         _rightRearMotor.setIdleMode(IdleMode.kBrake);
         _leftFrontMotor.setIdleMode(IdleMode.kBrake);
-        //_leftMiddleMotor.setIdleMode(IdleMode.kBrake);
+        _leftMiddleMotor.setIdleMode(IdleMode.kBrake);
         _leftRearMotor.setIdleMode(IdleMode.kBrake);
 
         _leftFrontMotor.setVoltage(leftVolts);
@@ -164,10 +164,10 @@ public class Drivetrain implements ISubsystem {
     public void drive(double throttle, double turn)
     {
         _rightFrontMotor.setIdleMode(IdleMode.kCoast);
-        //_rightMiddleMotor.setIdleMode(IdleMode.kCoast);
+        _rightMiddleMotor.setIdleMode(IdleMode.kCoast);
         _rightRearMotor.setIdleMode(IdleMode.kCoast);
         _leftFrontMotor.setIdleMode(IdleMode.kCoast);
-        //_leftMiddleMotor.setIdleMode(IdleMode.kCoast);
+        _leftMiddleMotor.setIdleMode(IdleMode.kCoast);
         _leftRearMotor.setIdleMode(IdleMode.kCoast);
 
         if (Math.abs(throttle) <= .1) {
@@ -181,10 +181,10 @@ public class Drivetrain implements ISubsystem {
     public void setRampRate(double rate)
     {
         _leftFrontMotor.setOpenLoopRampRate(rate);
-        //_leftMiddleMotor.setOpenLoopRampRate(rate);
+        _leftMiddleMotor.setOpenLoopRampRate(rate);
         _leftRearMotor.setOpenLoopRampRate(rate);
         _rightFrontMotor.setOpenLoopRampRate(rate);
-        //_rightMiddleMotor.setOpenLoopRampRate(rate);
+        _rightMiddleMotor.setOpenLoopRampRate(rate);
         _rightRearMotor.setOpenLoopRampRate(rate);
     }
 
@@ -376,13 +376,19 @@ public class Drivetrain implements ISubsystem {
       var limelightTargetAngle = _limelight.getAngleToTarget();
 
       var targetAngle = getHeading() - limelightTargetAngle;
-      if (Math.abs(targetAngle) <= 2)
-      {
-          targetAngle = getHeading();
-      }
+    //   if (Math.abs(targetAngle) <= 2)
+    //   {
+    //       targetAngle = getHeading();
+    //   }
 
       var output = _turnPID.calculate(getHeading(), targetAngle);
+
       SmartDashboard.putNumber("turnOutput", output);
+      
+      if (_turnPID.atSetpoint()) {
+        return 0;
+      }
+      
       if (Math.abs(output) > 0.5)
       {
         if (output > 0)

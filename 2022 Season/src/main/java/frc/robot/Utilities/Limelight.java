@@ -11,10 +11,10 @@ public class Limelight {
     private NetworkTableEntry _ledMode;
 
     public static Limelight _instance;
-    private double _limelightHeight = 2.91; // Feet
-    private double _goalHeight = 8.66; // Feet
+    private double _limelightHeight = 3; // Feet
+    private double _goalHeight = 8.58; // Feet
     private double _measurementHeight = _goalHeight - _limelightHeight; // Feet
-    private double _theta = 15; // Degrees
+    private double _theta = 35; // Degrees
 
     public static Limelight getInstance()
     {
@@ -40,7 +40,7 @@ public class Limelight {
 
     public double getDistanceToTarget()
     {
-        if (hasTarget())
+        if (!hasTarget())
         {
             return 0;
         }
