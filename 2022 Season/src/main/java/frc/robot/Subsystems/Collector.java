@@ -158,7 +158,7 @@ private static Collector _instance;
 
     public void chamberUp() {
         _frontChamberMotor.set(-_chamberSpeed);
-        _backChamberMotor.set(_chamberSpeed);
+        _backChamberMotor.set(-_chamberSpeed);
     }
 
     public void collectorDown() {

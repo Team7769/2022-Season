@@ -41,10 +41,12 @@ public class PathFollower {
     // {
     //     _currentPath = getTrenchToLineTrajectory(config);
     // }
+
     public void setTestPath(TrajectoryConfig config)
     {
         _currentPath = generateTestTrajectory(config);
     }
+
     public void setDriveForwardAndShootPath(TrajectoryConfig config)
     {
         _currentPath = getDriveForwardAndShootTrajectory(config);
@@ -56,6 +58,10 @@ public class PathFollower {
     public void setDriveBackFromTerminalPath(TrajectoryConfig config, Pose2d startingPose)
     {
         _currentPath = getDriveBackFromTerminalTrajectory(config, startingPose);
+    }
+    public void setFifthBallPath(TrajectoryConfig config, Pose2d startingPose)
+    {
+        _currentPath = getFifthBallTrajectory(config, startingPose);
     }
     public void setFiveBallPartOnePath(TrajectoryConfig config)
     {
@@ -81,6 +87,7 @@ public class PathFollower {
     {
         _currentPath = getFourBallFarPartTwoBackTrajectory(config, startingPose);
     }
+
     public Trajectory getCurrentTrajectory()
     {
         return _currentPath;
@@ -164,6 +171,19 @@ public class PathFollower {
         ),
         // End 3 meters straight ahead of where we started, facing forward
         new Pose2d(Constants.kDriveBackEndPointX, Constants.kDriveBackEndPointY, new Rotation2d(Constants.kDriveBackEndPointRotation)),
+        // Pass config
+        config);
+      }
+
+      private Trajectory getFifthBallTrajectory(TrajectoryConfig config, Pose2d currentPose) {
+
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(currentPose.getX(), currentPose.getY(), currentPose.getRotation()),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(
+            new Translation2d(Constants.kFifthBallWayPointX, Constants.kFifthBallWayPointY)
+        ),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(Constants.kFifthBallEndPointX, Constants.kFifthBallEndPointY, new Rotation2d(Constants.kFifthBallEndPointRotation)),
         // Pass config
         config);
       }

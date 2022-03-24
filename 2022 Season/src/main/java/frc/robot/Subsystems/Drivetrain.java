@@ -309,6 +309,11 @@ public class Drivetrain implements ISubsystem {
         _pathFollower.setDriveBackFromTerminalPath(getTrajectoryConfig(true), getPose());
     }
 
+    public void setFifthBallPath()
+    {
+        _pathFollower.setFifthBallPath(getTrajectoryConfig(false), getPose());
+    }
+
     public void setFiveBallPartOnePath()
     {
         _pathFollower.setFiveBallPartOnePath(getTrajectoryConfig(false));
@@ -388,7 +393,7 @@ public class Drivetrain implements ISubsystem {
       if (_turnPID.atSetpoint()) {
         return 0;
       }
-      
+
       if (Math.abs(output) > 0.5)
       {
         if (output > 0)

@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.ArrayList;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticHub;
@@ -86,6 +87,8 @@ public class Robot extends TimedRobot {
     _collector.setBallCount(1);
     _drivetrain.resetGyro();
     _shooter.zeroHood();
+
+    CameraServer.startAutomaticCapture();
   }
 
   /**
@@ -133,6 +136,7 @@ public class Robot extends TimedRobot {
     _autonomousCase = 0;
     _autonomousLoops = 0;
     _drivetrain.resetGyro();
+    _shooter.zeroHood();
     resetOdometry();
   }
   
@@ -156,8 +160,8 @@ public class Robot extends TimedRobot {
       case AutonomousMode.kFourBallFar:
         farFourBallAuto(false);
         break;
-      case AutonomousMode.kFourBallClose:
-        fourBallAuto();
+      case AutonomousMode.kFiveBall:
+        fiveBallAuto();
         break;
       default:
         // Do nothing
@@ -307,7 +311,7 @@ public class Robot extends TimedRobot {
     }
   }
 
-  public void fourBallAuto()
+  public void fiveBallAuto()
   {
     switch(_autonomousCase)
     {
@@ -317,7 +321,10 @@ public class Robot extends TimedRobot {
         _collector.intake();
         _shooter.setFarShot();
         _shooter.readyShot();
-        _autonomousCase++;
+
+        if (_autonomousLoops >= 12) {
+          _autonomousCase++;
+        }
         break;
       case 1:
         _collector.intake();
@@ -338,23 +345,24 @@ public class Robot extends TimedRobot {
         //_autonomousCase = 9000;
         break;
       case 3:
-        _collector.collectorUp();
-        _collector.stopCollect();
         _shooter.readyShot();
         _limelight.setAimbot();
         
-        _drivetrain.drive(0, _drivetrain.followTarget());
         if ((_shooter.goShoot() && _drivetrain.isTurnFinished()) || _shooting)
         {
+          _collector.collectorUp();
+          _collector.stopCollect();
+          _drivetrain.tankDriveVolts(0, 0);
           _shooting = true;
           _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
           _collector.feed();
         } else {
+          _drivetrain.drive(0, _drivetrain.followTarget());
           _ledController.setUpperLED(_ledController.kYellow);
-          _collector.stopChamber();
+          _collector.index();
         }
 
-        if (_autonomousLoops >= 150)
+        if (_autonomousLoops >= 50)
         {
           _ledController.setUpperLED(_ledController.color2HeartBeat);
           _shooter.stop();
@@ -382,43 +390,46 @@ public class Robot extends TimedRobot {
         _autonomousCase++;
         break;
       case 6:
-      _collector.index();
+      _collector.intake();
         _drivetrain.tankDriveVolts(0, 0);
         if (_autonomousLoops >= 50)
         {
+          _shooter.setCloseShot();
           _autonomousLoops = 0;
           _drivetrain.startPath();
           _autonomousCase++;
         }
         break;
       case 7:
-        _collector.index();
         _shooter.readyShot();
         _drivetrain.followPath();
-        if (_autonomousLoops <= 50)
-        {
-          _collector.intake();
-        }
+        _collector.intake();
+        // if (_autonomousLoops <= 50)
+        // {
+        //   _collector.intake();
+        // }
 
-        if (_autonomousLoops > 50) {
-          _collector.stopCollect();
-          _collector.collectorUp();
-        }
-        if (_autonomousLoops >= 100) {
-          _collector.collectorDown();
-        }
+        // if (_autonomousLoops > 50) {
+        //   _collector.stopCollect();
+        //   _collector.collectorUp();
+        // }
+        // if (_autonomousLoops >= 100) {
+        //   _collector.collectorDown();
+        // }
 
         if (_drivetrain.isPathFinished())
         {
+          _drivetrain.setFifthBallPath();
+          _autonomousLoops = 0;
           _autonomousCase++;
         }
         break;
       case 8:
         _limelight.setAimbot();
         _shooter.readyShot();
-        _drivetrain.drive(0, _drivetrain.followTarget());
-        if ((_shooter.goShoot() && _drivetrain.isTurnFinished()) || _shooting)
+        if (_shooter.goShoot() || _shooting)
         {
+          _drivetrain.tankDriveVolts(0, 0);
           _shooting = true;
           _ledController.setWaitingForConfirmation();
           _collector.feed();
@@ -426,74 +437,37 @@ public class Robot extends TimedRobot {
           _ledController.setUpperLED(_ledController.kYellow);
           _collector.stopChamber();
         }
-        break;
-      default:
-        _drivetrain.tankDriveVolts(0, 0);
-        break;
-    }
-  }
 
-  public void fiveBallAuto()
-  {
-    switch (_autonomousCase)
-    {
-      case 0:
-        _drivetrain.setFiveBallPartOnePath();
-        _drivetrain.startPath();
-        _autonomousCase++;
-        break;
-      case 1:
-        _drivetrain.followPath();
-
-        if (_drivetrain.isPathFinished())
-        {
-          _autonomousLoops = 0;
-          _autonomousCase++;
-        }
-        break;
-      case 2:
-        _drivetrain.tankDriveVolts(0, 0);
-        _drivetrain.setFiveBallPartTwoToTerminalPath();
-        _autonomousCase++;
-        break;
-      case 3:
-        _drivetrain.tankDriveVolts(0, 0);
-
-        if (_autonomousLoops >= 100)
-        {
+        if (_autonomousLoops > 50) {
+          _drivetrain.resetPID();
+          _shooter.setZoneShot();
           _drivetrain.startPath();
           _autonomousCase++;
         }
         break;
-      case 4:
+      case 9:
+        _shooter.readyShot();
         _drivetrain.followPath();
+        _collector.intake();
 
-        if (_drivetrain.isPathFinished())
-        {
-          _autonomousLoops = 0;
+        if (_drivetrain.isPathFinished()) {
+          _drivetrain.drive(0, _drivetrain.followTarget());
+          _shooting = false;
           _autonomousCase++;
         }
         break;
-      case 5:
-        _drivetrain.tankDriveVolts(0, 0);
-        _drivetrain.setFiveBallPartTwoFromTerminalPath();
-        _autonomousCase++;
-        break;
-      case 6:
-        _drivetrain.tankDriveVolts(0, 0);
-
-        if (_autonomousLoops >= 50)
-        {
-          _drivetrain.startPath();
-          _autonomousCase++;
-        }
-        break;
-      case 7:
-        _drivetrain.followPath();
-
-        if (_drivetrain.isPathFinished())
-        {
-          _autonomousCase++;
+      case 10:
+        _drivetrain.drive(0, _drivetrain.followTarget());
+        _shooter.readyShot();
+        if ((_shooter.goShoot() && _drivetrain.isTurnFinished()) || _shooting) {
+          _drivetrain.tankDriveVolts(0, 0);
+          _ledController.setWaitingForConfirmation();
+          _shooting = true;
+          _collector.feed();
+        } else {
+          _collector.index();
+          _collector.intake();
+          _ledController.setUpperLED(_ledController.kYellow);
         }
         break;
       default:
@@ -501,7 +475,6 @@ public class Robot extends TimedRobot {
         break;
     }
   }
-  
   
   /** This function is called once when teleop is enabled. */
   @Override
@@ -519,6 +492,7 @@ public class Robot extends TimedRobot {
     }
     _shooter.zeroHood();
     _climber.engageRatchet();
+    _shooter.setAutoShot();
   }
 
   /** This function is called periodically during operator control. */
@@ -626,14 +600,13 @@ public class Robot extends TimedRobot {
   private void teleopShoot() {
     if (_operatorController.getAButtonPressed())
     {
-      _shooter.setCloseShot();
+      _shooter.setAutoShot();
     } else if (_operatorController.getBButtonPressed()) { 
-      _shooter.setPukeShot();
+      _shooter.setCustomShot();
       // Other Shot
     } else if (_operatorController.getXButtonPressed())
     {
-      //_shooter.setZoneShot();
-      _shooter.setCustomShot();
+      _shooter.setZoneShot();
     } else if (_operatorController.getYButtonPressed())
     {
       _shooter.setFarShot();
@@ -733,8 +706,8 @@ public class Robot extends TimedRobot {
           _climbingCase = 4;
         } else if (_ratchetCounter >= 37) {
           _climber.stopClimb();
-          _climber.disengageRatchet();
         } else if (_ratchetCounter >= 25) {
+          _climber.disengageRatchet();
           _climber.climb();
         }
         break;

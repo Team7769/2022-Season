@@ -88,8 +88,13 @@ public class Climber implements ISubsystem {
 
     public void climb()
     {
-        _leftClimbMotor.set(1.0);
-        _rightClimbMotor.set(1.0);
+        if (_climbEncoder.get() <= 1) {
+            _leftClimbMotor.set(.75);
+            _rightClimbMotor.set(.75);
+        } else {
+            _leftClimbMotor.set(1.0);
+            _rightClimbMotor.set(1.0);
+        }
     }
 
     public void stopClimb()

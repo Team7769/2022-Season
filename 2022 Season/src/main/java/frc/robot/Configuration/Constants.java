@@ -57,15 +57,17 @@ public final class Constants {
     // Left Shooter Motor Config Values
     public static final double kShooterKp= .015;
     public static final double kShooterKf= .0473;
+
     // Hood Target Points
-    public static final double kHalfShotValue = 0.29;
-    public static final double kQuarterShotValue = .0825;
-    public static final double kThreeQuarterShotValue = 0.335;
+    public static final double kPukeShotValue = 0.335;
+    public static final double kCloseShotValue = .1;
+    public static final double kZoneShotValue = 0.17;
+    public static final double kFarShotValue = 0.17;
 
     public static final double kPukeShotSpeed = 6000;
-    public static final double kCloseShotSpeed = 11625;
+    public static final double kCloseShotSpeed = 11500;
     public static final double kZoneShotSpeed = 14000;
-    public static final double kFarShotSpeed = 14500;
+    public static final double kFarShotSpeed = 14250;
     
     // Drive Forward and Shoot Values
     public static final double kDriveForwardStartX= 6.71;
@@ -85,11 +87,18 @@ public final class Constants {
     public static final double kCollectTwoEndRotation= -2.5712743268771217;
    
     // Drive Back From Terminal Values
-    public static final double kDriveBackWayPointX= 2.747;
-    public static final double kDriveBackWayPointY= 2.382;
-    public static final double kDriveBackEndPointX= 5.08;
-    public static final double kDriveBackEndPointY= 1.83;
-    public static final double kDriveBackEndPointRotation= -2.7716865861332294;
+    public static final double kDriveBackWayPointX= 4.85;
+    public static final double kDriveBackWayPointY= 1.359;
+    public static final double kDriveBackEndPointX= 7.639;
+    public static final double kDriveBackEndPointY= 1.550;
+    public static final double kDriveBackEndPointRotation= -2.1;
+
+    // Fifth Ball Values
+    public static final double kFifthBallWayPointX= 7.381;
+    public static final double kFifthBallWayPointY= 1.123;
+    public static final double kFifthBallEndPointX= 7.639;
+    public static final double kFifthBallEndPointY= 0.268;
+    public static final double kFifthBallEndPointRotation= -1.5707963267948994;
     
     //Five Ball Part One Values
     public static final double kFiveBallPartOneStartX= 8.663;
@@ -211,7 +220,7 @@ public final class Constants {
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
 
     public static final double kMaxSpeedMetersPerSecond = 3.25;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 1.75;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 2.5;
 
     //Path Following
     public static final double kPathFollowingkP = 4.5;

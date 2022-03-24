@@ -43,10 +43,10 @@ public class Shooter implements ISubsystem {
     
     public static final InterpolationTable INTERPOLATION_TABLE = new InterpolationTable(new double[][]{
         {0, 11625, .0825}, // Close
-        {6, 12500, 0.125}, // Tarmac
-        {7, 12500, 0.125}, // Far
-        {8, 12250, 0.11}, // Tarmac
-        {9, 12850, 0.11}, // Tarmac
+        {6, 12300, 0.14}, // Tarmac
+        {7, 13150, 0.155}, // Far
+        {8, 13650, 0.1675}, // Tarmac
+        {9, 13800, 0.17}, // Tarmac
         {10, 14000, 0.17}, // Tarmac
         {11, 14500, 0.17}, // Tarmac
         {12, 15000, 0.175}, // Tarmac
@@ -130,7 +130,7 @@ public class Shooter implements ISubsystem {
             distance = _previousDistance;
         }
 
-        if (_targetName == "Custom") {
+        if (_targetName != "Auto Shot") {
             setHoodPosition(_hoodTarget);
             setSpeed(_shooterTarget);
         } else {
@@ -140,6 +140,7 @@ public class Shooter implements ISubsystem {
             setHoodPosition(position);
             setSpeed(speed);
         }
+
         _previousDistance = distance;
     }
     
@@ -164,29 +165,34 @@ public class Shooter implements ISubsystem {
     public void setPukeShot()
     {
         _shooterTarget = Constants.kPukeShotSpeed;
-        _hoodTarget = Constants.kThreeQuarterShotValue;
+        _hoodTarget = Constants.kPukeShotValue;
         _targetName = "Puke Shot";
     }
 
     public void setZoneShot()
     {
         _shooterTarget = Constants.kZoneShotSpeed;
-        _hoodTarget = Constants.kHalfShotValue;
+        _hoodTarget = Constants.kZoneShotValue;
         _targetName = "Zone Shot";
     }
 
     public void setCloseShot()
     {
         _shooterTarget = Constants.kCloseShotSpeed;
-        _hoodTarget = Constants.kQuarterShotValue;
+        _hoodTarget = Constants.kCloseShotValue;
         _targetName = "Close Shot";
     }
 
     public void setFarShot()
     {
         _shooterTarget = Constants.kFarShotSpeed;
-        _hoodTarget = Constants.kThreeQuarterShotValue;
+        _hoodTarget = Constants.kFarShotValue;
         _targetName = "Far Shot";
+    }
+
+    public void setAutoShot()
+    {
+        _targetName = "Auto Shot";
     }
     
     private void setSpeed(double speed)
