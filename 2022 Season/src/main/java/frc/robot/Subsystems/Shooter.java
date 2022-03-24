@@ -50,7 +50,8 @@ public class Shooter implements ISubsystem {
         {10, 14000, 0.17}, // Tarmac
         {11, 14500, 0.17}, // Tarmac
         {12, 15000, 0.175}, // Tarmac
-      });
+    });
+
     /** 
      * Gets the shooter instance
     */
@@ -102,6 +103,9 @@ public class Shooter implements ISubsystem {
         _limelight = Limelight.getInstance();
     }
 
+    /**
+     * Resets the hood encoder
+     */
     public void zeroHood()
     {
         // if (_limitSwitch.isPressed())
@@ -111,17 +115,27 @@ public class Shooter implements ISubsystem {
         _hoodEncoder.reset();
     }
 
+    /**
+     * Sets the speed of the hoodMotor
+     * @param speed - The speed you would like to set to
+     */
     public void manualHood(double speed)
     {
         _hoodMotor.set(speed);
     }
 
+    /**
+     * Reset the shot of the hoodTarget and shooterTarget
+     */
     public void resetShot()
     {
         _hoodTarget = 0;
         _shooterTarget = 0;
     }
 
+    /**
+     * Sets the hoodPosition and the Speed of the Robot based on the Limilight Distance to Target
+     */
     public void readyShot()
     {
         var distance = _limelight.getDistanceToTarget();
@@ -144,6 +158,10 @@ public class Shooter implements ISubsystem {
         _previousDistance = distance;
     }
     
+    /** 
+     * Checks if the Shooter is at the needed speed to shoot && if the hoodPID is at the needed SetPoint
+     * @return - Whether or not the conditions are met
+     */
     public boolean goShoot()
     {
         boolean shooterAtSpeed = false;
@@ -155,6 +173,10 @@ public class Shooter implements ISubsystem {
         
         return shooterAtSpeed && _hoodPID.atSetpoint();
     }
+
+    /** 
+     * Sets the hoodTarget, shooterTarget and targetName to the custom shot
+    */
     public void setCustomShot()
     {
         _hoodTarget = _customHoodPositon;
@@ -162,6 +184,9 @@ public class Shooter implements ISubsystem {
         _targetName = "Custom";
     }
 
+    /** 
+     * Sets the hoodTarget, shooterTarget and targetName to the puke shot
+    */
     public void setPukeShot()
     {
         _shooterTarget = Constants.kPukeShotSpeed;
@@ -169,6 +194,9 @@ public class Shooter implements ISubsystem {
         _targetName = "Puke Shot";
     }
 
+    /** 
+     * Sets the hoodTarget, shooterTarget and targetName to the zone shot
+    */
     public void setZoneShot()
     {
         _shooterTarget = Constants.kZoneShotSpeed;
@@ -176,6 +204,9 @@ public class Shooter implements ISubsystem {
         _targetName = "Zone Shot";
     }
 
+    /** 
+     * Sets the hoodTarget, shooterTarget and targetName to the close shot
+    */
     public void setCloseShot()
     {
         _shooterTarget = Constants.kCloseShotSpeed;
@@ -183,6 +214,9 @@ public class Shooter implements ISubsystem {
         _targetName = "Close Shot";
     }
 
+    /** 
+     * Sets the hoodTarget, shooterTarget and targetName to the Far shot
+    */
     public void setFarShot()
     {
         _shooterTarget = Constants.kFarShotSpeed;
@@ -190,22 +224,35 @@ public class Shooter implements ISubsystem {
         _targetName = "Far Shot";
     }
 
+    /** 
+     * Sets the hoodTarget, shooterTarget and targetName to the auto shot
+    */
     public void setAutoShot()
     {
         _targetName = "Auto Shot";
     }
     
+    /** 
+     * Sets the speed of the leftMotor
+    */
     private void setSpeed(double speed)
     {
         _leftMotor.set(TalonFXControlMode.Velocity, speed);
     }
 
+    /**
+     * Stops the leftMotor from moving
+     */
     public void stop()
     {
         _leftMotor.set(TalonFXControlMode.PercentOutput, 0);
         _hoodMotor.set(0);
     }
 
+    /**
+     * Moves the hood to the needed position
+     * @param position - Position you would like the hood to be at
+     */
     private void setHoodPosition(double position)
     {
         if (position != _hoodPID.getSetpoint())
@@ -229,6 +276,9 @@ public class Shooter implements ISubsystem {
         _hoodMotor.set(-output);
     }
 
+    /**
+     * Updates Shooter information on the SmartDashboard
+     */
     public void LogTelemetry() {
         // TODO Auto-generated method stub
         SmartDashboard.putNumber("hoodPosition", _hoodEncoder.get());
@@ -244,10 +294,12 @@ public class Shooter implements ISubsystem {
         SmartDashboard.putNumber("shooterCustomSpeed", _customShooterSpeed);
     }
 
+    /**
+     * Reads the data from the smart dashboard
+     */
     public void ReadDashboardData() {
         // TODO Auto-generated method stub
         _customHoodPositon = SmartDashboard.getNumber("hoodCustomPosition", 0);
         _customShooterSpeed = SmartDashboard.getNumber("shooterCustomSpeed", 0);
-        
     }
 }
