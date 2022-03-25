@@ -151,6 +151,9 @@ public class Drivetrain implements ISubsystem {
         _odometry.resetPosition(pose, _gyro.getRotation2d());
     }
 
+    /**
+    * Resets the Odometry of the driver train
+    */
     public void resetOdometry()
     {
         resetEncoders();
