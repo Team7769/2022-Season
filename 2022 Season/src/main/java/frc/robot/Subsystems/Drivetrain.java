@@ -46,15 +46,23 @@ public class Drivetrain implements ISubsystem {
 
     private static Drivetrain _instance;
 
+    /**
+     * Returns the Instance of the Drivetrain
+     * @return - Drivetrain instance
+     */
     public static Drivetrain GetInstance()
     {
         if (_instance == null)
         {
             _instance = new Drivetrain();
         }
+
         return _instance;
     }
 
+    /**
+     * Initialize the Drivetrain class
+     */
     public Drivetrain()
     {
         _leftFrontMotor = new CANSparkMax(Constants.kLeftFrontDriveDeviceId, MotorType.kBrushless);
@@ -118,6 +126,9 @@ public class Drivetrain implements ISubsystem {
         return _odometry.getPoseMeters();
     }
 
+    /**
+     * Updates the Pose of the DriveTrain 
+     */
     public void updatePose() {
         _odometry.update(_gyro.getRotation2d(), _leftDriveEncoder.getDistance(), _rightDriveEncoder.getDistance());
     }
@@ -131,6 +142,10 @@ public class Drivetrain implements ISubsystem {
         return new DifferentialDriveWheelSpeeds(_leftDriveEncoder.getRate(), _rightDriveEncoder.getRate());
     }
 
+    /**
+     * Resets the encoders and the odometry
+     * @param pose - Position on the fied your robot is at
+     */
     public void resetOdometry(Pose2d pose) {
         resetEncoders();
         _odometry.resetPosition(pose, _gyro.getRotation2d());
