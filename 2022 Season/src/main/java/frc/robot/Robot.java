@@ -321,10 +321,7 @@ public class Robot extends TimedRobot {
         _collector.intake();
         _shooter.setFarShot();
         _shooter.readyShot();
-
-        if (_autonomousLoops >= 12) {
-          _autonomousCase++;
-        }
+        _autonomousCase++;
         break;
       case 1:
         _collector.intake();
@@ -362,7 +359,7 @@ public class Robot extends TimedRobot {
           _collector.index();
         }
 
-        if (_autonomousLoops >= 50)
+        if (_autonomousLoops >= 75)
         {
           _ledController.setUpperLED(_ledController.color2HeartBeat);
           _shooter.stop();
@@ -401,7 +398,7 @@ public class Robot extends TimedRobot {
         }
         break;
       case 7:
-        _shooter.readyShot();
+        //_shooter.readyShot();
         _drivetrain.followPath();
         _collector.intake();
         // if (_autonomousLoops <= 50)
@@ -425,25 +422,30 @@ public class Robot extends TimedRobot {
         }
         break;
       case 8:
-        _limelight.setAimbot();
-        _shooter.readyShot();
-        if (_shooter.goShoot() || _shooting)
-        {
-          _drivetrain.tankDriveVolts(0, 0);
-          _shooting = true;
-          _ledController.setWaitingForConfirmation();
-          _collector.feed();
-        } else {
-          _ledController.setUpperLED(_ledController.kYellow);
-          _collector.stopChamber();
-        }
+         _shooter.setZoneShot();
+         _limelight.setAimbot();
+         _shooter.readyShot();
+         _drivetrain.startPath();
+         _autonomousCase++;
+        // _limelight.setAimbot();
+        // _shooter.readyShot();
+        // if (_shooter.goShoot() || _shooting)
+        // {
+        //   _drivetrain.tankDriveVolts(0, 0);
+        //   _shooting = true;
+        //   _ledController.setWaitingForConfirmation();
+        //   _collector.feed();
+        // } else {
+        //   _ledController.setUpperLED(_ledController.kYellow);
+        //   _collector.stopChamber();
+        // }
 
-        if (_autonomousLoops > 50) {
-          _drivetrain.resetPID();
-          _shooter.setZoneShot();
-          _drivetrain.startPath();
-          _autonomousCase++;
-        }
+        // if (_autonomousLoops > 50) {
+        //   _drivetrain.resetPID();
+        //   _shooter.setZoneShot();
+        //   _drivetrain.startPath();
+        //   _autonomousCase++;
+        // }
         break;
       case 9:
         _shooter.readyShot();
@@ -457,7 +459,6 @@ public class Robot extends TimedRobot {
         }
         break;
       case 10:
-        _drivetrain.drive(0, _drivetrain.followTarget());
         _shooter.readyShot();
         if ((_shooter.goShoot() && _drivetrain.isTurnFinished()) || _shooting) {
           _drivetrain.tankDriveVolts(0, 0);
@@ -465,7 +466,7 @@ public class Robot extends TimedRobot {
           _shooting = true;
           _collector.feed();
         } else {
-          _collector.index();
+          _drivetrain.drive(0, _drivetrain.followTarget());
           _collector.intake();
           _ledController.setUpperLED(_ledController.kYellow);
         }

@@ -147,11 +147,14 @@ public class Shooter implements ISubsystem {
     public boolean goShoot()
     {
         boolean shooterAtSpeed = false;
-        if (_shooterTarget == Constants.kFarShotSpeed) {
+        if (_shooterTarget == Constants.kFarShotSpeed || _shooterTarget == Constants.kZoneShotSpeed) {
             shooterAtSpeed = (Math.abs(_leftMotor.getClosedLoopError()) < 1000);
         } else {
             shooterAtSpeed = (Math.abs(_leftMotor.getClosedLoopError()) < 750);
         }
+        SmartDashboard.putNumber("closedLoopError", _leftMotor.getClosedLoopError());
+        SmartDashboard.putBoolean("shootAtSpeed", shooterAtSpeed);
+        SmartDashboard.putBoolean("hoodAtSetpoint", _hoodPID.atSetpoint());
         
         return shooterAtSpeed && _hoodPID.atSetpoint();
     }
@@ -242,6 +245,7 @@ public class Shooter implements ISubsystem {
 
         SmartDashboard.putNumber("hoodCustomPosition", _customHoodPositon);
         SmartDashboard.putNumber("shooterCustomSpeed", _customShooterSpeed);
+        SmartDashboard.putNumber("closedLoopError", _leftMotor.getClosedLoopError());
     }
 
     public void ReadDashboardData() {

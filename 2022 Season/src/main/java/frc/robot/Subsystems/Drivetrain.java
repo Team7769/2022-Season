@@ -79,6 +79,20 @@ public class Drivetrain implements ISubsystem {
             _rightMiddleMotor.follow(_rightFrontMotor);
         }
 
+        _leftFrontMotor.setSmartCurrentLimit(60);
+        _leftMiddleMotor.setSmartCurrentLimit(60);
+        _leftRearMotor.setSmartCurrentLimit(60);
+        _rightFrontMotor.setSmartCurrentLimit(60);
+        _rightMiddleMotor.setSmartCurrentLimit(60);
+        _rightRearMotor.setSmartCurrentLimit(60);
+
+        _leftFrontMotor.burnFlash();
+        _leftMiddleMotor.burnFlash();
+        _leftRearMotor.burnFlash();
+        _rightFrontMotor.burnFlash();
+        _rightMiddleMotor.burnFlash();
+        _rightRearMotor.burnFlash();
+
         _gyro = new AHRS(Port.kMXP);
 
         _leftDriveEncoder = new Encoder(Constants.kLeftEncoderPortA, Constants.kLeftEncoderPortB, true);
@@ -93,7 +107,7 @@ public class Drivetrain implements ISubsystem {
         _rightDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
 
         _turnPID = new PIDController(0.067, 0.0, 0.0035);
-        _turnPID.setTolerance(1.5);
+        _turnPID.setTolerance(2);
 
         _robotDrive = new DifferentialDrive(_leftFrontMotor, _rightFrontMotor);
         
