@@ -53,6 +53,19 @@ public class Limelight {
         return distance;
     }
 
+    public VisionTargetState getVisionTargetState()
+    {
+        if (!hasTarget())
+        {
+            return null;
+        }
+        
+        var offset = getAngleToTarget();
+        var distance = getDistanceToTarget();
+
+        return new VisionTargetState(offset, distance);
+    }
+
     public boolean hasTarget()
     {
         return _validTargets.getDouble(0) >= 1;

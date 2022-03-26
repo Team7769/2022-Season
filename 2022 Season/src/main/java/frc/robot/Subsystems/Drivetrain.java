@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Configuration.Constants;
 import frc.robot.Utilities.Limelight;
 import frc.robot.Utilities.PathFollower;
+import frc.robot.Utilities.VisionTargetState;
 
 public class Drivetrain implements ISubsystem {
     
@@ -45,6 +46,8 @@ public class Drivetrain implements ISubsystem {
     private PIDController _turnPID;
 
     private static Drivetrain _instance;
+
+    private double _targetAngle = 7769;
 
     public static Drivetrain GetInstance()
     {
@@ -395,10 +398,6 @@ public class Drivetrain implements ISubsystem {
       var limelightTargetAngle = _limelight.getAngleToTarget();
 
       var targetAngle = getHeading() - limelightTargetAngle;
-    //   if (Math.abs(targetAngle) <= 2)
-    //   {
-    //       targetAngle = getHeading();
-    //   }
 
       var output = _turnPID.calculate(getHeading(), targetAngle);
 
@@ -415,6 +414,26 @@ public class Drivetrain implements ISubsystem {
           output = 0.5;
         } else {
           output = -0.5;
+        }
+      }
+      return -output;
+    }
+    
+    public double followTarget(VisionTargetState visionTargetState)
+    {
+        if (_targetAngle == 7769) {
+            _targetAngle = getHeading() - visionTargetState.getOffset();
+        }
+
+      var output = _turnPID.calculate(getHeading(), _targetAngle);
+
+      if (Math.abs(output) > 0.35)
+      {
+        if (output > 0)
+        {
+          output = 0.35;
+        } else {
+          output = -0.35;
         }
       }
       return -output;
@@ -444,6 +463,10 @@ public class Drivetrain implements ISubsystem {
     public void resetPID()
     {
         _turnPID.reset();
+    }
+    public void resetTargetAngle()
+    {
+        _targetAngle = 7769;
     }
 
     public void LogTelemetry() {

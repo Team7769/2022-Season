@@ -15,6 +15,7 @@ import com.revrobotics.SparkMaxLimitSwitch.Type;
 import frc.robot.Configuration.Constants;
 import frc.robot.Lib.InterpolationTable;
 import frc.robot.Utilities.Limelight;
+import frc.robot.Utilities.VisionTargetState;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -44,12 +45,12 @@ public class Shooter implements ISubsystem {
     public static final InterpolationTable INTERPOLATION_TABLE = new InterpolationTable(new double[][]{
         {0, 11625, .0825}, // Close
         {6, 12300, 0.14}, // Tarmac
-        {7, 13150, 0.155}, // Far
-        {8, 13650, 0.1675}, // Tarmac
-        {9, 13800, 0.17}, // Tarmac
-        {10, 14000, 0.17}, // Tarmac
-        {11, 14500, 0.17}, // Tarmac
-        {12, 15000, 0.175}, // Tarmac
+        {7, 12750, 0.14}, // Far
+        {8, 12850, 0.14}, // Tarmac
+        {9, 13825, 0.16}, // Tarmac
+        {10, 14500, 0.165}, // Tarmac
+        {11, 15000, 0.165}, // Tarmac
+        {12, 16250, 0.185}, // Tarmac
       });
     /** 
      * Gets the shooter instance
@@ -142,6 +143,24 @@ public class Shooter implements ISubsystem {
         }
 
         _previousDistance = distance;
+    } 
+
+    public void readyShot(VisionTargetState visionTargetState)
+    {
+        var distance = visionTargetState.getDistance();
+
+        if (_targetName != "Auto Shot") {
+            setHoodPosition(_hoodTarget);
+            setSpeed(_shooterTarget);
+        } else {
+            var position = INTERPOLATION_TABLE.sample(distance)[1];
+            var speed = INTERPOLATION_TABLE.sample(distance)[0];
+
+            setHoodPosition(position);
+            setSpeed(speed);
+        }
+
+        _previousDistance = distance;
     }
     
     public boolean goShoot()
@@ -191,6 +210,13 @@ public class Shooter implements ISubsystem {
         _shooterTarget = Constants.kFarShotSpeed;
         _hoodTarget = Constants.kFarShotValue;
         _targetName = "Far Shot";
+    }
+
+    public void setTwoBallShot()
+    {
+        _shooterTarget = 13850;
+        _hoodTarget = 0.16;
+        _targetName = "Two Ball Shot";
     }
 
     public void setAutoShot()
