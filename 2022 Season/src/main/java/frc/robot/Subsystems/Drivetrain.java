@@ -46,23 +46,15 @@ public class Drivetrain implements ISubsystem {
 
     private static Drivetrain _instance;
 
-    /**
-     * Returns the Instance of the Drivetrain
-     * @return - Drivetrain instance
-     */
     public static Drivetrain GetInstance()
     {
         if (_instance == null)
         {
             _instance = new Drivetrain();
         }
-
         return _instance;
     }
 
-    /**
-     * Initialize the Drivetrain class
-     */
     public Drivetrain()
     {
         _leftFrontMotor = new CANSparkMax(Constants.kLeftFrontDriveDeviceId, MotorType.kBrushless);
@@ -77,15 +69,15 @@ public class Drivetrain implements ISubsystem {
         _leftRearMotor.follow(_leftFrontMotor);
         _rightRearMotor.follow(_rightFrontMotor);
 
-        if (Constants.kCompetitionRobot) {
+        // if (Constants.kCompetitionRobot) {
 
-            _leftMiddleMotor = new CANSparkMax(Constants.kLeftMiddleDriveDeviceId, MotorType.kBrushless);
-            _rightMiddleMotor = new CANSparkMax(Constants.kRightMiddleDriveDeviceId, MotorType.kBrushless);
-            _rightMiddleMotor.setInverted(true);
+        //     _leftMiddleMotor = new CANSparkMax(Constants.kLeftMiddleDriveDeviceId, MotorType.kBrushless);
+        //     _rightMiddleMotor = new CANSparkMax(Constants.kRightMiddleDriveDeviceId, MotorType.kBrushless);
+        //     _rightMiddleMotor.setInverted(true);
             
-            _leftMiddleMotor.follow(_leftFrontMotor);
-            _rightMiddleMotor.follow(_rightFrontMotor);
-        }
+        //     _leftMiddleMotor.follow(_leftFrontMotor);
+        //     _rightMiddleMotor.follow(_rightFrontMotor);
+        // }
 
         _gyro = new AHRS(Port.kMXP);
 
@@ -101,7 +93,6 @@ public class Drivetrain implements ISubsystem {
         _rightDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
 
         _turnPID = new PIDController(0.067, 0.0, 0.0035);
-        _turnPID.setTolerance(1.5);
 
         _robotDrive = new DifferentialDrive(_leftFrontMotor, _rightFrontMotor);
         
@@ -127,7 +118,7 @@ public class Drivetrain implements ISubsystem {
     }
 
     /**
-     * Updates the Pose of the DriveTrain 
+     * Updates the odometry Pose
      */
     public void updatePose() {
         _odometry.update(_gyro.getRotation2d(), _leftDriveEncoder.getDistance(), _rightDriveEncoder.getDistance());
@@ -143,8 +134,9 @@ public class Drivetrain implements ISubsystem {
     }
 
     /**
-     * Resets the encoders and the odometry
-     * @param pose - Position on the fied your robot is at
+     * Resets the odometry to the specified pose.
+     *
+     * @param pose The pose to which to set the odometry.
      */
     public void resetOdometry(Pose2d pose) {
         resetEncoders();
@@ -152,8 +144,8 @@ public class Drivetrain implements ISubsystem {
     }
 
     /**
-    * Resets the Odometry of the driver train
-    */
+     * Resets the odometry.
+     */
     public void resetOdometry()
     {
         resetEncoders();
@@ -168,10 +160,10 @@ public class Drivetrain implements ISubsystem {
      */
     public void tankDriveVolts(double leftVolts, double rightVolts) {
         _rightFrontMotor.setIdleMode(IdleMode.kBrake);
-        _rightMiddleMotor.setIdleMode(IdleMode.kBrake);
+        //_rightMiddleMotor.setIdleMode(IdleMode.kBrake);
         _rightRearMotor.setIdleMode(IdleMode.kBrake);
         _leftFrontMotor.setIdleMode(IdleMode.kBrake);
-        _leftMiddleMotor.setIdleMode(IdleMode.kBrake);
+        //_leftMiddleMotor.setIdleMode(IdleMode.kBrake);
         _leftRearMotor.setIdleMode(IdleMode.kBrake);
 
         _leftFrontMotor.setVoltage(leftVolts);
@@ -179,13 +171,19 @@ public class Drivetrain implements ISubsystem {
         _robotDrive.feed();
     }
     
+    /**
+     * Controls the throttle and turn of the drive directly with voltages. Drives using IdleMode.kCoast
+     *
+     * @param throttle - Robot speed along the X axis. Value between 1 and -1; Forward is positive
+     * @param turn - Robot rotation rate along the Z axis. Value between 1 and -1; Clockwise is positive
+     */
     public void drive(double throttle, double turn)
     {
         _rightFrontMotor.setIdleMode(IdleMode.kCoast);
-        _rightMiddleMotor.setIdleMode(IdleMode.kCoast);
+        //_rightMiddleMotor.setIdleMode(IdleMode.kCoast);
         _rightRearMotor.setIdleMode(IdleMode.kCoast);
         _leftFrontMotor.setIdleMode(IdleMode.kCoast);
-        _leftMiddleMotor.setIdleMode(IdleMode.kCoast);
+        //_leftMiddleMotor.setIdleMode(IdleMode.kCoast);
         _leftRearMotor.setIdleMode(IdleMode.kCoast);
 
         if (Math.abs(throttle) <= .1) {
@@ -193,19 +191,31 @@ public class Drivetrain implements ISubsystem {
         } else {
             setRampRate(.25);
         }
+
         _robotDrive.arcadeDrive(throttle, turn);
     }
 
+    /**
+     * Sets the left and right motor ramp rate
+     *
+     * @param rate - The rate you would like to set the left and right motor
+     */
     public void setRampRate(double rate)
     {
         _leftFrontMotor.setOpenLoopRampRate(rate);
-        _leftMiddleMotor.setOpenLoopRampRate(rate);
+        //_leftMiddleMotor.setOpenLoopRampRate(rate);
         _leftRearMotor.setOpenLoopRampRate(rate);
         _rightFrontMotor.setOpenLoopRampRate(rate);
-        _rightMiddleMotor.setOpenLoopRampRate(rate);
+        //_rightMiddleMotor.setOpenLoopRampRate(rate);
         _rightRearMotor.setOpenLoopRampRate(rate);
     }
 
+    /**
+     * Controls the left and right sides of the drive directly with voltages. Drives using IdleMode.kBrake
+     *
+     * @param leftVolts  the commanded left output
+     * @param rightVolts the commanded right output
+     */
     public void driveBrake(double throttle, double turn)
     {
         _rightFrontMotor.setIdleMode(IdleMode.kBrake);
@@ -221,6 +231,9 @@ public class Drivetrain implements ISubsystem {
         _rightDriveEncoder.reset();
     }
 
+    /**
+     * Resets the Drivertrain gyro
+     */
     public void resetGyro() {
         _gyro.reset();
     }
@@ -289,6 +302,13 @@ public class Drivetrain implements ISubsystem {
         return -_gyro.getRate();
     }
     
+    /**
+     * Returns a new trajectory config  
+     * 
+     * @param isReverse - Whether or not to return the config in reverse 
+     * 
+     * @return The trajectory config
+     */
     public TrajectoryConfig getTrajectoryConfig(boolean isReverse)
     {
       var autoVoltageConstraint =
@@ -308,58 +328,92 @@ public class Drivetrain implements ISubsystem {
             config.setReversed(isReverse);
             return config;
     }
+
+    /**
+     * Sets path follower current path as Test Path
+     */
     public void setTestPath()
     {
         _pathFollower.setTestPath(getTrajectoryConfig(false));
     }
+
+    /**
+     * Sets path follower current path as Drive Forward And Shoot Path
+     */
     public void setDriveForwardAndShootPath()
     {
         _pathFollower.setDriveForwardAndShootPath(getTrajectoryConfig(false));
     }
 
+    /**
+     * Sets path follower current path as Collect wo From Terminal Path
+     */
     public void setCollectTwoFromTerminalPath()
     {
         _pathFollower.setCollectTwoFromTerminalPath(getTrajectoryConfig(false), getPose());
     }
 
+    /**
+     * Sets path follower current path as Drive Back From Terminal Path
+     */
     public void setDriveBackFromTerminalPath()
     {
         _pathFollower.setDriveBackFromTerminalPath(getTrajectoryConfig(true), getPose());
     }
 
-    public void setFifthBallPath()
-    {
-        _pathFollower.setFifthBallPath(getTrajectoryConfig(false), getPose());
-    }
-
+    /**
+     * Sets path follower current path as Five Ball Part One Path
+     */
     public void setFiveBallPartOnePath()
     {
         _pathFollower.setFiveBallPartOnePath(getTrajectoryConfig(false));
     }
 
+    /**
+     * Sets path follower current path as Five Ball Part Two To Terminal Path
+     */
     public void setFiveBallPartTwoToTerminalPath()
     {
         _pathFollower.setFiveBallPartTwoToTerminalPath(getTrajectoryConfig(false), getPose().getRotation());
     }
 
+    /**
+     * Sets path follower current path as Five Ball Part Two From Terminal Path
+     */
     public void setFiveBallPartTwoFromTerminalPath()
     {
         _pathFollower.setFiveBallPartTwoFromTerminalPath(getTrajectoryConfig(true), getPose().getRotation());
     }
+
+    /**
+     * Sets path follower current path as Four Ball Far Part One Path
+     */
     public void setFourBallFarPartOnePath()
     {
         _pathFollower.setFourBallFarPartOneTrajectory(getTrajectoryConfig(false));
     }
+
+    /**
+     * Sets path follower current as Four Ball Far Part Two Out Path
+     */
     public void setFourBallFarPartTwoOutPath()
     {
         _pathFollower.setFourBallFarPartTwoOutPath(getTrajectoryConfig(false), getPose());
     }
     
+    /**
+     * Sets path follower current path as Four Ball Far Part Two Path
+     */
     public void setFourBallFarPartTwoBackPath()
     {
         _pathFollower.setFourBallFarPartTwoBackPath(getTrajectoryConfig(true), getPose());
     }
 
+    /**
+     * Starts the path that has already been set
+     * <p>
+     * METHOD SHOULD BE CALLED ONLY AFTER A PATH HAS BEEN SET
+     */
     public void startPath()
     {
         _leftDriveVelocityPID.reset();
@@ -399,19 +453,13 @@ public class Drivetrain implements ISubsystem {
       var limelightTargetAngle = _limelight.getAngleToTarget();
 
       var targetAngle = getHeading() - limelightTargetAngle;
-    //   if (Math.abs(targetAngle) <= 2)
-    //   {
-    //       targetAngle = getHeading();
-    //   }
-
-      var output = _turnPID.calculate(getHeading(), targetAngle);
-
-      SmartDashboard.putNumber("turnOutput", output);
-      
-      if (_turnPID.atSetpoint()) {
+      if (Math.abs(targetAngle) <= 2)
+      {
         return 0;
       }
 
+      var output = _turnPID.calculate(getHeading(), targetAngle);
+      SmartDashboard.putNumber("turnOutput", output);
       if (Math.abs(output) > 0.5)
       {
         if (output > 0)
