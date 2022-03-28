@@ -282,7 +282,7 @@ public class PathFollower {
      */
     private Trajectory getFifthBallTrajectory(TrajectoryConfig config, Pose2d currentPose) {
 
-        return TrajectoryGenerator.generateTrajectory(new Pose2d(currentPose.getX(), currentPose.getY(), currentPose.getRotation()),
+        return TrajectoryGenerator.generateTrajectory(currentPose,
         // Pass through these two interior waypoints, making an 's' curve path
         List.of(
             new Translation2d(Constants.kFifthBallWayPointX, Constants.kFifthBallWayPointY)

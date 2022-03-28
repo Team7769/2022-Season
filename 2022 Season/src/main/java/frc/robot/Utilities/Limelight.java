@@ -69,6 +69,23 @@ public class Limelight {
     }
 
     /**
+     * Returns the limelight visionTargetState
+     * @return - The current VisionTargetState
+     */
+    public VisionTargetState getVisionTargetState()
+    {
+        if (!hasTarget())
+        {
+            return null;
+        }
+        
+        var offset = getAngleToTarget();
+        var distance = getDistanceToTarget();
+
+        return new VisionTargetState(offset, distance);
+    }
+
+    /**
      * Checks if it has a target
      * @return - Whether or not there is a target
      */
