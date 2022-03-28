@@ -10,12 +10,21 @@ public class InterpolationTable {
     private final double[][] referencePoints;
     private final int propertyCount;
 
+    /**
+     * Constructor for the InterpolationTable
+     * @param referencePoints - The reference points to put into the interpolation table
+     */
     public InterpolationTable(double[][] referencePoints) {
         Arrays.sort(referencePoints, INPUT_SORTER);
         this.referencePoints = referencePoints;
         propertyCount = referencePoints[0].length - 1;
     }
 
+    /**
+     * Loops through the reference points and gets the desired list based on the input
+     * @param input - Input used to determine the desired list
+     * @return - Desired list of reference points
+     */
     public double[] sample(double input) {
         int leftBoundIndex = 0;
         int rightBoundIndex = referencePoints.length - 1;
@@ -54,6 +63,14 @@ public class InterpolationTable {
         return outputs;
     }
 
+    /**
+     * Returns a new output by calculating the interpolation between the two points
+     * @param input - The input used to determine the interpolation
+     * @param outputProperty - Index used to calculate the slope of point1 and point2
+     * @param point1 - List of the first point
+     * @param point2 - List of the second point
+     * @return - new interpolated value.
+     */
     private double interpolate(double input, int outputProperty, double[] point1, double[] point2) {
         outputProperty++;
         double slope = (point2[outputProperty] - point1[outputProperty]) / (point2[0] - point1[0]);
