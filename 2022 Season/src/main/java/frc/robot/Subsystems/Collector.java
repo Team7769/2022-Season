@@ -30,6 +30,10 @@ private static Collector _instance;
     private boolean _bottomChamberState = false;
     private boolean _topChamberState = false;
 
+    /**
+     * Get the Collector instance
+     * @return - Instance of collector
+     */
     public static Collector GetInstance()
     {
         if (_instance == null)
@@ -39,6 +43,9 @@ private static Collector _instance;
         return _instance;
     }
 
+    /**
+     * Constructor for the Collector
+     */
     public Collector() 
     { 
         _collectorMotor = new CANSparkMax(Constants.kCollectMotorDeviceId, MotorType.kBrushless);
@@ -72,11 +79,17 @@ private static Collector _instance;
         _collectorMotor.set(0.0);
     }
 
+    /**
+     * Stops the collector chamber back and front motors
+     */
     public void stopChamber() {
         _frontChamberMotor.set(0.0);
         _backChamberMotor.set(0.0);
     }
 
+    /**
+     * Moves the collector chamber back and front motors, to collect the cargo
+     */
     public void intake() {
         _collectorSolenoid.set(true);
         _collectorMotor.set(-_collectorSpeed);
@@ -86,10 +99,17 @@ private static Collector _instance;
             _backChamberMotor.set(-_chamberSpeed);
         }
     }
+
+    /**
+     * Moves the collector motors, to spit the cargo
+     */
     public void spit() {
         _collectorMotor.set(_collectorSpeed);
     }
 
+    /**
+     * Moves the collector chamber back and front motors, to eject the cargo
+     */
     public void eject() {
         _collectorSolenoid.set(true);
         _collectorMotor.set(_collectorSpeed);
@@ -97,6 +117,9 @@ private static Collector _instance;
         _backChamberMotor.set(-_chamberSpeed);
     }
     
+    /**
+     * Moves the cargo using the front and back chamber motors, and increase ball count accordingly 
+     */
     public void feed() {
         _frontChamberMotor.set(-_chamberSpeed);
         _backChamberMotor.set(_chamberSpeed);
@@ -119,11 +142,18 @@ private static Collector _instance;
         _bottomChamberState = _chamberBottomSensor.isBlocked();
     }
 
+    /**
+     * Sets the ballCount in the collector based on the {@param ballCount}
+     * @param ballCount - The number of balls in the collector
+     */
     public void setBallCount(int ballCount)
     {
         _ballCount = ballCount;
     }
 
+    /**
+     * Runs mutiple if conditions that determine the ball count and whether or not the chamber will stopped
+     */
     public void index()
     {
         if (_chamberTopSensor.isBlocked())
@@ -156,19 +186,31 @@ private static Collector _instance;
         _bottomChamberState = _chamberBottomSensor.isBlocked();
     }
 
+    /**
+     * Moves the collected front and back motors in the negative direction of the chamber speed.
+     */
     public void chamberUp() {
         _frontChamberMotor.set(-_chamberSpeed);
         _backChamberMotor.set(-_chamberSpeed);
     }
 
+    /**
+     * Sets the collector solenoid output to true
+     */
     public void collectorDown() {
         _collectorSolenoid.set(true);
     }
 
+    /**
+     * Sets the collector solenoid output to false
+     */
     public void collectorUp() {
         _collectorSolenoid.set(false);
     }
 
+    /**
+     * Logs collector data into the SmartDashboard
+     */
     public void LogTelemetry() {
         // TODO Auto-generated method stub
         
@@ -181,6 +223,9 @@ private static Collector _instance;
         SmartDashboard.putNumber("ballCount", _ballCount);
     }
 
+    /**
+     * Reads collector data from SmartDashboard... At the moment this function is not implemented
+     */
     public void ReadDashboardData() {
         // TODO Auto-generated method stub
 
