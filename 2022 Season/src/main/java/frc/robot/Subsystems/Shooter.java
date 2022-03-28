@@ -159,6 +159,10 @@ public class Shooter implements ISubsystem {
         _previousDistance = distance;
     } 
 
+    /**
+     * Uses the vision state to set the hood position and shooter speed
+     * @param visionTargetState - The visionTargetState that is being used in the calculations
+     */
     public void readyShot(VisionTargetState visionTargetState)
     {
         var distance = visionTargetState.getDistance();

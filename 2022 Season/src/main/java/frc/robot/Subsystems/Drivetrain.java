@@ -49,6 +49,10 @@ public class Drivetrain implements ISubsystem {
 
     private double _targetAngle = 7769;
 
+    /**
+     * Returns the singleton instance of the Drivetrain
+     * @return - Instance of the DriveTrain
+     */
     public static Drivetrain GetInstance()
     {
         if (_instance == null)
@@ -58,6 +62,9 @@ public class Drivetrain implements ISubsystem {
         return _instance;
     }
 
+    /**
+     * Constructor for the Drivetrain
+     */
     public Drivetrain()
     {
         _leftFrontMotor = new CANSparkMax(Constants.kLeftFrontDriveDeviceId, MotorType.kBrushless);
@@ -439,6 +446,10 @@ public class Drivetrain implements ISubsystem {
         resetOdometry(_pathFollower.getStartingPose());
         _pathFollower.startPath();
     }
+
+    /**
+     * Uses the path follower current path to drive to the target location
+     */
     public void followPath()
     {
         var target = _pathFollower.getPathTarget(getPose());
@@ -456,11 +467,20 @@ public class Drivetrain implements ISubsystem {
         tankDriveVolts(leftOutputTarget + leftFeedForward, rightOutputTarget + rightFeedForward);
 
     }
+
+    /**
+     * Returns whether or not the started path is finished.
+     * @return if path finished
+     */
     public boolean isPathFinished()
     {
       return _pathFollower.isPathFinished();
     }
 
+    /**
+     * If the limilight has a selected target it will return the output needed to get to the target
+     * @return the output needed to get to the limilight target. If no target exist returns 0.
+     */
     public double followTarget()
     {
       if (!_limelight.hasTarget())
@@ -492,6 +512,11 @@ public class Drivetrain implements ISubsystem {
       return -output;
     }
     
+    /**
+     * Uses the visionTargetState to return the output needed to reach target
+     * @param visionTargetState - The visionTargetState to use in calculations
+     * @return - output needed to reach target
+     */
     public double followTarget(VisionTargetState visionTargetState)
     {
         if (_targetAngle == 7769) {
@@ -512,6 +537,10 @@ public class Drivetrain implements ISubsystem {
       return -output;
     }
 
+    /**
+     * Turns the robot to the desired angle using Drivetrain.driveBrake
+     * @param angle - Angle you wish to turn to.
+     */
     public void turnToAngle(double angle)
     {
         var output = _turnPID.calculate(getHeading(), angle);
@@ -528,20 +557,34 @@ public class Drivetrain implements ISubsystem {
         driveBrake(0, -output);
     }
 
+    /**
+     * Whether or not if the robot has finished its turn
+     * @return - has robot finished its turn
+     */
     public boolean isTurnFinished()
     {
         return _turnPID.atSetpoint();
     }
 
+    /**
+     * Resets the turn pid of the driveTrain
+     */
     public void resetPID()
     {
         _turnPID.reset();
     }
+
+    /**
+     * Sets the targetAngle of driveTrain back to 7769
+     */
     public void resetTargetAngle()
     {
         _targetAngle = 7769;
     }
 
+    /**
+     * Logs driveTrain data to SmartDashboard
+     */
     public void LogTelemetry() {
         // TODO Auto-generated method stub
         SmartDashboard.putNumber("leftDriveDistance", _leftDriveEncoder.getDistance());
@@ -551,6 +594,9 @@ public class Drivetrain implements ISubsystem {
         SmartDashboard.putNumber("gyroHeading", getHeading());
     }
 
+    /**
+     * Reads the data from the SmartDashboard... But at the moment this function is empty so it does nothing.
+     */
     public void ReadDashboardData() {
         // TODO Auto-generated method stub
         

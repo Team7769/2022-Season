@@ -10,11 +10,19 @@ public class VisionTargetState {
         _distance = distance;
     }
 
+    /**
+     * The offset of the VisionTargetState
+     * @return offset
+     */
     public double getOffset()
     {
         return _offset;
     }
 
+    /**
+     * The distance of the VisionTargetState
+     * @return distance to target
+     */
     public double getDistance()
     {
         return _distance;
