@@ -322,12 +322,17 @@ public class Robot extends TimedRobot {
     switch(_autonomousCase)
     {
       case 0:
-        _drivetrain.setDriveForwardAndShootPath();
-        _drivetrain.startPath();
+        if (_autonomousLoops < 1) {
+          _drivetrain.setDriveForwardAndShootPath();
+          _shooter.setTwoBallShot();
+        }
         _collector.intake();
-        _shooter.setFarShot();
-        _shooter.readyShot();
-        _autonomousCase++;
+
+        if (_autonomousLoops >= 50) {
+          _shooter.setFarShot();
+          _drivetrain.startPath();
+          _autonomousCase++;
+        }
         break;
       case 1:
         _collector.intake();
@@ -571,6 +576,9 @@ public class Robot extends TimedRobot {
       //_limelight.setDashcam();
     }
     
+    if (_visionTargetState != null) {
+      SmartDashboard.putNumber("visionTargetStateAngle", _visionTargetState.getOffset());
+    }
     SmartDashboard.putNumber("throttle", throttle);
     SmartDashboard.putNumber("turn", turn);
     SmartDashboard.putNumber("augmentTurn", augmentTurn);
@@ -627,8 +635,27 @@ public class Robot extends TimedRobot {
 
     if (Math.abs(_driverController.getLeftTriggerAxis()) >= 0.5)
     {
+      _ph.disableCompressor();
       if (_visionTargetState == null) {
         _visionTargetState = _limelight.getVisionTargetState();
+
+        if (_visionTargetState == null) {
+          _shooter.readyShot();
+          
+        if (_driverController.getRightTriggerAxis() > 0.5)  {
+          _shooting = true; 
+          _collector.feed();
+          // Shoot
+        } else {
+          _shooting = false;
+        }
+  
+        if (_shooter.goShoot() && _drivetrain.isTurnFinished()){
+          _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
+        } else {
+          _ledController.setUpperLED(_ledController.kYellow);
+        }
+        }
       } else {
         _shooter.readyShot(_visionTargetState);
       
@@ -647,6 +674,7 @@ public class Robot extends TimedRobot {
         }
       }
     } else {
+      _ph.enableCompressorAnalog(70, 110);
       resetVisionTargetState();
       _ledController.setTeleopIdle();
       _shooting = false;
@@ -689,6 +717,8 @@ public class Robot extends TimedRobot {
 
   private void teleopClimb()
   {
+    SmartDashboard.putNumber("climbingCase", _climbingCase);
+    SmartDashboard.putNumber("currentRungNumber", _climberCurrentRung);
     switch (_climbingCase) {
       case 0:
         _climber.engageRatchet();

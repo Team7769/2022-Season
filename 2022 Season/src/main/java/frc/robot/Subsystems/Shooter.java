@@ -272,6 +272,9 @@ public class Shooter implements ISubsystem {
         SmartDashboard.putNumber("hoodCustomPosition", _customHoodPositon);
         SmartDashboard.putNumber("shooterCustomSpeed", _customShooterSpeed);
         SmartDashboard.putNumber("closedLoopError", _leftMotor.getClosedLoopError());
+
+        SmartDashboard.putNumber("interpolatedSpeed", INTERPOLATION_TABLE.sample(_limelight.getDistanceToTarget())[0]);
+        SmartDashboard.putNumber("interpolatedHood", INTERPOLATION_TABLE.sample(_limelight.getDistanceToTarget())[1]);
     }
 
     public void ReadDashboardData() {
