@@ -64,6 +64,9 @@ public class Climber implements ISubsystem {
         _climbTarget = Constants.kClimbPullUpPosition;
     }
 
+    /**
+     * Resets the climber encoder only if the limitSwitch is pressed
+     */
     public void resetClimbEncoder()
     {
         if (isLimitSwitchPressed())
@@ -72,22 +75,36 @@ public class Climber implements ISubsystem {
         }
     }
 
+    /**
+     * Checks if climber limit switch is pressed
+     * @return - <strong> true </strong> if limit switch is pressed 
+     */
     public boolean isLimitSwitchPressed()
     {
         return _climbLimitSwitch.isPressed();
     }
 
+    /**
+     * Sets a new climberTarget based on the position provided
+     * @param position - Position to set climberTarget to
+     */
     public void setClimbPosition(double position)
     {
         _climbTarget = position;
     }
 
+    /**
+     * Sets the left and right climber motor to -1
+     */
     public void extend()
     {
         _leftClimbMotor.set(-1);
         _rightClimbMotor.set(-1);
     }
 
+    /**
+     * Moves both the left and right climber motors respectively based on the value of the climberEncoder
+     */
     public void climb()
     {
         if (_climbEncoder.get() <= 1) {
@@ -99,53 +116,85 @@ public class Climber implements ISubsystem {
         }
     }
 
+    /**
+     * Stops moving the climber motors
+     */
     public void stopClimb()
     {
         _leftClimbMotor.set(0);
         _rightClimbMotor.set(0);
     }
 
+    /**
+     * Checks if the climberEncoder value is greater than or equals to the climberTarget values
+     * @return - <strong> true </strong> if the climberTarger has been reached or passed
+     */
     public boolean isExtendFinished()
     {
         return _climbEncoder.get() >= _climbTarget;
     }
 
+    /**
+     * Sets the speed of both the left and right climber motors
+     * @param speed - Speed you would like to set the climber motors
+     */
     public void setClimberMotor(double speed)
     {
         _leftClimbMotor.set(speed);
         _rightClimbMotor.set(speed);
     }
 
+    /**
+     * Sets the climber forward
+     */
     public void setClimberForward()
     {
         _climber.set(Value.kForward);
     }
 
+    /**
+     * Sets the climber in reverse
+     */
     public void setClimberReverse()
     {
         _climber.set(Value.kReverse);
     }
 
+    /**
+     * Sets the climber off
+     */
     public void setClimberOff()
     {
         _climber.set(Value.kOff);
     }
 
+    /**
+     * Sets the ratchet in reverse
+     */
     public void engageRatchet()
     {
         _ratchet.set(Value.kReverse);
     }
 
+    /**
+     * Sets the ratchet forward
+     */
     public void disengageRatchet()
     {
         _ratchet.set(Value.kForward);
     }
 
+    /**
+     * Sets the ratchet off
+     */
     public void setRatchetOff()
     {
         _climber.set(Value.kOff);
     }
 
+    /**
+     * Logs the data of the climber to the SmartDashboard
+     */
     public void LogTelemetry() {
         // TODO Auto-generated method stub
         
@@ -155,6 +204,9 @@ public class Climber implements ISubsystem {
         SmartDashboard.putNumber("rightClimbCurrent", _rightClimbMotor.getOutputCurrent());
     }
 
+    /**
+     * Reads the data of the climber from the SmartDashboard... This function is not implemented yet
+     */
     public void ReadDashboardData() {
         // TODO Auto-generated method stub
         

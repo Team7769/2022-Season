@@ -16,6 +16,10 @@ public class Limelight {
     private double _measurementHeight = _goalHeight - _limelightHeight; // Feet
     private double _theta = 35; // Degrees
 
+    /**
+     * Returns the limelight instance
+     * @return - Instance of limelight
+     */
     public static Limelight getInstance()
     {
         if (_instance == null)
@@ -26,6 +30,9 @@ public class Limelight {
         return _instance;
     }
 
+    /**
+     * Limelight Constructor to create a LimeLight Object
+     */
     public Limelight()
     {
         _validTargets = NetworkTableInstance.getDefault().getTable(Constants.kTableName).getEntry(Constants.kValidTargetKey);
@@ -33,11 +40,19 @@ public class Limelight {
         _camMode = NetworkTableInstance.getDefault().getTable(Constants.kTableName).getEntry(Constants.kCamModeKey);
     }
 
+    /**
+     * Returns the limelight value from {@link NetworkTableInstance}
+     * @return - Angle value to target
+     */
     public double getAngleToTarget()
     {
         return NetworkTableInstance.getDefault().getTable(Constants.kTableName).getEntry(Constants.kTargetAngleXKey).getDouble(0);
     }
 
+    /**
+     * Gets distance from target, if there is no target provided it will return 0.0
+     * @return - Distance from the target
+     */
     public double getDistanceToTarget()
     {
         if (!hasTarget())
@@ -53,6 +68,10 @@ public class Limelight {
         return distance;
     }
 
+    /**
+     * Returns the limelight visionTargetState
+     * @return - The current VisionTargetState
+     */
     public VisionTargetState getVisionTargetState()
     {
         if (!hasTarget())
@@ -66,22 +85,36 @@ public class Limelight {
         return new VisionTargetState(offset, distance);
     }
 
+    /**
+     * Checks if it has a target
+     * @return - Whether or not there is a target
+     */
     public boolean hasTarget()
     {
         return _validTargets.getDouble(0) >= 1;
     }
 
+    /**
+     * Checks if the bot is aimed
+     * @return - Whether or not the bot is aimed
+     */
     public boolean isAimbot()
     {
         return _camMode.getDouble(0) == 1;
     }
 
+    /**
+     * Sets the aim of the bot
+     */
     public void setAimbot()
     {
         _ledMode.setDouble(Constants.kLEDOn);
         _camMode.setDouble(Constants.kCamModeVisionProcessing);
     }
 
+    /** 
+     * Sets the DashCame 
+     */
     public void setDashcam()
     {
         _ledMode.setDouble(Constants.kLEDOff);

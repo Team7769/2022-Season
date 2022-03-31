@@ -26,6 +26,7 @@ public class LEDController {
         _lowerBlinkin = new Spark(1);
         _upperBlinkin = new Spark(0);
     }
+
     public static LEDController GetInstance()
     {
         if (_instance == null)
@@ -49,10 +50,12 @@ public class LEDController {
     {
         _upperBlinkin.set(kTrackingTarget);
     }
+
     public void setOnTargetState()
     {
         _upperBlinkin.set(kOnTarget);
     }
+    
     public void setTeleopIdle()
     {
         _upperBlinkin.set(sinelonCustom);
