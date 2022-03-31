@@ -163,6 +163,15 @@ public final class Constants {
     public static final double kFourBallFarPartTwoBackEndPointY= 2.697;
     public static final double kFourBallFarPartTwoBackEndRotation= -2.7716865861332294;
 
+    // Two Ball Steal Values
+    public static final double kTwoBallStealMidpointAX = 5.019;
+    public static final double kTwoBallStealMidpointAY = 7.274;
+    public static final double kTwoBallStealMidpointBX = 5.604;
+    public static final double kTwoBallStealMidpointBY = 7.330;
+    public static final double kTwoBallStealEndpointX = 6.189;
+    public static final double kTwoBallStealEndpointY = 7.330;
+    public static final double kTwoBallStealEndRotation = 0;
+
     //Hood PID Values
     public static final double kHoodKp= 16.0; 
     public static final double kHoodKi= 0;

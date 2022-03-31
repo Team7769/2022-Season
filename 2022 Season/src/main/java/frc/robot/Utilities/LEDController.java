@@ -20,6 +20,8 @@ public class LEDController {
     public final double bpmCustom = 0.43;
     public final double sinelonCustom = 0.55;
     public final double colorWavesParty = -0.45;
+    public final double kRainbowGlitter = -0.89;
+    public final double kFireMedium = -0.59;
     
     public LEDController()
     {

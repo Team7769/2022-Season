@@ -359,6 +359,11 @@ public class Drivetrain implements ISubsystem {
         _pathFollower.setFourBallFarPartTwoBackPath(getTrajectoryConfig(true), getPose());
     }
 
+    public void setTwoBallStealPath()
+    {
+        _pathFollower.setTwoBallStealPath(getTrajectoryConfig(false), getPose());
+    }
+
     public void startPath()
     {
         _leftDriveVelocityPID.reset();
