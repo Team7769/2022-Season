@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -53,9 +54,12 @@ public class Robot extends TimedRobot {
   private int _climberCurrentRung = 2;
   private int _ratchetCounter = 0;
   private int _extendCounter = 0;
+  private int _aimLoops = 0;
   private VisionTargetState _visionTargetState = null;
+  private boolean _finishedAiming = false;
   private boolean _climbing = false;
   private boolean _shooting = false;
+  private Timer _climbTimer = new Timer();
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -565,14 +569,29 @@ public class Robot extends TimedRobot {
     if (Math.abs(_driverController.getLeftTriggerAxis()) > 0.5)
     {
       _limelight.setAimbot();
-      if (_visionTargetState == null) {
-        _visionTargetState = _limelight.getVisionTargetState();
+      // if (_visionTargetState == null) {
+      //   _visionTargetState = _limelight.getVisionTargetState();
+      // } else {
+      //   augmentTurn = _drivetrain.followTarget(_visionTargetState);
+      // }
+
+      if (!_finishedAiming){
+        augmentTurn = _drivetrain.followTarget();
       } else {
-        augmentTurn = _drivetrain.followTarget(_visionTargetState);
+        _drivetrain.tankDriveVolts(0, 0);
+      }
+
+      if (_drivetrain.isTurnFinished()) {
+        _aimLoops++;
+        if (_aimLoops > 5) {
+          _finishedAiming = true;
+        }
       }
     } else {
+      _aimLoops = 0;
       _drivetrain.resetTargetAngle();
-      resetVisionTargetState();
+      _drivetrain.resetPID();
+      _finishedAiming = false;
       //_limelight.setDashcam();
     }
     
@@ -636,11 +655,7 @@ public class Robot extends TimedRobot {
     if (Math.abs(_driverController.getLeftTriggerAxis()) >= 0.5)
     {
       _ph.disableCompressor();
-      if (_visionTargetState == null) {
-        _visionTargetState = _limelight.getVisionTargetState();
-
-        if (_visionTargetState == null) {
-          _shooter.readyShot();
+      _shooter.readyShot();
           
         if (_driverController.getRightTriggerAxis() > 0.5)  {
           _shooting = true; 
@@ -655,24 +670,6 @@ public class Robot extends TimedRobot {
         } else {
           _ledController.setUpperLED(_ledController.kYellow);
         }
-        }
-      } else {
-        _shooter.readyShot(_visionTargetState);
-      
-        if (_driverController.getRightTriggerAxis() > 0.5)  {
-          _shooting = true; 
-          _collector.feed();
-          // Shoot
-        } else {
-          _shooting = false;
-        }
-  
-        if (_shooter.goShoot() && _drivetrain.isTurnFinished()){
-          _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
-        } else {
-          _ledController.setUpperLED(_ledController.kYellow);
-        }
-      }
     } else {
       _ph.enableCompressorAnalog(70, 110);
       resetVisionTargetState();
@@ -721,6 +718,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("currentRungNumber", _climberCurrentRung);
     switch (_climbingCase) {
       case 0:
+        _climbTimer.start();
         _climber.engageRatchet();
         logClimbState("Engage Ratchet");
         _climbingCase = 1;
@@ -771,7 +769,7 @@ public class Robot extends TimedRobot {
         }
         break;
       case 4:
-        if (_extendCounter <= 12) {
+        if (_extendCounter <= 25) {
           logClimbState("Extending.");
           _climber.extend();
           _extendCounter++;
@@ -821,6 +819,11 @@ public class Robot extends TimedRobot {
       } else {
         _climber.stopClimb();
         logClimbState("Waiting for confirmation.");
+
+        if (_climberCurrentRung >= 3) {
+          _climbTimer.stop();
+          SmartDashboard.putNumber("climbTime", _climbTimer.get());
+        }
         _ledController.setWaitingForConfirmation();
         if (_driverController.getAButton()){
           _ledController.setFire();

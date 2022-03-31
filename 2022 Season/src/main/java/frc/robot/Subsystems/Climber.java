@@ -50,10 +50,12 @@ public class Climber implements ISubsystem {
         
         _leftClimbMotor = new CANSparkMax(Constants.kLeftClimbMotorDeviceId, MotorType.kBrushless);
         _leftClimbMotor.setIdleMode(IdleMode.kBrake);
+        _leftClimbMotor.burnFlash();
 
         _rightClimbMotor = new CANSparkMax(Constants.kRightClimbMotorDeviceId, MotorType.kBrushless);
         _rightClimbMotor.setIdleMode(IdleMode.kBrake);
         _rightClimbMotor.setInverted(true);
+        _rightClimbMotor.burnFlash();
 
         _climbEncoder = new DutyCycleEncoder(Constants.kClimbEncoderPort);
 
