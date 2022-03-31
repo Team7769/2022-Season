@@ -80,6 +80,11 @@ private static Collector _instance;
     public void intake() {
         _collectorSolenoid.set(true);
         _collectorMotor.set(-_collectorSpeed);
+
+        if (!_chamberBottomSensor.isBlocked()){
+            _frontChamberMotor.set(-_chamberSpeed);
+            _backChamberMotor.set(-_chamberSpeed);
+        }
     }
     public void spit() {
         _collectorMotor.set(_collectorSpeed);
@@ -153,7 +158,7 @@ private static Collector _instance;
 
     public void chamberUp() {
         _frontChamberMotor.set(-_chamberSpeed);
-        _backChamberMotor.set(_chamberSpeed);
+        _backChamberMotor.set(-_chamberSpeed);
     }
 
     public void collectorDown() {

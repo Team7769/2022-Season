@@ -6,11 +6,13 @@ package frc.robot;
 
 import java.util.ArrayList;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -24,6 +26,7 @@ import frc.robot.Subsystems.ISubsystem;
 import frc.robot.Subsystems.Shooter;
 import frc.robot.Utilities.LEDController;
 import frc.robot.Utilities.Limelight;
+import frc.robot.Utilities.VisionTargetState;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -50,8 +53,16 @@ public class Robot extends TimedRobot {
   private int _climbingCase = 0;
   private int _climberCurrentRung = 2;
   private int _ratchetCounter = 0;
+  private int _extendCounter = 0;
+  private int _aimLoops = 0;
+  private VisionTargetState _visionTargetState = null;
+  private boolean _finishedAiming = false;
   private boolean _climbing = false;
   private boolean _shooting = false;
+  private Timer _climbTimer = new Timer();
+
+  // Fastest climb recorded, update as needed
+  private int _fastestClimb = 60;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -85,6 +96,9 @@ public class Robot extends TimedRobot {
 
     _collector.setBallCount(1);
     _drivetrain.resetGyro();
+    _shooter.zeroHood();
+
+    CameraServer.startAutomaticCapture();
   }
 
   /**
@@ -105,7 +119,7 @@ public class Robot extends TimedRobot {
     });
 
     if (Constants.kCompetitionRobot) {
-     _shooter.zeroHood();
+     //_shooter.zeroHood();
      _climber.resetClimbEncoder();
     }
     
@@ -132,6 +146,7 @@ public class Robot extends TimedRobot {
     _autonomousCase = 0;
     _autonomousLoops = 0;
     _drivetrain.resetGyro();
+    _shooter.zeroHood();
     resetOdometry();
   }
   
@@ -155,8 +170,8 @@ public class Robot extends TimedRobot {
       case AutonomousMode.kFourBallFar:
         farFourBallAuto(false);
         break;
-      case AutonomousMode.kFourBallClose:
-        fourBallAuto();
+      case AutonomousMode.kFiveBall:
+        fiveBallAuto();
         break;
       default:
         // Do nothing
@@ -181,16 +196,19 @@ public class Robot extends TimedRobot {
     switch(_autonomousCase)
     {
       case 0:
-        _drivetrain.setFourBallFarPartOnePath();
-        _drivetrain.startPath();
+        if (_autonomousLoops < 1) {
+          _drivetrain.setFourBallFarPartOnePath();
+          _shooter.setTwoBallShot();
+        }
         _collector.intake();
-        _shooter.setFarShot();
-        _shooter.readyShot();
-        _autonomousCase++;
+
+        if (_autonomousLoops >= 100) {
+          _drivetrain.startPath();
+          _autonomousCase++;
+        }
         break;
       case 1:
         _collector.intake();
-        _shooter.readyShot();
         _drivetrain.followPath();
 
         if (_drivetrain.isPathFinished())
@@ -224,7 +242,8 @@ public class Robot extends TimedRobot {
           }
         } else {
           
-          if (_shooter.goShoot()) {
+          if ((_shooter.goShoot() && _drivetrain.isTurnFinished()) || _shooting) {
+            _shooting = true;
             _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
             _collector.feed();
           } else {
@@ -236,6 +255,7 @@ public class Robot extends TimedRobot {
         }
         break;
       case 4:
+        _shooting = false;
         _collector.index();
         _drivetrain.followPath();
         _collector.intake();
@@ -288,8 +308,9 @@ public class Robot extends TimedRobot {
         _limelight.setAimbot();
         _shooter.readyShot();
         _drivetrain.drive(0, _drivetrain.followTarget());
-        if (_shooter.goShoot())
+        if ((_shooter.goShoot() && _drivetrain.isTurnFinished()) || _shooting)
         {
+          _shooting = true;
           _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
           _collector.feed();
         } else {
@@ -303,17 +324,22 @@ public class Robot extends TimedRobot {
     }
   }
 
-  public void fourBallAuto()
+  public void fiveBallAuto()
   {
     switch(_autonomousCase)
     {
       case 0:
-        _drivetrain.setDriveForwardAndShootPath();
-        _drivetrain.startPath();
+        if (_autonomousLoops < 1) {
+          _drivetrain.setDriveForwardAndShootPath();
+          _shooter.setTwoBallShot();
+        }
         _collector.intake();
-        _shooter.setFarShot();
-        _shooter.readyShot();
-        _autonomousCase++;
+
+        if (_autonomousLoops >= 50) {
+          _shooter.setFarShot();
+          _drivetrain.startPath();
+          _autonomousCase++;
+        }
         break;
       case 1:
         _collector.intake();
@@ -334,22 +360,24 @@ public class Robot extends TimedRobot {
         //_autonomousCase = 9000;
         break;
       case 3:
-        _collector.collectorUp();
-        _collector.stopCollect();
         _shooter.readyShot();
         _limelight.setAimbot();
         
-        _drivetrain.drive(0, _drivetrain.followTarget());
-        if (_shooter.goShoot())
+        if ((_shooter.goShoot() && _drivetrain.isTurnFinished()) || _shooting)
         {
+          _collector.collectorUp();
+          _collector.stopCollect();
+          _drivetrain.tankDriveVolts(0, 0);
+          _shooting = true;
           _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
           _collector.feed();
         } else {
+          _drivetrain.drive(0, _drivetrain.followTarget());
           _ledController.setUpperLED(_ledController.kYellow);
-          _collector.stopChamber();
+          _collector.index();
         }
 
-        if (_autonomousLoops >= 150)
+        if (_autonomousLoops >= 75)
         {
           _ledController.setUpperLED(_ledController.color2HeartBeat);
           _shooter.stop();
@@ -359,6 +387,7 @@ public class Robot extends TimedRobot {
         }
         break;
       case 4:
+        _shooting = false;
         _collector.index();
         _drivetrain.followPath();
         _collector.intake();
@@ -376,48 +405,88 @@ public class Robot extends TimedRobot {
         _autonomousCase++;
         break;
       case 6:
-      _collector.index();
+      _collector.intake();
         _drivetrain.tankDriveVolts(0, 0);
         if (_autonomousLoops >= 50)
         {
+          _shooter.setCloseShot();
           _autonomousLoops = 0;
           _drivetrain.startPath();
           _autonomousCase++;
         }
         break;
       case 7:
-        _collector.index();
-        _shooter.readyShot();
+        //_shooter.readyShot();
         _drivetrain.followPath();
-        if (_autonomousLoops <= 50)
-        {
-          _collector.intake();
-        }
+        _collector.intake();
+        // if (_autonomousLoops <= 50)
+        // {
+        //   _collector.intake();
+        // }
 
-        if (_autonomousLoops > 50) {
-          _collector.stopCollect();
-          _collector.collectorUp();
-        }
-        if (_autonomousLoops >= 100) {
-          _collector.collectorDown();
-        }
+        // if (_autonomousLoops > 50) {
+        //   _collector.stopCollect();
+        //   _collector.collectorUp();
+        // }
+        // if (_autonomousLoops >= 100) {
+        //   _collector.collectorDown();
+        // }
 
         if (_drivetrain.isPathFinished())
         {
+          _drivetrain.setFifthBallPath();
+          _autonomousLoops = 0;
           _autonomousCase++;
         }
         break;
       case 8:
-        _limelight.setAimbot();
+         _shooter.setZoneShot();
+         _limelight.setAimbot();
+         _shooter.readyShot();
+         _drivetrain.startPath();
+         _autonomousCase++;
+        // _limelight.setAimbot();
+        // _shooter.readyShot();
+        // if (_shooter.goShoot() || _shooting)
+        // {
+        //   _drivetrain.tankDriveVolts(0, 0);
+        //   _shooting = true;
+        //   _ledController.setWaitingForConfirmation();
+        //   _collector.feed();
+        // } else {
+        //   _ledController.setUpperLED(_ledController.kYellow);
+        //   _collector.stopChamber();
+        // }
+
+        // if (_autonomousLoops > 50) {
+        //   _drivetrain.resetPID();
+        //   _shooter.setZoneShot();
+        //   _drivetrain.startPath();
+        //   _autonomousCase++;
+        // }
+        break;
+      case 9:
         _shooter.readyShot();
-        _drivetrain.drive(0, _drivetrain.followTarget());
-        if (_shooter.goShoot())
-        {
+        _drivetrain.followPath();
+        _collector.intake();
+
+        if (_drivetrain.isPathFinished()) {
+          _drivetrain.drive(0, _drivetrain.followTarget());
+          _shooting = false;
+          _autonomousCase++;
+        }
+        break;
+      case 10:
+        _shooter.readyShot();
+        if ((_shooter.goShoot() && _drivetrain.isTurnFinished()) || _shooting) {
+          _drivetrain.tankDriveVolts(0, 0);
           _ledController.setWaitingForConfirmation();
+          _shooting = true;
           _collector.feed();
         } else {
+          _drivetrain.drive(0, _drivetrain.followTarget());
+          _collector.intake();
           _ledController.setUpperLED(_ledController.kYellow);
-          _collector.stopChamber();
         }
         break;
       default:
@@ -425,76 +494,6 @@ public class Robot extends TimedRobot {
         break;
     }
   }
-
-  public void fiveBallAuto()
-  {
-    switch (_autonomousCase)
-    {
-      case 0:
-        _drivetrain.setFiveBallPartOnePath();
-        _drivetrain.startPath();
-        _autonomousCase++;
-        break;
-      case 1:
-        _drivetrain.followPath();
-
-        if (_drivetrain.isPathFinished())
-        {
-          _autonomousLoops = 0;
-          _autonomousCase++;
-        }
-        break;
-      case 2:
-        _drivetrain.tankDriveVolts(0, 0);
-        _drivetrain.setFiveBallPartTwoToTerminalPath();
-        _autonomousCase++;
-        break;
-      case 3:
-        _drivetrain.tankDriveVolts(0, 0);
-
-        if (_autonomousLoops >= 100)
-        {
-          _drivetrain.startPath();
-          _autonomousCase++;
-        }
-        break;
-      case 4:
-        _drivetrain.followPath();
-
-        if (_drivetrain.isPathFinished())
-        {
-          _autonomousLoops = 0;
-          _autonomousCase++;
-        }
-        break;
-      case 5:
-        _drivetrain.tankDriveVolts(0, 0);
-        _drivetrain.setFiveBallPartTwoFromTerminalPath();
-        _autonomousCase++;
-        break;
-      case 6:
-        _drivetrain.tankDriveVolts(0, 0);
-
-        if (_autonomousLoops >= 50)
-        {
-          _drivetrain.startPath();
-          _autonomousCase++;
-        }
-        break;
-      case 7:
-        _drivetrain.followPath();
-
-        if (_drivetrain.isPathFinished())
-        {
-          _autonomousCase++;
-        }
-        break;
-      default:
-        _drivetrain.tankDriveVolts(0, 0);
-        break;
-    }
-  }
-  
   
   /** This function is called once when teleop is enabled. */
   @Override
@@ -511,6 +510,7 @@ public class Robot extends TimedRobot {
       _ledController.setLowerLED(_ledController.kRedHeartBeat);
     }
     _climber.engageRatchet();
+    _shooter.setAutoShot();
   }
 
   /** This function is called periodically during operator control. */
@@ -547,7 +547,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
-    _limelight.setDashcam();
+    _limelight.setAimbot();
 
     _climber.resetClimbEncoder();
     _autonomousMode = (int) SmartDashboard.getNumber("autonomousMode", 0);
@@ -571,11 +571,30 @@ public class Robot extends TimedRobot {
     if (Math.abs(_driverController.getLeftTriggerAxis()) > 0.5)
     {
       _limelight.setAimbot();
-      augmentTurn = _drivetrain.followTarget();
+
+      if (!_finishedAiming){
+        augmentTurn = _drivetrain.followTarget();
+      } else {
+        _drivetrain.tankDriveVolts(0, 0);
+      }
+
+      if (_drivetrain.isTurnFinished()) {
+        _aimLoops++;
+        if (_aimLoops > 5) {
+          _finishedAiming = true;
+        }
+      }
     } else {
+      _aimLoops = 0;
+      _drivetrain.resetTargetAngle();
+      _drivetrain.resetPID();
+      _finishedAiming = false;
       _limelight.setDashcam();
     }
     
+    if (_visionTargetState != null) {
+      SmartDashboard.putNumber("visionTargetStateAngle", _visionTargetState.getOffset());
+    }
     SmartDashboard.putNumber("throttle", throttle);
     SmartDashboard.putNumber("turn", turn);
     SmartDashboard.putNumber("augmentTurn", augmentTurn);
@@ -616,16 +635,15 @@ public class Robot extends TimedRobot {
   }
 
   private void teleopShoot() {
-    if (_operatorController.getAButtonPressed())
+    if (_operatorController.getAButtonPressed() || _driverController.getAButtonPressed())
     {
-      _shooter.setCloseShot();
-    } else if (_operatorController.getBButtonPressed()) { 
+      _shooter.setAutoShot();
+    } else if (_operatorController.getBButtonPressed() || _driverController.getBButtonPressed()) { 
       _shooter.setPukeShot();
       // Other Shot
     } else if (_operatorController.getXButtonPressed())
     {
       _shooter.setZoneShot();
-      //_shooter.setCustomShot();
     } else if (_operatorController.getYButtonPressed())
     {
       _shooter.setFarShot();
@@ -633,22 +651,25 @@ public class Robot extends TimedRobot {
 
     if (Math.abs(_driverController.getLeftTriggerAxis()) >= 0.5)
     {
+      _ph.disableCompressor();
       _shooter.readyShot();
-      
-      if (_driverController.getRightTriggerAxis() > 0.5)  {
-        _shooting = true; 
-        _collector.feed();
-        // Shoot
-      } else {
-        _shooting = false;
-      }
-
-      if (_shooter.goShoot()){
-        _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
-      } else {
-        _ledController.setUpperLED(_ledController.kYellow);
-      }
+          
+        if (_driverController.getRightTriggerAxis() > 0.5)  {
+          _shooting = true; 
+          _collector.feed();
+          // Shoot
+        } else {
+          _shooting = false;
+        }
+  
+        if (_shooter.goShoot() && _drivetrain.isTurnFinished()){
+          _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
+        } else {
+          _ledController.setUpperLED(_ledController.kYellow);
+        }
     } else {
+      _ph.enableCompressorAnalog(70, 110);
+      resetVisionTargetState();
       _ledController.setTeleopIdle();
       _shooting = false;
       _shooter.stop();
@@ -678,6 +699,11 @@ public class Robot extends TimedRobot {
 
   }
 
+  private void resetVisionTargetState()
+  {
+    _visionTargetState = null;
+  }
+
   private void logClimbState(String message)
   {
     SmartDashboard.putString("climbState", message);
@@ -685,8 +711,12 @@ public class Robot extends TimedRobot {
 
   private void teleopClimb()
   {
+    SmartDashboard.putNumber("climbingCase", _climbingCase);
+    SmartDashboard.putNumber("currentRungNumber", _climberCurrentRung);
+    SmartDashboard.putNumber("climbTime", _climbTimer.get());
     switch (_climbingCase) {
       case 0:
+        _climbTimer.start();
         _climber.engageRatchet();
         logClimbState("Engage Ratchet");
         _climbingCase = 1;
@@ -697,6 +727,7 @@ public class Robot extends TimedRobot {
         logClimbState("Climbing");
         if (_climber.isLimitSwitchPressed())
         {
+          _climber.setClimberForward();
           logClimbState("Stop climbing");
           _climber.stopClimb();
           _climbingCase = 2;
@@ -710,7 +741,6 @@ public class Robot extends TimedRobot {
         if (_driverController.getAButton()){
           _ledController.setFire();
           logClimbState("Set climber foward.");
-          _climber.setClimberForward();
           _climber.setClimbPosition(Constants.kClimbExtendedPosition);
           _ratchetCounter = 0;
           _climbingCase = 3;
@@ -721,52 +751,57 @@ public class Robot extends TimedRobot {
 
         if (_ratchetCounter >= 100)
         {
+          _extendCounter = 0;
           _climber.stopClimb();
-          _climbingCase = 4;
+
+          if (_climberCurrentRung > 2) {
+            _climbingCase = 4;
+          } else {
+            _climbingCase = 5;
+          }
         } else if (_ratchetCounter >= 37) {
           _climber.stopClimb();
-          _climber.disengageRatchet();
         } else if (_ratchetCounter >= 25) {
+          _climber.disengageRatchet();
           _climber.climb();
         }
         break;
       case 4:
+        if (_extendCounter <= 25) {
+          logClimbState("Extending.");
+          _climber.extend();
+          _extendCounter++;
+        } else {
+          _climber.stopClimb();
+          logClimbState("Waiting for confirmation.");
+          _ledController.setWaitingForConfirmation();
+          if (_driverController.getAButton()){
+            _ledController.setFire();
+            _climbingCase = 5;
+          }
+        }
+        break;
+      case 5:
         _climber.extend();
-
         if (_climber.isExtendFinished())
         {
           _climber.stopClimb();
           _ratchetCounter = 0;
-          _climbingCase = 5;
+          _climbingCase = 6;
         } else {
           logClimbState("Extending.");
         }
-
         break;
-      case 5:
+      case 6:
         _climber.stopClimb();
         _ratchetCounter++;
         if (_ratchetCounter >= 25) {
           _climber.engageRatchet();
           _climber.setClimberReverse();
-          _climbingCase = 6;
-        }
-        break;
-      case 6:
-        logClimbState("Waiting for confirmation.");
-        _ledController.setWaitingForConfirmation();
-        if (_driverController.getAButton()){
-          _ledController.setFire();
-          _ratchetCounter = 0;
           _climbingCase = 7;
         }
         break;
       case 7:
-      if (_ratchetCounter <= 50) {
-        _climber.climb();
-        _ratchetCounter++;
-      } else {
-        _climber.stopClimb();
         logClimbState("Waiting for confirmation.");
         _ledController.setWaitingForConfirmation();
         if (_driverController.getAButton()){
@@ -774,20 +809,44 @@ public class Robot extends TimedRobot {
           _ratchetCounter = 0;
           _climbingCase = 8;
         }
-      }
         break;
       case 8:
+      if (_ratchetCounter <= 25) {
+        _climber.climb();
+        _ratchetCounter++;
+      } else {
+        _climber.stopClimb();
+        logClimbState("Waiting for confirmation.");
+
+        if (_climberCurrentRung >= 3) {
+          _climbTimer.stop();
+
+          if (_climbTimer.get() <= _fastestClimb) {
+            _ledController.setNewRecord();
+          }
+        } else {
+          _ledController.setWaitingForConfirmation();
+        }
+        if (_driverController.getAButton()){
+          _ledController.setFire();
+          _ratchetCounter = 0;
+          _climbingCase = 9;
+        }
+      }
+        break;
+      case 9:
         _climber.climb();
         
         if (_climber.isLimitSwitchPressed())
         {
+          _climber.setClimberForward();
           logClimbState("Stop climbing");
           _climberCurrentRung++;
           _climber.stopClimb();
 
           if (_climberCurrentRung >= 4)
           {
-            _climbingCase = 9;
+            _climbingCase = 10;
           } else {
             _climbingCase = 2;
           }

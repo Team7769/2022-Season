@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Configuration.Constants;
 import frc.robot.Utilities.Limelight;
 import frc.robot.Utilities.PathFollower;
+import frc.robot.Utilities.VisionTargetState;
 
 public class Drivetrain implements ISubsystem {
     
@@ -46,6 +47,8 @@ public class Drivetrain implements ISubsystem {
 
     private static Drivetrain _instance;
 
+    private double _targetAngle = 7769;
+
     public static Drivetrain GetInstance()
     {
         if (_instance == null)
@@ -69,15 +72,29 @@ public class Drivetrain implements ISubsystem {
         _leftRearMotor.follow(_leftFrontMotor);
         _rightRearMotor.follow(_rightFrontMotor);
 
-        // if (Constants.kCompetitionRobot) {
+        if (Constants.kCompetitionRobot) {
 
-        //     _leftMiddleMotor = new CANSparkMax(Constants.kLeftMiddleDriveDeviceId, MotorType.kBrushless);
-        //     _rightMiddleMotor = new CANSparkMax(Constants.kRightMiddleDriveDeviceId, MotorType.kBrushless);
-        //     _rightMiddleMotor.setInverted(true);
+            _leftMiddleMotor = new CANSparkMax(Constants.kLeftMiddleDriveDeviceId, MotorType.kBrushless);
+            _rightMiddleMotor = new CANSparkMax(Constants.kRightMiddleDriveDeviceId, MotorType.kBrushless);
+            _rightMiddleMotor.setInverted(true);
             
-        //     _leftMiddleMotor.follow(_leftFrontMotor);
-        //     _rightMiddleMotor.follow(_rightFrontMotor);
-        // }
+            _leftMiddleMotor.follow(_leftFrontMotor);
+            _rightMiddleMotor.follow(_rightFrontMotor);
+        }
+
+        _leftFrontMotor.setSmartCurrentLimit(60);
+        _leftMiddleMotor.setSmartCurrentLimit(60);
+        _leftRearMotor.setSmartCurrentLimit(60);
+        _rightFrontMotor.setSmartCurrentLimit(60);
+        _rightMiddleMotor.setSmartCurrentLimit(60);
+        _rightRearMotor.setSmartCurrentLimit(60);
+
+        _leftFrontMotor.burnFlash();
+        _leftMiddleMotor.burnFlash();
+        _leftRearMotor.burnFlash();
+        _rightFrontMotor.burnFlash();
+        _rightMiddleMotor.burnFlash();
+        _rightRearMotor.burnFlash();
 
         _gyro = new AHRS(Port.kMXP);
 
@@ -92,7 +109,8 @@ public class Drivetrain implements ISubsystem {
         _leftDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
         _rightDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
 
-        _turnPID = new PIDController(0.067, 0.0, 0.0035);
+        _turnPID = new PIDController(0.085, 0.0, 0.0035);
+        _turnPID.setTolerance(1.5);
 
         _robotDrive = new DifferentialDrive(_leftFrontMotor, _rightFrontMotor);
         
@@ -149,10 +167,10 @@ public class Drivetrain implements ISubsystem {
      */
     public void tankDriveVolts(double leftVolts, double rightVolts) {
         _rightFrontMotor.setIdleMode(IdleMode.kBrake);
-        //_rightMiddleMotor.setIdleMode(IdleMode.kBrake);
+        _rightMiddleMotor.setIdleMode(IdleMode.kBrake);
         _rightRearMotor.setIdleMode(IdleMode.kBrake);
         _leftFrontMotor.setIdleMode(IdleMode.kBrake);
-        //_leftMiddleMotor.setIdleMode(IdleMode.kBrake);
+        _leftMiddleMotor.setIdleMode(IdleMode.kBrake);
         _leftRearMotor.setIdleMode(IdleMode.kBrake);
 
         _leftFrontMotor.setVoltage(leftVolts);
@@ -163,10 +181,10 @@ public class Drivetrain implements ISubsystem {
     public void drive(double throttle, double turn)
     {
         _rightFrontMotor.setIdleMode(IdleMode.kCoast);
-        //_rightMiddleMotor.setIdleMode(IdleMode.kCoast);
+        _rightMiddleMotor.setIdleMode(IdleMode.kCoast);
         _rightRearMotor.setIdleMode(IdleMode.kCoast);
         _leftFrontMotor.setIdleMode(IdleMode.kCoast);
-        //_leftMiddleMotor.setIdleMode(IdleMode.kCoast);
+        _leftMiddleMotor.setIdleMode(IdleMode.kCoast);
         _leftRearMotor.setIdleMode(IdleMode.kCoast);
 
         if (Math.abs(throttle) <= .1) {
@@ -180,10 +198,10 @@ public class Drivetrain implements ISubsystem {
     public void setRampRate(double rate)
     {
         _leftFrontMotor.setOpenLoopRampRate(rate);
-        //_leftMiddleMotor.setOpenLoopRampRate(rate);
+        _leftMiddleMotor.setOpenLoopRampRate(rate);
         _leftRearMotor.setOpenLoopRampRate(rate);
         _rightFrontMotor.setOpenLoopRampRate(rate);
-        //_rightMiddleMotor.setOpenLoopRampRate(rate);
+        _rightMiddleMotor.setOpenLoopRampRate(rate);
         _rightRearMotor.setOpenLoopRampRate(rate);
     }
 
@@ -308,6 +326,11 @@ public class Drivetrain implements ISubsystem {
         _pathFollower.setDriveBackFromTerminalPath(getTrajectoryConfig(true), getPose());
     }
 
+    public void setFifthBallPath()
+    {
+        _pathFollower.setFifthBallPath(getTrajectoryConfig(false), getPose());
+    }
+
     public void setFiveBallPartOnePath()
     {
         _pathFollower.setFiveBallPartOnePath(getTrajectoryConfig(false));
@@ -375,20 +398,42 @@ public class Drivetrain implements ISubsystem {
       var limelightTargetAngle = _limelight.getAngleToTarget();
 
       var targetAngle = getHeading() - limelightTargetAngle;
-      if (Math.abs(targetAngle) <= 2)
-      {
+
+      var output = _turnPID.calculate(getHeading(), targetAngle);
+
+      SmartDashboard.putNumber("turnOutput", output);
+      
+      if (_turnPID.atSetpoint()) {
         return 0;
       }
 
-      var output = _turnPID.calculate(getHeading(), targetAngle);
-      SmartDashboard.putNumber("turnOutput", output);
-      if (Math.abs(output) > 0.5)
+      if (Math.abs(output) > 0.35)
       {
         if (output > 0)
         {
-          output = 0.5;
+          output = 0.35;
         } else {
-          output = -0.5;
+          output = -0.35;
+        }
+      }
+      return -output;
+    }
+    
+    public double followTarget(VisionTargetState visionTargetState)
+    {
+        if (_targetAngle == 7769) {
+            _targetAngle = getHeading() - visionTargetState.getOffset();
+        }
+
+      var output = _turnPID.calculate(getHeading(), _targetAngle);
+
+      if (Math.abs(output) > 0.35)
+      {
+        if (output > 0)
+        {
+          output = 0.35;
+        } else {
+          output = -0.35;
         }
       }
       return -output;
@@ -418,6 +463,10 @@ public class Drivetrain implements ISubsystem {
     public void resetPID()
     {
         _turnPID.reset();
+    }
+    public void resetTargetAngle()
+    {
+        _targetAngle = 7769;
     }
 
     public void LogTelemetry() {

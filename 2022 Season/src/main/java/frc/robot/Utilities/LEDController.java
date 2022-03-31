@@ -19,6 +19,7 @@ public class LEDController {
     public final double kYellow = .69;
     public final double bpmCustom = 0.43;
     public final double sinelonCustom = 0.55;
+    public final double colorWavesParty = -0.45;
     
     public LEDController()
     {
@@ -60,6 +61,11 @@ public class LEDController {
     public void setWaitingForConfirmation()
     {
         _upperBlinkin.set(kWaitingForConfirmation);
+    }
+
+    public void setNewRecord()
+    {
+        _upperBlinkin.set(colorWavesParty);
     }
 
     public void setFire()
