@@ -59,12 +59,12 @@ public final class Constants {
     public static final double kShooterKf= .0485;
 
     // Hood Target Points
-    public static final double kPukeShotValue = 0.335;
+    public static final double kPukeShotValue = 0.25;
     public static final double kCloseShotValue = .1;
     public static final double kZoneShotValue = 0.140;
     public static final double kFarShotValue = 0.165;
 
-    public static final double kPukeShotSpeed = 6000;
+    public static final double kPukeShotSpeed = 5000;
     public static final double kCloseShotSpeed = 11500;
     public static final double kZoneShotSpeed = 13750;
     public static final double kFarShotSpeed = 14250;

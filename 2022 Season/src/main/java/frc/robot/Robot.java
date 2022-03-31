@@ -60,6 +60,9 @@ public class Robot extends TimedRobot {
   private boolean _climbing = false;
   private boolean _shooting = false;
   private Timer _climbTimer = new Timer();
+
+  // Fastest climb recorded, update as needed
+  private int _fastestClimb = 60;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -506,7 +509,6 @@ public class Robot extends TimedRobot {
     } else {
       _ledController.setLowerLED(_ledController.kRedHeartBeat);
     }
-    _shooter.zeroHood();
     _climber.engageRatchet();
     _shooter.setAutoShot();
   }
@@ -569,11 +571,6 @@ public class Robot extends TimedRobot {
     if (Math.abs(_driverController.getLeftTriggerAxis()) > 0.5)
     {
       _limelight.setAimbot();
-      // if (_visionTargetState == null) {
-      //   _visionTargetState = _limelight.getVisionTargetState();
-      // } else {
-      //   augmentTurn = _drivetrain.followTarget(_visionTargetState);
-      // }
 
       if (!_finishedAiming){
         augmentTurn = _drivetrain.followTarget();
@@ -592,7 +589,7 @@ public class Robot extends TimedRobot {
       _drivetrain.resetTargetAngle();
       _drivetrain.resetPID();
       _finishedAiming = false;
-      //_limelight.setDashcam();
+      _limelight.setDashcam();
     }
     
     if (_visionTargetState != null) {
@@ -638,11 +635,11 @@ public class Robot extends TimedRobot {
   }
 
   private void teleopShoot() {
-    if (_operatorController.getAButtonPressed())
+    if (_operatorController.getAButtonPressed() || _driverController.getAButtonPressed())
     {
       _shooter.setAutoShot();
-    } else if (_operatorController.getBButtonPressed()) { 
-      _shooter.setCustomShot();
+    } else if (_operatorController.getBButtonPressed() || _driverController.getBButtonPressed()) { 
+      _shooter.setPukeShot();
       // Other Shot
     } else if (_operatorController.getXButtonPressed())
     {
@@ -716,6 +713,7 @@ public class Robot extends TimedRobot {
   {
     SmartDashboard.putNumber("climbingCase", _climbingCase);
     SmartDashboard.putNumber("currentRungNumber", _climberCurrentRung);
+    SmartDashboard.putNumber("climbTime", _climbTimer.get());
     switch (_climbingCase) {
       case 0:
         _climbTimer.start();
@@ -822,9 +820,13 @@ public class Robot extends TimedRobot {
 
         if (_climberCurrentRung >= 3) {
           _climbTimer.stop();
-          SmartDashboard.putNumber("climbTime", _climbTimer.get());
+
+          if (_climbTimer.get() <= _fastestClimb) {
+            _ledController.setNewRecord();
+          }
+        } else {
+          _ledController.setWaitingForConfirmation();
         }
-        _ledController.setWaitingForConfirmation();
         if (_driverController.getAButton()){
           _ledController.setFire();
           _ratchetCounter = 0;
