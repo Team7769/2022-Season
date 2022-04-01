@@ -605,6 +605,7 @@ public class Robot extends TimedRobot {
     }
     _climber.engageRatchet();
     _shooter.setAutoShot();
+    _drivetrain.configTeleopTurn();
   }
 
   /** This function is called periodically during operator control. */
@@ -781,15 +782,16 @@ public class Robot extends TimedRobot {
     }
     else if (!_shooting) {
       _collector.index();
+      _collector.collectorUp();
       _collector.stopCollect();
       // Stop collector
     }
 
-    if (_operatorController.getRightTriggerAxis() > 0.5) { 
-      _collector.collectorUp();
-    } else if (_operatorController.getLeftTriggerAxis() > 0.5) {
-      _collector.collectorDown();
-    }
+    // if (_operatorController.getRightTriggerAxis() > 0.5) { 
+    //   _collector.collectorUp();
+    // } else if (_operatorController.getLeftTriggerAxis() > 0.5) {
+    //   _collector.collectorDown();
+    // }
 
   }
 

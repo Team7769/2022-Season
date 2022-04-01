@@ -109,9 +109,8 @@ public class Drivetrain implements ISubsystem {
         _leftDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
         _rightDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
 
-        _turnPID = new PIDController(0.067, 0.0, 0.0040);
-        //_turnPID = new PIDController(0.067, 0.0, 0.0);
-        _turnPID.setTolerance(1.0);
+        _turnPID = new PIDController(0.067, 0.0, 0.0035);
+        _turnPID.setTolerance(1.5);
 
         _robotDrive = new DifferentialDrive(_leftFrontMotor, _rightFrontMotor);
         
@@ -125,6 +124,13 @@ public class Drivetrain implements ISubsystem {
         _pathFollower = new PathFollower();
 
         _limelight = Limelight.getInstance();
+    }
+
+    public void configTeleopTurn()
+    {
+        _turnPID.setTolerance(1.0);
+        _turnPID.setPID(0.067, 0.0, 0.0040);
+        _turnPID.reset();
     }
     
     /**
@@ -499,6 +505,9 @@ public class Drivetrain implements ISubsystem {
         // SmartDashboard.putNumber("rightDriveDistance", _rightDriveEncoder.getDistance());
         // SmartDashboard.putNumber("rightDriveRate", _rightDriveEncoder.getRate());
         // SmartDashboard.putNumber("gyroHeading", getHeading());
+
+        // SmartDashboard.putNumber("turnP", _turnPID.getP());
+        // SmartDashboard.putNumber("turnD", _turnPID.getD());
     }
 
     public void ReadDashboardData() {
