@@ -168,7 +168,7 @@ public final class Constants {
     public static final double kTwoBallStealMidpointAY = 7.274;
     public static final double kTwoBallStealMidpointBX = 5.604;
     public static final double kTwoBallStealMidpointBY = 7.330;
-    public static final double kTwoBallStealEndpointX = 6.189;
+    public static final double kTwoBallStealEndpointX = 6.45;
     public static final double kTwoBallStealEndpointY = 7.330;
     public static final double kTwoBallStealEndRotation = 0;
 

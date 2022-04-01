@@ -845,7 +845,7 @@ public class Robot extends TimedRobot {
       case 3:
         _ratchetCounter++;
 
-        if (_ratchetCounter >= 100)
+        if (_ratchetCounter >= 50)
         {
           _extendCounter = 0;
           _climber.stopClimb();
@@ -855,9 +855,9 @@ public class Robot extends TimedRobot {
           } else {
             _climbingCase = 5;
           }
-        } else if (_ratchetCounter >= 37) {
+        } else if (_ratchetCounter >= 17) {
           _climber.stopClimb();
-        } else if (_ratchetCounter >= 25) {
+        } else if (_ratchetCounter <= 5) {
           _climber.disengageRatchet();
           _climber.climb();
         }
