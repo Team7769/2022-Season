@@ -109,8 +109,9 @@ public class Drivetrain implements ISubsystem {
         _leftDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
         _rightDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
 
-        _turnPID = new PIDController(0.067, 0.0, 0.0035);
-        _turnPID.setTolerance(1.5);
+        _turnPID = new PIDController(0.067, 0.0, 0.0040);
+        //_turnPID = new PIDController(0.067, 0.0, 0.0);
+        _turnPID.setTolerance(1.0);
 
         _robotDrive = new DifferentialDrive(_leftFrontMotor, _rightFrontMotor);
         
@@ -411,6 +412,14 @@ public class Drivetrain implements ISubsystem {
       if (_turnPID.atSetpoint()) {
         return 0;
       }
+      
+
+    //output test
+      if (output > 0) {
+        output += 0.05;
+      } else {
+        output -= 0.05;
+      }
 
       if (Math.abs(output) > 0.5)
       {
@@ -421,6 +430,15 @@ public class Drivetrain implements ISubsystem {
           output = -0.5;
         }
       }
+      
+    // output test
+    //   if (Math.abs(output) <= 0.1) {
+    //       if (output > 0) {
+    //           output = 0.1;
+    //       } else {
+    //           output = -0.1;
+    //       }
+    //   }
       return -output;
     }
     
@@ -476,11 +494,11 @@ public class Drivetrain implements ISubsystem {
 
     public void LogTelemetry() {
         // TODO Auto-generated method stub
-        SmartDashboard.putNumber("leftDriveDistance", _leftDriveEncoder.getDistance());
-        SmartDashboard.putNumber("leftDriveRate", _leftDriveEncoder.getRate());
-        SmartDashboard.putNumber("rightDriveDistance", _rightDriveEncoder.getDistance());
-        SmartDashboard.putNumber("rightDriveRate", _rightDriveEncoder.getRate());
-        SmartDashboard.putNumber("gyroHeading", getHeading());
+        // SmartDashboard.putNumber("leftDriveDistance", _leftDriveEncoder.getDistance());
+        // SmartDashboard.putNumber("leftDriveRate", _leftDriveEncoder.getRate());
+        // SmartDashboard.putNumber("rightDriveDistance", _rightDriveEncoder.getDistance());
+        // SmartDashboard.putNumber("rightDriveRate", _rightDriveEncoder.getRate());
+        // SmartDashboard.putNumber("gyroHeading", getHeading());
     }
 
     public void ReadDashboardData() {

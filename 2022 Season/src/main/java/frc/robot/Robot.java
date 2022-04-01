@@ -123,10 +123,6 @@ public class Robot extends TimedRobot {
      _climber.resetClimbEncoder();
     }
     
-    _ph.enableCompressorAnalog(70, 110);
-    
-    SmartDashboard.putNumber("limelightX", _limelight.getAngleToTarget());
-    SmartDashboard.putBoolean("limelightValidTarget", _limelight.hasTarget());
   }
 
   /**
@@ -676,7 +672,7 @@ public class Robot extends TimedRobot {
         _drivetrain.tankDriveVolts(0, 0);
       }
 
-      if (_drivetrain.isTurnFinished()) {
+      if (_drivetrain.isTurnFinished() && _limelight.hasTarget()) {
         _aimLoops++;
         if (_aimLoops > 5) {
           _finishedAiming = true;
@@ -760,7 +756,7 @@ public class Robot extends TimedRobot {
           _shooting = false;
         }
   
-        if (_shooter.goShoot() && _drivetrain.isTurnFinished()){
+        if (_shooter.goShoot() && _finishedAiming){
           _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
         } else {
           _ledController.setUpperLED(_ledController.kYellow);

@@ -149,10 +149,10 @@ public class Climber implements ISubsystem {
     public void LogTelemetry() {
         // TODO Auto-generated method stub
         
-        SmartDashboard.putNumber("climbEncoderDistance", _climbEncoder.get());
-        SmartDashboard.putBoolean("climbLimitSwitchPressed", _climbLimitSwitch.isPressed());
-        SmartDashboard.putNumber("leftClimbCurrent", _leftClimbMotor.getOutputCurrent());
-        SmartDashboard.putNumber("rightClimbCurrent", _rightClimbMotor.getOutputCurrent());
+        // SmartDashboard.putNumber("climbEncoderDistance", _climbEncoder.get());
+        // SmartDashboard.putBoolean("climbLimitSwitchPressed", _climbLimitSwitch.isPressed());
+        // SmartDashboard.putNumber("leftClimbCurrent", _leftClimbMotor.getOutputCurrent());
+        // SmartDashboard.putNumber("rightClimbCurrent", _rightClimbMotor.getOutputCurrent());
     }
 
     public void ReadDashboardData() {
