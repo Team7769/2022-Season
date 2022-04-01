@@ -109,7 +109,7 @@ public class Drivetrain implements ISubsystem {
         _leftDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
         _rightDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
 
-        _turnPID = new PIDController(0.085, 0.0, 0.0035);
+        _turnPID = new PIDController(0.067, 0.0, 0.0035);
         _turnPID.setTolerance(1.5);
 
         _robotDrive = new DifferentialDrive(_leftFrontMotor, _rightFrontMotor);
@@ -412,13 +412,13 @@ public class Drivetrain implements ISubsystem {
         return 0;
       }
 
-      if (Math.abs(output) > 0.35)
+      if (Math.abs(output) > 0.5)
       {
         if (output > 0)
         {
-          output = 0.35;
+          output = 0.5;
         } else {
-          output = -0.35;
+          output = -0.5;
         }
       }
       return -output;

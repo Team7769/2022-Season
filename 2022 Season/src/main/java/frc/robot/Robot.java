@@ -736,7 +736,7 @@ public class Robot extends TimedRobot {
     if (_operatorController.getAButtonPressed() || _driverController.getAButtonPressed())
     {
       _shooter.setAutoShot();
-    } else if (_operatorController.getBButtonPressed() || _driverController.getBButtonPressed()) { 
+    } else if (_driverController.getBButtonPressed()) { 
       _shooter.setPukeShot();
       // Other Shot
     } else if (_operatorController.getXButtonPressed())
