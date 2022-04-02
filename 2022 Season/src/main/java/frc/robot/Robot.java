@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
   private Timer _climbTimer = new Timer();
 
   // Fastest climb recorded, update as needed
-  private int _fastestClimb = 60;
+  private double _fastestClimb = 15.5;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.

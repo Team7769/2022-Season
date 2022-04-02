@@ -314,6 +314,25 @@ public class Drivetrain implements ISubsystem {
             config.setReversed(isReverse);
             return config;
     }
+    public TrajectoryConfig getSlowTrajectoryConfig(boolean isReverse)
+    {
+      var autoVoltageConstraint =
+        new DifferentialDriveVoltageConstraint(
+            new SimpleMotorFeedforward(Constants.ksVolts,
+                                       Constants.kvVoltSecondsPerMeter,
+                                       Constants.kaVoltSecondsSquaredPerMeter),
+            Constants.kDriveKinematics,
+            10);
+        TrajectoryConfig config =
+        new TrajectoryConfig(2.0,
+                             1.5)
+            // Add kinematics to ensure max speed is actually obeyed
+            .setKinematics(Constants.kDriveKinematics)
+            // Apply the voltage constraint
+            .addConstraint(autoVoltageConstraint);
+            config.setReversed(isReverse);
+            return config;
+    }
     public void setTestPath()
     {
         _pathFollower.setTestPath(getTrajectoryConfig(false));
@@ -368,7 +387,7 @@ public class Drivetrain implements ISubsystem {
 
     public void setTwoBallStealPath()
     {
-        _pathFollower.setTwoBallStealPath(getTrajectoryConfig(false), getPose());
+        _pathFollower.setTwoBallStealPath(getSlowTrajectoryConfig(false), getPose());
     }
 
     public void startPath()
