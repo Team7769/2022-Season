@@ -109,7 +109,7 @@ public class Drivetrain implements ISubsystem {
         _leftDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
         _rightDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
 
-        _turnPID = new PIDController(0.085, 0.0, 0.0035);
+        _turnPID = new PIDController(0.067, 0.0, 0.0035);
         _turnPID.setTolerance(1.5);
 
         _robotDrive = new DifferentialDrive(_leftFrontMotor, _rightFrontMotor);
@@ -124,6 +124,13 @@ public class Drivetrain implements ISubsystem {
         _pathFollower = new PathFollower();
 
         _limelight = Limelight.getInstance();
+    }
+
+    public void configTeleopTurn()
+    {
+        _turnPID.setTolerance(1.0);
+        _turnPID.setPID(0.067, 0.0, 0.0040);
+        _turnPID.reset();
     }
     
     /**
@@ -307,6 +314,25 @@ public class Drivetrain implements ISubsystem {
             config.setReversed(isReverse);
             return config;
     }
+    public TrajectoryConfig getSlowTrajectoryConfig(boolean isReverse)
+    {
+      var autoVoltageConstraint =
+        new DifferentialDriveVoltageConstraint(
+            new SimpleMotorFeedforward(Constants.ksVolts,
+                                       Constants.kvVoltSecondsPerMeter,
+                                       Constants.kaVoltSecondsSquaredPerMeter),
+            Constants.kDriveKinematics,
+            10);
+        TrajectoryConfig config =
+        new TrajectoryConfig(2.0,
+                             1.5)
+            // Add kinematics to ensure max speed is actually obeyed
+            .setKinematics(Constants.kDriveKinematics)
+            // Apply the voltage constraint
+            .addConstraint(autoVoltageConstraint);
+            config.setReversed(isReverse);
+            return config;
+    }
     public void setTestPath()
     {
         _pathFollower.setTestPath(getTrajectoryConfig(false));
@@ -359,6 +385,11 @@ public class Drivetrain implements ISubsystem {
         _pathFollower.setFourBallFarPartTwoBackPath(getTrajectoryConfig(true), getPose());
     }
 
+    public void setTwoBallStealPath()
+    {
+        _pathFollower.setTwoBallStealPath(getSlowTrajectoryConfig(false), getPose());
+    }
+
     public void startPath()
     {
         _leftDriveVelocityPID.reset();
@@ -406,16 +437,33 @@ public class Drivetrain implements ISubsystem {
       if (_turnPID.atSetpoint()) {
         return 0;
       }
+      
 
-      if (Math.abs(output) > 0.35)
+    //output test
+      if (output > 0) {
+        output += 0.05;
+      } else {
+        output -= 0.05;
+      }
+
+      if (Math.abs(output) > 0.5)
       {
         if (output > 0)
         {
-          output = 0.35;
+          output = 0.5;
         } else {
-          output = -0.35;
+          output = -0.5;
         }
       }
+      
+    // output test
+    //   if (Math.abs(output) <= 0.1) {
+    //       if (output > 0) {
+    //           output = 0.1;
+    //       } else {
+    //           output = -0.1;
+    //       }
+    //   }
       return -output;
     }
     
@@ -471,11 +519,14 @@ public class Drivetrain implements ISubsystem {
 
     public void LogTelemetry() {
         // TODO Auto-generated method stub
-        SmartDashboard.putNumber("leftDriveDistance", _leftDriveEncoder.getDistance());
-        SmartDashboard.putNumber("leftDriveRate", _leftDriveEncoder.getRate());
-        SmartDashboard.putNumber("rightDriveDistance", _rightDriveEncoder.getDistance());
-        SmartDashboard.putNumber("rightDriveRate", _rightDriveEncoder.getRate());
-        SmartDashboard.putNumber("gyroHeading", getHeading());
+        // SmartDashboard.putNumber("leftDriveDistance", _leftDriveEncoder.getDistance());
+        // SmartDashboard.putNumber("leftDriveRate", _leftDriveEncoder.getRate());
+        // SmartDashboard.putNumber("rightDriveDistance", _rightDriveEncoder.getDistance());
+        // SmartDashboard.putNumber("rightDriveRate", _rightDriveEncoder.getRate());
+        // SmartDashboard.putNumber("gyroHeading", getHeading());
+
+        // SmartDashboard.putNumber("turnP", _turnPID.getP());
+        // SmartDashboard.putNumber("turnD", _turnPID.getD());
     }
 
     public void ReadDashboardData() {

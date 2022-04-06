@@ -174,10 +174,10 @@ private static Collector _instance;
         
         // SmartDashboard.putNumber("collectorSpeed", _collectorSpeed);
         // SmartDashboard.putNumber("chamberSpeed", _chamberSpeed);
-        SmartDashboard.putNumber("frontChamberOutput", _frontChamberMotor.get());
-        SmartDashboard.putNumber("backChamberOutput", _backChamberMotor.get());
-        SmartDashboard.putBoolean("bottomChamberSensor", _chamberBottomSensor.isBlocked());
-        SmartDashboard.putBoolean("topChamberSensor", _chamberTopSensor.isBlocked());
+        // SmartDashboard.putNumber("frontChamberOutput", _frontChamberMotor.get());
+        // SmartDashboard.putNumber("backChamberOutput", _backChamberMotor.get());
+        // SmartDashboard.putBoolean("bottomChamberSensor", _chamberBottomSensor.isBlocked());
+        // SmartDashboard.putBoolean("topChamberSensor", _chamberTopSensor.isBlocked());
         SmartDashboard.putNumber("ballCount", _ballCount);
     }
 

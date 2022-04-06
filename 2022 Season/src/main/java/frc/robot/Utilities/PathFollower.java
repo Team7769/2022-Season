@@ -87,6 +87,10 @@ public class PathFollower {
     {
         _currentPath = getFourBallFarPartTwoBackTrajectory(config, startingPose);
     }
+    public void setTwoBallStealPath(TrajectoryConfig config, Pose2d startingPose)
+    {
+        _currentPath = getStealTrajectory(config, startingPose);
+    }
 
     public Trajectory getCurrentTrajectory()
     {
@@ -184,6 +188,20 @@ public class PathFollower {
         ),
         // End 3 meters straight ahead of where we started, facing forward
         new Pose2d(Constants.kFifthBallEndPointX, Constants.kFifthBallEndPointY, new Rotation2d(Constants.kFifthBallEndPointRotation)),
+        // Pass config
+        config);
+      }
+
+      private Trajectory getStealTrajectory(TrajectoryConfig config, Pose2d currentPose) {
+
+        return TrajectoryGenerator.generateTrajectory(currentPose,
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(
+            new Translation2d(Constants.kTwoBallStealMidpointAX, Constants.kTwoBallStealMidpointAY),
+            new Translation2d(Constants.kTwoBallStealMidpointBX, Constants.kTwoBallStealMidpointBY)
+        ),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(Constants.kTwoBallStealEndpointX, Constants.kTwoBallStealEndpointY, new Rotation2d(Constants.kTwoBallStealEndRotation)),
         // Pass config
         config);
       }

@@ -260,27 +260,27 @@ public class Shooter implements ISubsystem {
 
     public void LogTelemetry() {
         // TODO Auto-generated method stub
-        SmartDashboard.putNumber("hoodPosition", _hoodEncoder.get());
-        SmartDashboard.putNumber("hoodOffset", _hoodEncoder.getPositionOffset());
-        SmartDashboard.putNumber("hoodFrequency", _hoodEncoder.getFrequency());
-        SmartDashboard.putBoolean("limitSwitchBlocked", _limitSwitch.isPressed());
-        SmartDashboard.putNumber("hoodDistance", _hoodEncoder.getDistance());
-        SmartDashboard.putNumber("hoodTarget", _hoodTarget);
-        SmartDashboard.putString("currentShot", _targetName);
-        SmartDashboard.putNumber("targetDistance", _limelight.getDistanceToTarget());
+        // SmartDashboard.putNumber("hoodPosition", _hoodEncoder.get());
+        // SmartDashboard.putNumber("hoodOffset", _hoodEncoder.getPositionOffset());
+        // SmartDashboard.putNumber("hoodFrequency", _hoodEncoder.getFrequency());
+        // SmartDashboard.putBoolean("limitSwitchBlocked", _limitSwitch.isPressed());
+        // SmartDashboard.putNumber("hoodDistance", _hoodEncoder.getDistance());
+         SmartDashboard.putNumber("hoodTarget", _hoodTarget);
+         SmartDashboard.putString("currentShot", _targetName);
+        // SmartDashboard.putNumber("targetDistance", _limelight.getDistanceToTarget());
 
-        SmartDashboard.putNumber("hoodCustomPosition", _customHoodPositon);
-        SmartDashboard.putNumber("shooterCustomSpeed", _customShooterSpeed);
-        SmartDashboard.putNumber("closedLoopError", _leftMotor.getClosedLoopError());
+        // SmartDashboard.putNumber("hoodCustomPosition", _customHoodPositon);
+        // SmartDashboard.putNumber("shooterCustomSpeed", _customShooterSpeed);
+        // SmartDashboard.putNumber("closedLoopError", _leftMotor.getClosedLoopError());
 
-        SmartDashboard.putNumber("interpolatedSpeed", INTERPOLATION_TABLE.sample(_limelight.getDistanceToTarget())[0]);
-        SmartDashboard.putNumber("interpolatedHood", INTERPOLATION_TABLE.sample(_limelight.getDistanceToTarget())[1]);
+        //SmartDashboard.putNumber("interpolatedSpeed", INTERPOLATION_TABLE.sample(_limelight.getDistanceToTarget())[0]);
+        //SmartDashboard.putNumber("interpolatedHood", INTERPOLATION_TABLE.sample(_limelight.getDistanceToTarget())[1]);
     }
 
     public void ReadDashboardData() {
         // TODO Auto-generated method stub
-        _customHoodPositon = SmartDashboard.getNumber("hoodCustomPosition", 0);
-        _customShooterSpeed = SmartDashboard.getNumber("shooterCustomSpeed", 0);
+        // _customHoodPositon = SmartDashboard.getNumber("hoodCustomPosition", 0);
+        // _customShooterSpeed = SmartDashboard.getNumber("shooterCustomSpeed", 0);
         
     }
 }
