@@ -77,10 +77,17 @@ public class Shooter implements ISubsystem {
 
         _leftMotorConfig = new TalonFXConfiguration();
         _rightMotorConfig = new TalonFXConfiguration();
+
+        _leftMotorConfig.voltageCompSaturation = 10;
+        _leftMotorConfig.closedloopRamp = 0.4;
+
+        _rightMotorConfig.voltageCompSaturation = 10;
+        _rightMotorConfig.closedloopRamp = 0.4;
         
         _leftMotorConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor; //Local Feedback Source
         _leftMotorConfig.slot0.kP = Constants.kShooterKp;
         _leftMotorConfig.slot0.kF = Constants.kShooterKf;
+        _leftMotorConfig.slot0.integralZone = 200;
 
 		/* Configure the Remote (Left) Talon's selected sensor as a remote sensor for the right Talon */
 		_rightMotorConfig.remoteFilter0.remoteSensorDeviceID = _leftMotor.getDeviceID(); //Device ID of Remote Source

@@ -38,11 +38,11 @@ public final class Constants {
     public static final int kRightShooterMotorDeviceId= 14;
 
     // Solenoids
-    public static final int kCollectorSolenoidChannel = 12;
-    public static final int kClimberSolenoidForwardChannel = 11;
-    public static final int kClimberSolenoidReverseChannel = 15;
-    public static final int kRatchetSolenoidForwardChannel = 14;
-    public static final int kRatchetSolenoidReverseChannel = 13;
+    public static final int kCollectorSolenoidChannel = 5;
+    public static final int kClimberSolenoidForwardChannel = 4;
+    public static final int kClimberSolenoidReverseChannel = 0;
+    public static final int kRatchetSolenoidForwardChannel = 7;
+    public static final int kRatchetSolenoidReverseChannel = 6;
     
     //DIO
     public static final int kLeftEncoderPortA = 0;

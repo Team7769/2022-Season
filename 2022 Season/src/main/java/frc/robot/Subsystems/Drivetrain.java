@@ -110,9 +110,11 @@ public class Drivetrain implements ISubsystem {
         _rightDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
 
         _turnPID = new PIDController(0.067, 0.0, 0.0035);
+        _turnPID.setIntegratorRange(-6, 6);
         _turnPID.setTolerance(1.5);
 
         _robotDrive = new DifferentialDrive(_leftFrontMotor, _rightFrontMotor);
+        _robotDrive.setSafetyEnabled(false);
         
         resetEncoders();
         _odometry = new DifferentialDriveOdometry(_gyro.getRotation2d());
@@ -173,13 +175,6 @@ public class Drivetrain implements ISubsystem {
      * @param rightVolts the commanded right output
      */
     public void tankDriveVolts(double leftVolts, double rightVolts) {
-        _rightFrontMotor.setIdleMode(IdleMode.kBrake);
-        _rightMiddleMotor.setIdleMode(IdleMode.kBrake);
-        _rightRearMotor.setIdleMode(IdleMode.kBrake);
-        _leftFrontMotor.setIdleMode(IdleMode.kBrake);
-        _leftMiddleMotor.setIdleMode(IdleMode.kBrake);
-        _leftRearMotor.setIdleMode(IdleMode.kBrake);
-
         _leftFrontMotor.setVoltage(leftVolts);
         _rightFrontMotor.setVoltage(rightVolts);
         _robotDrive.feed();
@@ -187,19 +182,25 @@ public class Drivetrain implements ISubsystem {
     
     public void drive(double throttle, double turn)
     {
-        _rightFrontMotor.setIdleMode(IdleMode.kCoast);
-        _rightMiddleMotor.setIdleMode(IdleMode.kCoast);
-        _rightRearMotor.setIdleMode(IdleMode.kCoast);
-        _leftFrontMotor.setIdleMode(IdleMode.kCoast);
-        _leftMiddleMotor.setIdleMode(IdleMode.kCoast);
-        _leftRearMotor.setIdleMode(IdleMode.kCoast);
-
         if (Math.abs(throttle) <= .1) {
             setRampRate(0);
         } else {
             setRampRate(.25);
         }
         _robotDrive.arcadeDrive(throttle, turn);
+    }
+
+    public void directDrive(double throttle, double turn) {
+        _leftFrontMotor.set(throttle - turn);
+        _rightFrontMotor.set(throttle + turn);
+    }
+
+    public void arcadeDrive(double throttle, double turn) {
+        _robotDrive.arcadeDrive(throttle, turn, false);
+    }
+
+    public void curvatureDrive(double throttle, double turn, boolean quickTurn) {
+        _robotDrive.curvatureDrive(throttle, turn, quickTurn);
     }
 
     public void setRampRate(double rate)
@@ -217,6 +218,24 @@ public class Drivetrain implements ISubsystem {
         _rightFrontMotor.setIdleMode(IdleMode.kBrake);
         _leftFrontMotor.setIdleMode(IdleMode.kBrake);
         _robotDrive.arcadeDrive(throttle, turn);
+    }
+
+    public void setCoastMode() {
+        _rightFrontMotor.setIdleMode(IdleMode.kCoast);
+        _rightMiddleMotor.setIdleMode(IdleMode.kCoast);
+        _rightRearMotor.setIdleMode(IdleMode.kCoast);
+        _leftFrontMotor.setIdleMode(IdleMode.kCoast);
+        _leftMiddleMotor.setIdleMode(IdleMode.kCoast);
+        _leftRearMotor.setIdleMode(IdleMode.kCoast);
+    }
+
+    public void setBrakeMode() {
+        _rightFrontMotor.setIdleMode(IdleMode.kBrake);
+        _rightMiddleMotor.setIdleMode(IdleMode.kBrake);
+        _rightRearMotor.setIdleMode(IdleMode.kBrake);
+        _leftFrontMotor.setIdleMode(IdleMode.kBrake);
+        _leftMiddleMotor.setIdleMode(IdleMode.kBrake);
+        _leftRearMotor.setIdleMode(IdleMode.kBrake);
     }
     
     /**
