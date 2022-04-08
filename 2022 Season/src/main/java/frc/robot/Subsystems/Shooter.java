@@ -78,11 +78,11 @@ public class Shooter implements ISubsystem {
         _leftMotorConfig = new TalonFXConfiguration();
         _rightMotorConfig = new TalonFXConfiguration();
 
-        _leftMotorConfig.voltageCompSaturation = 10;
-        _leftMotorConfig.closedloopRamp = 0.4;
+        // _leftMotorConfig.voltageCompSaturation = 10;
+        // _leftMotorConfig.closedloopRamp = 0.4;
 
-        _rightMotorConfig.voltageCompSaturation = 10;
-        _rightMotorConfig.closedloopRamp = 0.4;
+        // _rightMotorConfig.voltageCompSaturation = 10;
+        // _rightMotorConfig.closedloopRamp = 0.4;
         
         _leftMotorConfig.primaryPID.selectedFeedbackSensor = FeedbackDevice.IntegratedSensor; //Local Feedback Source
         _leftMotorConfig.slot0.kP = Constants.kShooterKp;
@@ -267,14 +267,14 @@ public class Shooter implements ISubsystem {
 
     public void LogTelemetry() {
         // TODO Auto-generated method stub
-        // SmartDashboard.putNumber("hoodPosition", _hoodEncoder.get());
-        // SmartDashboard.putNumber("hoodOffset", _hoodEncoder.getPositionOffset());
-        // SmartDashboard.putNumber("hoodFrequency", _hoodEncoder.getFrequency());
-        // SmartDashboard.putBoolean("limitSwitchBlocked", _limitSwitch.isPressed());
-        // SmartDashboard.putNumber("hoodDistance", _hoodEncoder.getDistance());
+        SmartDashboard.putNumber("hoodPosition", _hoodEncoder.get());
+        SmartDashboard.putNumber("hoodOffset", _hoodEncoder.getPositionOffset());
+        SmartDashboard.putNumber("hoodFrequency", _hoodEncoder.getFrequency());
+        SmartDashboard.putBoolean("limitSwitchBlocked", _limitSwitch.isPressed());
+        SmartDashboard.putNumber("hoodDistance", _hoodEncoder.getDistance());
          SmartDashboard.putNumber("hoodTarget", _hoodTarget);
          SmartDashboard.putString("currentShot", _targetName);
-        // SmartDashboard.putNumber("targetDistance", _limelight.getDistanceToTarget());
+        SmartDashboard.putNumber("targetDistance", _limelight.getDistanceToTarget());
 
         // SmartDashboard.putNumber("hoodCustomPosition", _customHoodPositon);
         // SmartDashboard.putNumber("shooterCustomSpeed", _customShooterSpeed);

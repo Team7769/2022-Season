@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -61,12 +60,16 @@ public class Drivetrain implements ISubsystem {
     public Drivetrain()
     {
         _leftFrontMotor = new CANSparkMax(Constants.kLeftFrontDriveDeviceId, MotorType.kBrushless);
+        _leftFrontMotor.restoreFactoryDefaults();
         _leftRearMotor = new CANSparkMax(Constants.kLeftRearDriveDeviceId, MotorType.kBrushless);
+        _leftRearMotor.restoreFactoryDefaults();
 
         _rightFrontMotor = new CANSparkMax(Constants.kRightFrontDriveDeviceId, MotorType.kBrushless);
+        _rightFrontMotor.restoreFactoryDefaults();
         _rightFrontMotor.setInverted(true);
 
         _rightRearMotor = new CANSparkMax(Constants.kRightRearDriveDeviceId, MotorType.kBrushless);
+        _rightRearMotor.restoreFactoryDefaults();
         _rightRearMotor.setInverted(true);
 
         _leftRearMotor.follow(_leftFrontMotor);
@@ -75,7 +78,10 @@ public class Drivetrain implements ISubsystem {
         if (Constants.kCompetitionRobot) {
 
             _leftMiddleMotor = new CANSparkMax(Constants.kLeftMiddleDriveDeviceId, MotorType.kBrushless);
+            _leftMiddleMotor.restoreFactoryDefaults();
+            
             _rightMiddleMotor = new CANSparkMax(Constants.kRightMiddleDriveDeviceId, MotorType.kBrushless);
+            _rightMiddleMotor.restoreFactoryDefaults();
             _rightMiddleMotor.setInverted(true);
             
             _leftMiddleMotor.follow(_leftFrontMotor);
@@ -419,10 +425,6 @@ public class Drivetrain implements ISubsystem {
     public void followPath()
     {
         var target = _pathFollower.getPathTarget(getPose());
-        SmartDashboard.putNumber("leftSpeed", getWheelSpeeds().leftMetersPerSecond);
-        SmartDashboard.putNumber("rightSpeed", getWheelSpeeds().rightMetersPerSecond);
-        SmartDashboard.putNumber("leftTargetSpeed", target.leftMetersPerSecond);
-        SmartDashboard.putNumber("rightTargetSpeed", target.rightMetersPerSecond);
 
         var leftOutputTarget = _leftDriveVelocityPID.calculate(getWheelSpeeds().leftMetersPerSecond, target.leftMetersPerSecond);
         var rightOutputTarget = _rightDriveVelocityPID.calculate(getWheelSpeeds().rightMetersPerSecond, target.rightMetersPerSecond);

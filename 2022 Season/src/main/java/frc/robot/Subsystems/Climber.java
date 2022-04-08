@@ -45,8 +45,8 @@ public class Climber implements ISubsystem {
      * Constructor for climber
     */
     public Climber(){
-        _climber = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.kClimberSolenoidForwardChannel, Constants.kClimberSolenoidReverseChannel);
-        _ratchet = new DoubleSolenoid(PneumaticsModuleType.REVPH, Constants.kRatchetSolenoidForwardChannel, Constants.kRatchetSolenoidReverseChannel);
+        _climber = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Constants.kClimberSolenoidForwardChannel, Constants.kClimberSolenoidReverseChannel);
+        _ratchet = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, Constants.kRatchetSolenoidForwardChannel, Constants.kRatchetSolenoidReverseChannel);
         
         _leftClimbMotor = new CANSparkMax(Constants.kLeftClimbMotorDeviceId, MotorType.kBrushless);
         _leftClimbMotor.setIdleMode(IdleMode.kBrake);

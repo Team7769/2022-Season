@@ -8,18 +8,12 @@ import java.util.ArrayList;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Configuration.AutonomousMode;
 import frc.robot.Configuration.Constants;
@@ -61,16 +55,14 @@ public class Robot extends TimedRobot {
   private int _extendCounter = 0;
   private int _aimLoops = 0;
   private int _testDriveMode = 0;
-  private VisionTargetState _visionTargetState = null;
   private boolean _finishedAiming = false;
   private boolean _climbing = false;
   private boolean _shooting = false;
-  private SlewRateLimiter _filter = new SlewRateLimiter(0.5);
-  private Timer _climbTimer = new Timer();
-  private Timer _disabledTimer = new Timer();
+  // private Timer _climbTimer = new Timer();
+  // private Timer _disabledTimer = new Timer();
 
   // Fastest climb recorded, update as needed
-  private double _fastestClimb = 15.5;
+  //private double _fastestClimb = 15.5;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -123,10 +115,10 @@ public class Robot extends TimedRobot {
     // This is the robot periodic method.
     _drivetrain.updatePose();
 
-    _subsystems.forEach(s -> {
-      s.ReadDashboardData();
-      s.LogTelemetry();
-    });
+    // _subsystems.forEach(s -> {
+    //   s.ReadDashboardData();
+    //   s.LogTelemetry();
+    // });
 
     if (Constants.kCompetitionRobot) {
      //_shooter.zeroHood();
@@ -155,20 +147,33 @@ public class Robot extends TimedRobot {
     _drivetrain.resetGyro();
     _shooter.zeroHood();
     resetOdometry();
-    
-    var alliance = DriverStation.getAlliance();
-    if (alliance == Alliance.Blue) {
-      _ledController.setLowerLED(_ledController.kBlueHeartBeat);
-    } else {
-      _ledController.setLowerLED(_ledController.kRedHeartBeat);
+
+    switch (_autonomousMode) {
+      case AutonomousMode.kDoNothing:
+        break;
+      case AutonomousMode.kTwoBallFar:
+        _drivetrain.setFourBallFarPartOnePath();
+        _shooter.setTwoBallShot();
+        break;
+      case AutonomousMode.kTwoBallSteal:
+        _drivetrain.setFourBallFarPartOnePath();
+        _shooter.setTwoBallShot();
+        break;
+      case AutonomousMode.kFiveBall:
+        break;
     }
+    
+    // var alliance = DriverStation.getAlliance();
+    // if (alliance == Alliance.Blue) {
+    //   _ledController.setLowerLED(_ledController.kBlueHeartBeat);
+    // } else {
+    //   _ledController.setLowerLED(_ledController.kRedHeartBeat);
+    // }
   }
   
   public void resetOdometry()
   {
-    //_drivetrain.resetOdometry();
     _drivetrain.resetEncoders();
-    //_drivetrain.resetPIDControllers();
   }
 
   /** This function is called periodically during autonomous. */
@@ -210,10 +215,6 @@ public class Robot extends TimedRobot {
     switch(_autonomousCase)
     {
       case 0:
-        if (_autonomousLoops < 1) {
-          _drivetrain.setFourBallFarPartOnePath();
-          _shooter.setTwoBallShot();
-        }
         _collector.intake();
 
         if (_autonomousLoops >= 100) {
@@ -443,7 +444,6 @@ public class Robot extends TimedRobot {
       case 0:
         if (_autonomousLoops < 1) {
           _drivetrain.setDriveForwardAndShootPath();
-          _shooter.setTwoBallShot();
         }
         _collector.intake();
 
@@ -615,13 +615,14 @@ public class Robot extends TimedRobot {
     _climbingCase = 0;
     _ratchetCounter = 0;
     _ledController.setTeleopIdle();
+    _ledController.setLowerLED(_ledController.kBlueHeartBeat);
     
-    var alliance = DriverStation.getAlliance();
-    if (alliance == Alliance.Blue) {
-      _ledController.setLowerLED(_ledController.kBlueHeartBeat);
-    } else {
-      _ledController.setLowerLED(_ledController.kRedHeartBeat);
-    }
+    // var alliance = DriverStation.getAlliance();
+    // if (alliance == Alliance.Blue) {
+    //   _ledController.setLowerLED(_ledController.kBlueHeartBeat);
+    // } else {
+    //   _ledController.setLowerLED(_ledController.kRedHeartBeat);
+    // }
     _climber.engageRatchet();
     _shooter.setAutoShot();
     _drivetrain.configTeleopTurn();
@@ -645,32 +646,39 @@ public class Robot extends TimedRobot {
       stopAll();
       teleopClimb();
     }
+    
+    var totalCurrent = _pd.getTotalCurrent();
+    SmartDashboard.putNumber("totalCurrent", totalCurrent);
+
+    if (totalCurrent > 220) {
+      _driverController.setRumble(RumbleType.kLeftRumble, 1.0);
+    } else {
+      _driverController.setRumble(RumbleType.kLeftRumble, 0);
+    }
   }
 
   /** This function is called once when the robot is disabled. */
   @Override
   public void disabledInit() {
-
-    _disabledTimer.start();
-    var alliance = DriverStation.getAlliance();
-    if (alliance == Alliance.Blue) {
-      _ledController.setLowerLED(_ledController.kBlueHeartBeat);
-    } else {
-      _ledController.setLowerLED(_ledController.kRedHeartBeat);
-    }
+    _limelight.setAimbot();
+    //_disabledTimer.start();
+    // var alliance = DriverStation.getAlliance();
+    // if (alliance == Alliance.Blue) {
+    //   _ledController.setLowerLED(_ledController.kBlueHeartBeat);
+    // } else {
+    //   _ledController.setLowerLED(_ledController.kRedHeartBeat);
+    // }
   }
 
   /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {
-    if (_disabledTimer.get() > 2) {
-      _drivetrain.setCoastMode();
-      _disabledTimer.stop();
-      _disabledTimer.reset();
-    }
-    _limelight.setAimbot();
+    // if (_disabledTimer.get() > 2) {
+    //   _drivetrain.setCoastMode();
+    //   _disabledTimer.stop();
+    //   _disabledTimer.reset();
+    // }
 
-    _climber.resetClimbEncoder();
     _autonomousMode = (int) SmartDashboard.getNumber("autonomousMode", 0);
   }
 
@@ -678,87 +686,86 @@ public class Robot extends TimedRobot {
   @Override
   public void testInit() {
 
-    var slewRate = SmartDashboard.getNumber("slewRate", 0.5);
-    SmartDashboard.putNumber("slewRate", slewRate);
-    _filter = new SlewRateLimiter(slewRate);
+    // var slewRate = SmartDashboard.getNumber("slewRate", 0.5);
+    // SmartDashboard.putNumber("slewRate", slewRate);
+    // _filter = new SlewRateLimiter(slewRate);
 
-    _testDriveMode = 0;
-    _drivetrain.setCoastMode();
+    // _testDriveMode = 0;
+    // _drivetrain.setCoastMode();
   }
 
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
 
-    if (_driverController.getAButton()) {
-      _testDriveMode = 0;
-      SmartDashboard.putString("testDriveMode", "Cubic Smoothing");
-    } else if (_driverController.getBButton()) {
-      _testDriveMode = 1;
-      SmartDashboard.putString("testDriveMode", "Slew Rate Filter");
-    } else if (_driverController.getXButton()) {
-      _testDriveMode = 2;
-      SmartDashboard.putString("testDriveMode", "Curvature Drive");
-    } else if (_driverController.getYButton()) {
-      SmartDashboard.putString("testDriveMode", "Direct Drive");
-      _testDriveMode = 3;
-    } else if (_driverController.getStartButton()) {
-      _testDriveMode = 4;
-      SmartDashboard.putString("testDriveMode", "Current Drive");
-    }
+    // if (_driverController.getAButton()) {
+    //   _testDriveMode = 0;
+    //   SmartDashboard.putString("testDriveMode", "Cubic Smoothing");
+    // } else if (_driverController.getBButton()) {
+    //   _testDriveMode = 1;
+    //   SmartDashboard.putString("testDriveMode", "Slew Rate Filter");
+    // } else if (_driverController.getXButton()) {
+    //   _testDriveMode = 2;
+    //   SmartDashboard.putString("testDriveMode", "Curvature Drive");
+    // } else if (_driverController.getYButton()) {
+    //   SmartDashboard.putString("testDriveMode", "Direct Drive");
+    //   _testDriveMode = 3;
+    // } else if (_driverController.getStartButton()) {
+    //   _testDriveMode = 4;
+    //   SmartDashboard.putString("testDriveMode", "Current Drive");
+    // }
 
-    var throttle = -_driverController.getLeftY();
-    var turn = _driverController.getRightX();
+    // var throttle = -_driverController.getLeftY();
+    // var turn = _driverController.getRightX();
 
-    switch(_testDriveMode) {
-      case 0:
+    // if (Math.abs(throttle) <= 0.1) {
+    //   throttle = 0;
+    // }
+    // if (Math.abs(turn) <= 0.1) {
+    //   turn = 0;
+    // }
 
-        // Smoothing algorithm for x^3
-        if (throttle > 0.0)
-          throttle = (1 - 0.1) * Math.pow(throttle, 3) + 0.1;
-        else
-          throttle = (1 - 0.1) * Math.pow(throttle, 3) - 0.1;
+    // switch(_testDriveMode) {
+    //   case 0:
 
-        // Smoothing algorithm for x^3
-        if (turn > 0.0)
-          turn = (1 - 0.1) * Math.pow(turn, 3) + 0.1;
-        else
-          turn = (1 - 0.1) * Math.pow(turn, 3) - 0.1;
+    //     // Smoothing algorithm for x^3
+    //     if (throttle > 0.0)
+    //       throttle = (1 - 0.1) * Math.pow(throttle, 3) + 0.1;
+    //     else if (throttle < 0.0)
+    //       throttle = (1 - 0.1) * Math.pow(throttle, 3) - 0.1;
 
-        _drivetrain.arcadeDrive(throttle, turn);
-        _ledController.setNewRecord();
-        break;
-      case 1:
-        _drivetrain.arcadeDrive(_filter.calculate(throttle), turn);
-        _ledController.setUpperLED(_ledController.bpmParty);
+    //     // Smoothing algorithm for x^3
+    //     if (turn > 0.0)
+    //       turn = (1 - 0.1) * Math.pow(turn, 3) + 0.1;
+    //     else if (turn < 0.0)
+    //       turn = (1 - 0.1) * Math.pow(turn, 3) - 0.1;
+
+    //     _drivetrain.arcadeDrive(throttle, turn);
+    //     _ledController.setNewRecord();
+    //     break;
+    //   case 1:
+    //     _drivetrain.arcadeDrive(_filter.calculate(throttle), turn);
+    //     _ledController.setUpperLED(_ledController.bpmParty);
     
-        break;
-      case 2:
-        var quickTurn = _driverController.getLeftBumper();
-        _drivetrain.curvatureDrive(throttle, turn, quickTurn);
-        _ledController.setUpperLED(_ledController.kGoldStrobe);
+    //     break;
+    //   case 2:
+    //     var quickTurn = _driverController.getLeftBumper();
+    //     _drivetrain.curvatureDrive(throttle, turn, quickTurn);
+    //     _ledController.setUpperLED(_ledController.kGoldStrobe);
     
-        break;
-      case 3:
-        _drivetrain.directDrive(throttle, turn);
-        _ledController.setUpperLED(_ledController.kBlueShot);
-        break;
-      default:
-        _drivetrain.drive(throttle, turn);
-        _ledController.setUpperLED(_ledController.kConfetti);
-        break;
-    }
-    var totalCurrent = _pd.getTotalCurrent();
-    SmartDashboard.putNumber("totalCurrent", totalCurrent);
+    //     break;
+    //   case 3:
+    //     _drivetrain.directDrive(throttle, turn);
+    //     _ledController.setUpperLED(_ledController.kBlueShot);
+    //     break;
+    //   default:
+    //     _drivetrain.drive(throttle, turn);
+    //     _ledController.setUpperLED(_ledController.kConfetti);
+    //     break;
+    // }
 
-    if (_pd.getTotalCurrent() > 220) {
-      _driverController.setRumble(RumbleType.kLeftRumble, 1.0);
-    } else {
-      _driverController.setRumble(RumbleType.kLeftRumble, 0);
-    }
-
-    SmartDashboard.putNumber("driverY", _driverController.getLeftY());
-    SmartDashboard.putNumber("driverX", _driverController.getRightX());
+    // SmartDashboard.putNumber("driverY", _driverController.getLeftY());
+    // SmartDashboard.putNumber("driverX", _driverController.getRightX());
   }
 
   private void teleopDrive() {
@@ -792,13 +799,7 @@ public class Robot extends TimedRobot {
       _limelight.setDashcam();
     }
     
-    if (_visionTargetState != null) {
-      SmartDashboard.putNumber("visionTargetStateAngle", _visionTargetState.getOffset());
-    }
-    SmartDashboard.putNumber("throttle", throttle);
-    SmartDashboard.putNumber("turn", turn);
-    SmartDashboard.putNumber("augmentTurn", augmentTurn);
-    _drivetrain.drive(deadband(throttle, 0.1), deadband((turn * .75) + augmentTurn, 0.1));
+    _drivetrain.drive(throttle, (turn * .75) + augmentTurn);
 
     if (_driverController.getBackButton() && _driverController.getStartButton() && _climber.isExtendFinished()){
       _climbing = true;
@@ -827,10 +828,8 @@ public class Robot extends TimedRobot {
     if (_drivetrain.isTurnFinished())
       {
         SmartDashboard.putBoolean("lockedOn", true);
-        //_ledController.setOnTargetState();
       } else {
         SmartDashboard.putBoolean("lockedOn", false);
-        //_ledController.setTrackingTargetState();
       }
   }
 
@@ -851,7 +850,6 @@ public class Robot extends TimedRobot {
 
     if (Math.abs(_driverController.getLeftTriggerAxis()) >= 0.5)
     {
-      _pcm.disableCompressor();
       _shooter.readyShot();
           
         if (_driverController.getRightTriggerAxis() > 0.5)  {
@@ -868,8 +866,6 @@ public class Robot extends TimedRobot {
           _ledController.setUpperLED(_ledController.kYellow);
         }
     } else {
-      _pcm.enableCompressorDigital();
-      resetVisionTargetState();
       _ledController.setTeleopIdle();
       _shooting = false;
       _shooter.stop();
@@ -900,11 +896,6 @@ public class Robot extends TimedRobot {
 
   }
 
-  private void resetVisionTargetState()
-  {
-    _visionTargetState = null;
-  }
-
   private void logClimbState(String message)
   {
     SmartDashboard.putString("climbState", message);
@@ -914,10 +905,9 @@ public class Robot extends TimedRobot {
   {
     SmartDashboard.putNumber("climbingCase", _climbingCase);
     SmartDashboard.putNumber("currentRungNumber", _climberCurrentRung);
-    SmartDashboard.putNumber("climbTime", _climbTimer.get());
+    //SmartDashboard.putNumber("climbTime", _climbTimer.get());
     switch (_climbingCase) {
       case 0:
-        _climbTimer.start();
         _climber.engageRatchet();
         logClimbState("Engage Ratchet");
         _climbingCase = 1;
@@ -938,7 +928,6 @@ public class Robot extends TimedRobot {
         
         logClimbState("Waiting for confirmation.");
         _ledController.setWaitingForConfirmation();
-        SmartDashboard.putBoolean("driver start", _driverController.getAButton());
         if (_driverController.getAButton()){
           _ledController.setFire();
           logClimbState("Set climber foward.");
@@ -1020,11 +1009,7 @@ public class Robot extends TimedRobot {
         logClimbState("Waiting for confirmation.");
 
         if (_climberCurrentRung >= 3) {
-          _climbTimer.stop();
-
-          if (_climbTimer.get() <= _fastestClimb) {
-            _ledController.setNewRecord();
-          }
+          _ledController.setNewRecord();
         } else {
           _ledController.setWaitingForConfirmation();
         }

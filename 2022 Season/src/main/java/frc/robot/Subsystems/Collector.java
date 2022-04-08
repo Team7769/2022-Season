@@ -1,14 +1,11 @@
 package frc.robot.Subsystems;
 
-import java.nio.channels.Channel;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Configuration.Constants;
 import frc.robot.Lib.Photoeye;
@@ -51,7 +48,7 @@ private static Collector _instance;
         _backChamberMotor = new CANSparkMax(Constants.kChamberBackMotorDeviceId, MotorType.kBrushless);
         _backChamberMotor.setIdleMode(IdleMode.kBrake);
 
-        _collectorSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Constants.kCollectorSolenoidChannel);
+        _collectorSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, Constants.kCollectorSolenoidChannel);
     
         _chamberBottomSensor = new Photoeye(Constants.kChamberBottomPort);
         _chamberTopSensor = new Photoeye(Constants.kChamberTopPort);
