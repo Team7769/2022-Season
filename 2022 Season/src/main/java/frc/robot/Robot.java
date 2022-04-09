@@ -443,7 +443,7 @@ public class Robot extends TimedRobot {
         _collector.intake();
 
         if (_autonomousLoops >= 50) {
-          _shooter.setFarShot();
+          _shooter.setAutoShot();
           _drivetrain.startPath();
           _autonomousCase++;
         }
