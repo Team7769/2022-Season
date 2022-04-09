@@ -61,7 +61,7 @@ public final class Constants {
     // Hood Target Points
     public static final double kPukeShotValue = 0.25;
     public static final double kCloseShotValue = .1;
-    public static final double kZoneShotValue = 0.140;
+    public static final double kZoneShotValue = 0.16;
     public static final double kFarShotValue = 0.165;
 
     public static final double kPukeShotSpeed = 5000;
@@ -225,8 +225,8 @@ public final class Constants {
     public static final double ksVolts = 0.149;
     public static final double kvVoltSecondsPerMeter = 2.86;
     public static final double kaVoltSecondsSquaredPerMeter = 0.0;
-    //public static final double kTrackwidthMeters = .715;
-    public static final double kTrackwidthMeters = .72;
+    public static final double kTrackwidthMeters = .715;
+    //public static final double kTrackwidthMeters = .72;
     public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
 
     public static final double kMaxSpeedMetersPerSecond = 3.25;

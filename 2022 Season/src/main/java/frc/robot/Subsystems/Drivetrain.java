@@ -540,11 +540,11 @@ public class Drivetrain implements ISubsystem {
 
     public void LogTelemetry() {
         // TODO Auto-generated method stub
-        // SmartDashboard.putNumber("leftDriveDistance", _leftDriveEncoder.getDistance());
+         SmartDashboard.putNumber("leftDriveDistance", _leftDriveEncoder.getDistance());
         // SmartDashboard.putNumber("leftDriveRate", _leftDriveEncoder.getRate());
-        // SmartDashboard.putNumber("rightDriveDistance", _rightDriveEncoder.getDistance());
+         SmartDashboard.putNumber("rightDriveDistance", _rightDriveEncoder.getDistance());
         // SmartDashboard.putNumber("rightDriveRate", _rightDriveEncoder.getRate());
-        // SmartDashboard.putNumber("gyroHeading", getHeading());
+         SmartDashboard.putNumber("gyroHeading", getHeading());
 
         // SmartDashboard.putNumber("turnP", _turnPID.getP());
         // SmartDashboard.putNumber("turnD", _turnPID.getD());
