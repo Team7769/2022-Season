@@ -556,7 +556,7 @@ public class Robot extends TimedRobot {
         }
         break;
       case 8:
-         _shooter.setZoneShot();
+         _shooter.setAutoShot();
          _limelight.setAimbot();
          _shooter.readyShot();
          _drivetrain.startPath();

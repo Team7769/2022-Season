@@ -61,13 +61,13 @@ public final class Constants {
     // Hood Target Points
     public static final double kPukeShotValue = 0.25;
     public static final double kCloseShotValue = .1;
-    public static final double kZoneShotValue = 0.16;
+    public static final double kZoneShotValue = 0.14;
     public static final double kFarShotValue = 0.165;
 
     public static final double kPukeShotSpeed = 5000;
     public static final double kCloseShotSpeed = 11500;
-    public static final double kZoneShotSpeed = 13750;
-    public static final double kFarShotSpeed = 14150;
+    public static final double kZoneShotSpeed = 13600;
+    public static final double kFarShotSpeed = 14100;
     
     // Drive Forward and Shoot Values
     public static final double kDriveForwardStartX= 6.71;
@@ -82,9 +82,9 @@ public final class Constants {
     // Collect Two From Terminal Values
     public static final double kCollectTwoWayPointX = 3.748;
     public static final double kCollectTwoWayPointY = 2.168;
-    public static final double kCollectTwoEndPointX= 1.679;
-    public static final double kCollectTwoEndPointY= 2.135;
-    public static final double kCollectTwoEndRotation= -2.5712743268771217;
+    public static final double kCollectTwoEndPointX= 1.567;
+    public static final double kCollectTwoEndPointY= 2.258;
+    public static final double kCollectTwoEndRotation= -2.65;
    
     // Drive Back From Terminal Values
     public static final double kDriveBackWayPointX= 4.85;
@@ -96,8 +96,8 @@ public final class Constants {
     // Fifth Ball Values
     public static final double kFifthBallWayPointX= 7.448;
     public static final double kFifthBallWayPointY= 0.853;
-    public static final double kFifthBallEndPointX= 7.358;
-    public static final double kFifthBallEndPointY= 0.4;
+    public static final double kFifthBallEndPointX= 7.35;
+    public static final double kFifthBallEndPointY= 0.35;
     public static final double kFifthBallEndPointRotation= -1.5707963267948994;
     
     //Five Ball Part One Values
