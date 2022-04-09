@@ -97,7 +97,7 @@ public final class Constants {
     public static final double kFifthBallWayPointX= 7.448;
     public static final double kFifthBallWayPointY= 0.853;
     public static final double kFifthBallEndPointX= 7.35;
-    public static final double kFifthBallEndPointY= 0.35;
+    public static final double kFifthBallEndPointY= 0.30;
     public static final double kFifthBallEndPointRotation= -1.5707963267948994;
     
     //Five Ball Part One Values
@@ -182,7 +182,7 @@ public final class Constants {
     public static final double kClimbKi = 0;
     public static final double kClimbD = 0;
 
-    public static final double kClimbPullUpPosition = 5.75;
+    public static final double kClimbPullUpPosition = 6.1;
     public static final double kClimbExtendedPosition = 7.75;
     //public static final double kClimbF = 0.35;
     
