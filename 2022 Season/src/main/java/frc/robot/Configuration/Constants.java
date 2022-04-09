@@ -67,7 +67,7 @@ public final class Constants {
     public static final double kPukeShotSpeed = 5000;
     public static final double kCloseShotSpeed = 11500;
     public static final double kZoneShotSpeed = 13750;
-    public static final double kFarShotSpeed = 14250;
+    public static final double kFarShotSpeed = 14150;
     
     // Drive Forward and Shoot Values
     public static final double kDriveForwardStartX= 6.71;

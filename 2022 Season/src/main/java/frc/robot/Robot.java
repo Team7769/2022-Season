@@ -100,7 +100,7 @@ public class Robot extends TimedRobot {
     _drivetrain.resetGyro();
     _shooter.zeroHood();
 
-    CameraServer.startAutomaticCapture();
+    //CameraServer.startAutomaticCapture();
   }
 
   /**
@@ -113,17 +113,11 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     // This is the robot periodic method.
-    _drivetrain.updatePose();
 
     // _subsystems.forEach(s -> {
     //   s.ReadDashboardData();
     //   s.LogTelemetry();
     // });
-
-    if (Constants.kCompetitionRobot) {
-     //_shooter.zeroHood();
-     _climber.resetClimbEncoder();
-    }
     
   }
 
@@ -179,6 +173,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    _drivetrain.updatePose();
     switch (_autonomousMode) {
       case AutonomousMode.kDoNothing:
         doNothing();
@@ -655,6 +650,11 @@ public class Robot extends TimedRobot {
     } else {
       _driverController.setRumble(RumbleType.kLeftRumble, 0);
     }
+    
+    if (Constants.kCompetitionRobot) {
+      //_shooter.zeroHood();
+      _climber.resetClimbEncoder();
+     }
   }
 
   /** This function is called once when the robot is disabled. */
@@ -678,7 +678,7 @@ public class Robot extends TimedRobot {
     //   _disabledTimer.stop();
     //   _disabledTimer.reset();
     // }
-
+      //SmartDashboard.putNumber("limelightDistance", _limelight.getDistanceToTarget());
     _autonomousMode = (int) SmartDashboard.getNumber("autonomousMode", 0);
   }
 
