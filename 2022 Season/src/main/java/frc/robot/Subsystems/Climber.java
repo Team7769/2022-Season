@@ -64,10 +64,13 @@ public class Climber implements ISubsystem {
         _climbTarget = Constants.kClimbPullUpPosition;
     }
 
-    public void resetClimbEncoder()
+    public void resetClimbEncoder(boolean checkSwitch)
     {
-        if (isLimitSwitchPressed())
-        {
+        if (checkSwitch) {
+            if (isLimitSwitchPressed()) {
+                _climbEncoder.reset();
+            }
+        } else {
             _climbEncoder.reset();
         }
     }

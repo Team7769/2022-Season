@@ -493,7 +493,7 @@ public class Robot extends TimedRobot {
           }
         }
 
-        if (_autonomousLoops >= 75)
+        if (_autonomousLoops >= 87)
         {
           _ledController.setUpperLED(_ledController.kFireMedium);
           _shooter.stop();
@@ -627,6 +627,7 @@ public class Robot extends TimedRobot {
     // } else {
     //   _ledController.setLowerLED(_ledController.kRedHeartBeat);
     // }
+    _climber.resetClimbEncoder(false);
     _climber.engageRatchet();
     _shooter.setAutoShot();
     _drivetrain.configTeleopTurn();
@@ -659,11 +660,6 @@ public class Robot extends TimedRobot {
     } else {
       _driverController.setRumble(RumbleType.kLeftRumble, 0);
     }
-    
-    if (Constants.kCompetitionRobot) {
-      //_shooter.zeroHood();
-      _climber.resetClimbEncoder();
-     }
   }
 
   /** This function is called once when the robot is disabled. */
@@ -912,6 +908,7 @@ public class Robot extends TimedRobot {
 
   private void teleopClimb()
   {
+    _climber.resetClimbEncoder(true);
     SmartDashboard.putNumber("climbingCase", _climbingCase);
     SmartDashboard.putNumber("currentRungNumber", _climberCurrentRung);
     //SmartDashboard.putNumber("climbTime", _climbTimer.get());
