@@ -461,12 +461,13 @@ public class Robot extends TimedRobot {
         }
         break;
       case 2:
-        _drivetrain.drive(0, _drivetrain.followTarget());
+        _drivetrain.tankDriveVolts(0, 0);
         _drivetrain.setCollectTwoFromTerminalPath();
         _shooter.readyShot();
         _autonomousCase++;
         _aimLoops = 0;
         _finishedAiming = false;
+        _autonomousLoops = 0;
         //_autonomousCase = 9000;
         break;
       case 3:

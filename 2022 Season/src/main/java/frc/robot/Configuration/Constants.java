@@ -62,12 +62,12 @@ public final class Constants {
     public static final double kPukeShotValue = 0.25;
     public static final double kCloseShotValue = .1;
     public static final double kZoneShotValue = 0.14;
-    public static final double kFarShotValue = 0.165;
+    public static final double kFarShotValue = 0.15;
 
     public static final double kPukeShotSpeed = 5000;
     public static final double kCloseShotSpeed = 11500;
     public static final double kZoneShotSpeed = 13600;
-    public static final double kFarShotSpeed = 14100;
+    public static final double kFarShotSpeed = 14000;
     
     // Drive Forward and Shoot Values
     public static final double kDriveForwardStartX= 6.71;
@@ -82,8 +82,8 @@ public final class Constants {
     // Collect Two From Terminal Values
     public static final double kCollectTwoWayPointX = 3.748;
     public static final double kCollectTwoWayPointY = 2.168;
-    public static final double kCollectTwoEndPointX= 1.717;
-    public static final double kCollectTwoEndPointY= 2.408;
+    public static final double kCollectTwoEndPointX= 1.667;
+    public static final double kCollectTwoEndPointY= 2.358;
     public static final double kCollectTwoEndRotation= -2.65;
    
     // Drive Back From Terminal Values
