@@ -228,17 +228,23 @@ public class Robot extends TimedRobot {
         }
         break;
       case 2:
+        if (_autonomousLoops < 1) {
+          _drivetrain.setTwoBallStealPath();
+        }
         _drivetrain.tankDriveVolts(0, 0);
-        _drivetrain.setTwoBallStealPath();
-        _shooter.readyShot();
-        _autonomousCase++;
+        //_shooter.readyShot();
+
+        if (_autonomousLoops >= 100) {
+          _autonomousLoops = 0;
+          _autonomousCase++;
+        }
         break;
       case 3:
         _collector.collectorUp();
         _collector.stopCollect();
         _limelight.setAimbot();
 
-        if (_autonomousLoops >= 100)
+        if (_autonomousLoops >= 150)
         {
           _drivetrain.drive(0, 0);
           _shooter.stop();
@@ -251,7 +257,7 @@ public class Robot extends TimedRobot {
             _autonomousCase++;
           }
         } else {
-          
+          _shooter.readyShot();
           if ((_shooter.goShoot() && _drivetrain.isTurnFinished()) || _shooting) {
             _shooting = true;
             _ledController.setUpperLED(_ledController.kWaitingForConfirmation);
@@ -261,7 +267,6 @@ public class Robot extends TimedRobot {
             _collector.stopChamber();
           }
           _drivetrain.drive(0, _drivetrain.followTarget());
-          _shooter.readyShot();
         }
         break;
       case 4:
