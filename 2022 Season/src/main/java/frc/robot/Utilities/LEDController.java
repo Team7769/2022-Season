@@ -22,6 +22,10 @@ public class LEDController {
     public final double colorWavesParty = -0.43;
     public final double kRainbowGlitter = -0.89;
     public final double kFireMedium = -0.59;
+    public final double kGoldStrobe = -0.07;
+    public final double kBlueStrobe = -0.09;
+    public final double kBlueShot = -0.83;
+    public final double kConfetti = -0.87;
     
     public LEDController()
     {
