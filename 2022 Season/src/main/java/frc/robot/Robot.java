@@ -593,14 +593,17 @@ public class Robot extends TimedRobot {
         _collector.intake();
 
         if (_drivetrain.isPathFinished()) {
-          _drivetrain.drive(0, _drivetrain.followTarget());
+          _drivetrain.tankDriveVolts(0, 0);
           _shooting = false;
+          _aimLoops = 0;
+          _finishedAiming = false;
+          _autonomousLoops = 0;
           _autonomousCase++;
         }
         break;
       case 10:
         _shooter.readyShot();
-        if ((_shooter.goShoot() && _drivetrain.isTurnFinished()) || _shooting) {
+        if ((_shooter.goShoot() && _finishedAiming) || _shooting || _autonomousLoops >= 75) {
           _drivetrain.tankDriveVolts(0, 0);
           _ledController.setWaitingForConfirmation();
           _shooting = true;
@@ -609,6 +612,13 @@ public class Robot extends TimedRobot {
           _drivetrain.drive(0, _drivetrain.followTarget());
           _collector.intake();
           _ledController.setUpperLED(_ledController.kYellow);
+
+          if (_drivetrain.isTurnFinished() && _limelight.hasTarget()) {
+            _aimLoops++;
+            if (_aimLoops > 5) {
+              _finishedAiming = true;
+            }
+          }
         }
         break;
       default:
