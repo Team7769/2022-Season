@@ -861,6 +861,7 @@ public class Robot extends TimedRobot {
 
     if (Math.abs(_driverController.getLeftTriggerAxis()) >= 0.5)
     {
+      _pcm.disableCompressor();
       _shooter.readyShot();
           
         if (_driverController.getRightTriggerAxis() > 0.5)  {
@@ -877,9 +878,17 @@ public class Robot extends TimedRobot {
           _ledController.setUpperLED(_ledController.kYellow);
         }
     } else {
+      _pcm.enableCompressorDigital();
       _ledController.setTeleopIdle();
       _shooting = false;
-      _shooter.stop();
+
+      if (_driverController.getYButton()) {
+        _shooter.resetHoodEncoder();
+      } else if (_driverController.getXButton()) {
+        _shooter.moveHoodDown();
+      } else {
+        _shooter.stop();
+      }
     }
   }
 
