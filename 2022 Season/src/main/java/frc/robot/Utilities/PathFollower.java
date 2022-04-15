@@ -51,9 +51,13 @@ public class PathFollower {
     {
         _currentPath = getDriveForwardAndShootTrajectory(config);
     }
-    public void setCollectTwoFromTerminalPath(TrajectoryConfig config, Pose2d startingPose)
+    public void setCollectTwoFromTerminalBluePath(TrajectoryConfig config, Pose2d startingPose)
     {
-        _currentPath = getCollectTwoFromTerminalTrajectory(config, startingPose);
+        _currentPath = getCollectTwoFromTerminalBlueTrajectory(config, startingPose);
+    }
+    public void setCollectTwoFromTerminalRedPath(TrajectoryConfig config, Pose2d startingPose)
+    {
+        _currentPath = getCollectTwoFromTerminalRedTrajectory(config, startingPose);
     }
     public void setDriveBackFromTerminalPath(TrajectoryConfig config, Pose2d startingPose)
     {
@@ -153,7 +157,7 @@ public class PathFollower {
         config);
       }
 
-      private Trajectory getCollectTwoFromTerminalTrajectory(TrajectoryConfig config, Pose2d currentPose) {
+      private Trajectory getCollectTwoFromTerminalBlueTrajectory(TrajectoryConfig config, Pose2d currentPose) {
 
         return TrajectoryGenerator.generateTrajectory(new Pose2d(currentPose.getX(), currentPose.getY(), currentPose.getRotation()),
         // Pass through these two interior waypoints, making an 's' curve path
@@ -161,7 +165,20 @@ public class PathFollower {
             new Translation2d(Constants.kCollectTwoWayPointX, Constants.kCollectTwoWayPointY)
         ),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(Constants.kCollectTwoEndPointX, Constants.kCollectTwoEndPointY, new Rotation2d(Constants.kCollectTwoEndRotation)),
+        new Pose2d(Constants.kCollectTwoEndPointXBlue, Constants.kCollectTwoEndPointYBlue, new Rotation2d(Constants.kCollectTwoEndRotation)),
+        // Pass config
+        config);
+      }
+
+      private Trajectory getCollectTwoFromTerminalRedTrajectory(TrajectoryConfig config, Pose2d currentPose) {
+
+        return TrajectoryGenerator.generateTrajectory(new Pose2d(currentPose.getX(), currentPose.getY(), currentPose.getRotation()),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(
+            new Translation2d(Constants.kCollectTwoWayPointX, Constants.kCollectTwoWayPointY)
+        ),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(Constants.kCollectTwoEndPointXRed, Constants.kCollectTwoEndPointYRed, new Rotation2d(Constants.kCollectTwoEndRotation)),
         // Pass config
         config);
       }

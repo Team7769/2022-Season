@@ -153,7 +153,8 @@ public class Robot extends TimedRobot {
         _drivetrain.setFourBallFarPartOnePath();
         _shooter.setTwoBallShot();
         break;
-      case AutonomousMode.kFiveBall:
+      case AutonomousMode.kFiveBallRed:
+      case AutonomousMode.kFiveBallBlue:
         break;
     }
     
@@ -184,8 +185,11 @@ public class Robot extends TimedRobot {
       case AutonomousMode.kTwoBallSteal:
         twoBallStealAuto(false);
         break;
-      case AutonomousMode.kFiveBall:
-        fiveBallAuto();
+      case AutonomousMode.kFiveBallRed:
+        fiveBallAuto(true);
+        break;
+      case AutonomousMode.kFiveBallBlue:
+        fiveBallAuto(false);
         break;
       default:
         // Do nothing
@@ -437,7 +441,7 @@ public class Robot extends TimedRobot {
   //   }
   // }
 
-  public void fiveBallAuto()
+  public void fiveBallAuto(boolean isRed)
   {
     switch(_autonomousCase)
     {
@@ -467,7 +471,12 @@ public class Robot extends TimedRobot {
         break;
       case 2:
         _drivetrain.tankDriveVolts(0, 0);
-        _drivetrain.setCollectTwoFromTerminalPath();
+
+        if (isRed) {
+          _drivetrain.setCollectTwoFromTerminalRedPath();
+        } else {
+          _drivetrain.setCollectTwoFromTerminalBluePath();
+        }
         _shooter.readyShot();
         _autonomousCase++;
         _aimLoops = 0;
