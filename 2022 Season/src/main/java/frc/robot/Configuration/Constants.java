@@ -82,8 +82,10 @@ public final class Constants {
     // Collect Two From Terminal Values
     public static final double kCollectTwoWayPointX = 3.748;
     public static final double kCollectTwoWayPointY = 2.168;
-    public static final double kCollectTwoEndPointX= 1.692;
-    public static final double kCollectTwoEndPointY= 2.383;
+    public static final double kCollectTwoEndPointXRed= 1.86;
+    public static final double kCollectTwoEndPointYRed= 2.131;
+    public static final double kCollectTwoEndPointXBlue= 1.717;
+    public static final double kCollectTwoEndPointYBlue= 2.371;
     public static final double kCollectTwoEndRotation= -2.65;
    
     // Drive Back From Terminal Values

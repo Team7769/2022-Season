@@ -265,6 +265,13 @@ public class Shooter implements ISubsystem {
         _hoodMotor.set(-output);
     }
 
+    public void moveHoodDown() {
+        _hoodMotor.set(.25);
+    }
+    public void resetHoodEncoder() {
+        _hoodEncoder.reset();
+    }
+
     public void LogTelemetry() {
         // TODO Auto-generated method stub
         SmartDashboard.putNumber("hoodPosition", _hoodEncoder.get());

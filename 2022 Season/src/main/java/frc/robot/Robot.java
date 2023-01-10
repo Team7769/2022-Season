@@ -153,7 +153,8 @@ public class Robot extends TimedRobot {
         _drivetrain.setFourBallFarPartOnePath();
         _shooter.setTwoBallShot();
         break;
-      case AutonomousMode.kFiveBall:
+      case AutonomousMode.kFiveBallRed:
+      case AutonomousMode.kFiveBallBlue:
         break;
     }
     
@@ -184,8 +185,11 @@ public class Robot extends TimedRobot {
       case AutonomousMode.kTwoBallSteal:
         twoBallStealAuto(false);
         break;
-      case AutonomousMode.kFiveBall:
-        fiveBallAuto();
+      case AutonomousMode.kFiveBallRed:
+        fiveBallAuto(true);
+        break;
+      case AutonomousMode.kFiveBallBlue:
+        fiveBallAuto(false);
         break;
       default:
         // Do nothing
@@ -437,7 +441,7 @@ public class Robot extends TimedRobot {
   //   }
   // }
 
-  public void fiveBallAuto()
+  public void fiveBallAuto(boolean isRed)
   {
     switch(_autonomousCase)
     {
@@ -467,7 +471,12 @@ public class Robot extends TimedRobot {
         break;
       case 2:
         _drivetrain.tankDriveVolts(0, 0);
-        _drivetrain.setCollectTwoFromTerminalPath();
+
+        if (isRed) {
+          _drivetrain.setCollectTwoFromTerminalRedPath();
+        } else {
+          _drivetrain.setCollectTwoFromTerminalBluePath();
+        }
         _shooter.readyShot();
         _autonomousCase++;
         _aimLoops = 0;
@@ -593,14 +602,17 @@ public class Robot extends TimedRobot {
         _collector.intake();
 
         if (_drivetrain.isPathFinished()) {
-          _drivetrain.drive(0, _drivetrain.followTarget());
+          _drivetrain.tankDriveVolts(0, 0);
           _shooting = false;
+          _aimLoops = 0;
+          _finishedAiming = false;
+          _autonomousLoops = 0;
           _autonomousCase++;
         }
         break;
       case 10:
         _shooter.readyShot();
-        if ((_shooter.goShoot() && _drivetrain.isTurnFinished()) || _shooting) {
+        if ((_shooter.goShoot() && _finishedAiming) || _shooting || _autonomousLoops >= 75) {
           _drivetrain.tankDriveVolts(0, 0);
           _ledController.setWaitingForConfirmation();
           _shooting = true;
@@ -609,6 +621,13 @@ public class Robot extends TimedRobot {
           _drivetrain.drive(0, _drivetrain.followTarget());
           _collector.intake();
           _ledController.setUpperLED(_ledController.kYellow);
+
+          if (_drivetrain.isTurnFinished() && _limelight.hasTarget()) {
+            _aimLoops++;
+            if (_aimLoops > 5) {
+              _finishedAiming = true;
+            }
+          }
         }
         break;
       default:
@@ -861,6 +880,7 @@ public class Robot extends TimedRobot {
 
     if (Math.abs(_driverController.getLeftTriggerAxis()) >= 0.5)
     {
+      _pcm.disableCompressor();
       _shooter.readyShot();
           
         if (_driverController.getRightTriggerAxis() > 0.5)  {
@@ -877,9 +897,17 @@ public class Robot extends TimedRobot {
           _ledController.setUpperLED(_ledController.kYellow);
         }
     } else {
+      _pcm.enableCompressorDigital();
       _ledController.setTeleopIdle();
       _shooting = false;
-      _shooter.stop();
+
+      if (_driverController.getYButton()) {
+        _shooter.resetHoodEncoder();
+      } else if (_driverController.getXButton()) {
+        _shooter.moveHoodDown();
+      } else {
+        _shooter.stop();
+      }
     }
   }
 
