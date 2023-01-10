@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
@@ -61,12 +60,16 @@ public class Drivetrain implements ISubsystem {
     public Drivetrain()
     {
         _leftFrontMotor = new CANSparkMax(Constants.kLeftFrontDriveDeviceId, MotorType.kBrushless);
+        _leftFrontMotor.restoreFactoryDefaults();
         _leftRearMotor = new CANSparkMax(Constants.kLeftRearDriveDeviceId, MotorType.kBrushless);
+        _leftRearMotor.restoreFactoryDefaults();
 
         _rightFrontMotor = new CANSparkMax(Constants.kRightFrontDriveDeviceId, MotorType.kBrushless);
+        _rightFrontMotor.restoreFactoryDefaults();
         _rightFrontMotor.setInverted(true);
 
         _rightRearMotor = new CANSparkMax(Constants.kRightRearDriveDeviceId, MotorType.kBrushless);
+        _rightRearMotor.restoreFactoryDefaults();
         _rightRearMotor.setInverted(true);
 
         _leftRearMotor.follow(_leftFrontMotor);
@@ -75,7 +78,10 @@ public class Drivetrain implements ISubsystem {
         if (Constants.kCompetitionRobot) {
 
             _leftMiddleMotor = new CANSparkMax(Constants.kLeftMiddleDriveDeviceId, MotorType.kBrushless);
+            _leftMiddleMotor.restoreFactoryDefaults();
+            
             _rightMiddleMotor = new CANSparkMax(Constants.kRightMiddleDriveDeviceId, MotorType.kBrushless);
+            _rightMiddleMotor.restoreFactoryDefaults();
             _rightMiddleMotor.setInverted(true);
             
             _leftMiddleMotor.follow(_leftFrontMotor);
@@ -110,9 +116,11 @@ public class Drivetrain implements ISubsystem {
         _rightDriveVelocityPID = new PIDController(Constants.kPathFollowingkP, 0.0, 0.0);
 
         _turnPID = new PIDController(0.067, 0.0, 0.0035);
+        _turnPID.setIntegratorRange(-6, 6);
         _turnPID.setTolerance(1.5);
 
         _robotDrive = new DifferentialDrive(_leftFrontMotor, _rightFrontMotor);
+        _robotDrive.setSafetyEnabled(false);
         
         resetEncoders();
         _odometry = new DifferentialDriveOdometry(_gyro.getRotation2d());
@@ -173,13 +181,6 @@ public class Drivetrain implements ISubsystem {
      * @param rightVolts the commanded right output
      */
     public void tankDriveVolts(double leftVolts, double rightVolts) {
-        _rightFrontMotor.setIdleMode(IdleMode.kBrake);
-        _rightMiddleMotor.setIdleMode(IdleMode.kBrake);
-        _rightRearMotor.setIdleMode(IdleMode.kBrake);
-        _leftFrontMotor.setIdleMode(IdleMode.kBrake);
-        _leftMiddleMotor.setIdleMode(IdleMode.kBrake);
-        _leftRearMotor.setIdleMode(IdleMode.kBrake);
-
         _leftFrontMotor.setVoltage(leftVolts);
         _rightFrontMotor.setVoltage(rightVolts);
         _robotDrive.feed();
@@ -187,19 +188,25 @@ public class Drivetrain implements ISubsystem {
     
     public void drive(double throttle, double turn)
     {
-        _rightFrontMotor.setIdleMode(IdleMode.kCoast);
-        _rightMiddleMotor.setIdleMode(IdleMode.kCoast);
-        _rightRearMotor.setIdleMode(IdleMode.kCoast);
-        _leftFrontMotor.setIdleMode(IdleMode.kCoast);
-        _leftMiddleMotor.setIdleMode(IdleMode.kCoast);
-        _leftRearMotor.setIdleMode(IdleMode.kCoast);
-
         if (Math.abs(throttle) <= .1) {
             setRampRate(0);
         } else {
             setRampRate(.25);
         }
         _robotDrive.arcadeDrive(throttle, turn);
+    }
+
+    public void directDrive(double throttle, double turn) {
+        _leftFrontMotor.set(throttle - turn);
+        _rightFrontMotor.set(throttle + turn);
+    }
+
+    public void arcadeDrive(double throttle, double turn) {
+        _robotDrive.arcadeDrive(throttle, turn, false);
+    }
+
+    public void curvatureDrive(double throttle, double turn, boolean quickTurn) {
+        _robotDrive.curvatureDrive(throttle, turn, quickTurn);
     }
 
     public void setRampRate(double rate)
@@ -217,6 +224,24 @@ public class Drivetrain implements ISubsystem {
         _rightFrontMotor.setIdleMode(IdleMode.kBrake);
         _leftFrontMotor.setIdleMode(IdleMode.kBrake);
         _robotDrive.arcadeDrive(throttle, turn);
+    }
+
+    public void setCoastMode() {
+        _rightFrontMotor.setIdleMode(IdleMode.kCoast);
+        _rightMiddleMotor.setIdleMode(IdleMode.kCoast);
+        _rightRearMotor.setIdleMode(IdleMode.kCoast);
+        _leftFrontMotor.setIdleMode(IdleMode.kCoast);
+        _leftMiddleMotor.setIdleMode(IdleMode.kCoast);
+        _leftRearMotor.setIdleMode(IdleMode.kCoast);
+    }
+
+    public void setBrakeMode() {
+        _rightFrontMotor.setIdleMode(IdleMode.kBrake);
+        _rightMiddleMotor.setIdleMode(IdleMode.kBrake);
+        _rightRearMotor.setIdleMode(IdleMode.kBrake);
+        _leftFrontMotor.setIdleMode(IdleMode.kBrake);
+        _leftMiddleMotor.setIdleMode(IdleMode.kBrake);
+        _leftRearMotor.setIdleMode(IdleMode.kBrake);
     }
     
     /**
@@ -342,9 +367,14 @@ public class Drivetrain implements ISubsystem {
         _pathFollower.setDriveForwardAndShootPath(getTrajectoryConfig(false));
     }
 
-    public void setCollectTwoFromTerminalPath()
+    public void setCollectTwoFromTerminalBluePath()
     {
-        _pathFollower.setCollectTwoFromTerminalPath(getTrajectoryConfig(false), getPose());
+        _pathFollower.setCollectTwoFromTerminalBluePath(getTrajectoryConfig(false), getPose());
+    }
+
+    public void setCollectTwoFromTerminalRedPath()
+    {
+        _pathFollower.setCollectTwoFromTerminalRedPath(getTrajectoryConfig(false), getPose());
     }
 
     public void setDriveBackFromTerminalPath()
@@ -400,10 +430,6 @@ public class Drivetrain implements ISubsystem {
     public void followPath()
     {
         var target = _pathFollower.getPathTarget(getPose());
-        SmartDashboard.putNumber("leftSpeed", getWheelSpeeds().leftMetersPerSecond);
-        SmartDashboard.putNumber("rightSpeed", getWheelSpeeds().rightMetersPerSecond);
-        SmartDashboard.putNumber("leftTargetSpeed", target.leftMetersPerSecond);
-        SmartDashboard.putNumber("rightTargetSpeed", target.rightMetersPerSecond);
 
         var leftOutputTarget = _leftDriveVelocityPID.calculate(getWheelSpeeds().leftMetersPerSecond, target.leftMetersPerSecond);
         var rightOutputTarget = _rightDriveVelocityPID.calculate(getWheelSpeeds().rightMetersPerSecond, target.rightMetersPerSecond);
@@ -519,11 +545,11 @@ public class Drivetrain implements ISubsystem {
 
     public void LogTelemetry() {
         // TODO Auto-generated method stub
-        // SmartDashboard.putNumber("leftDriveDistance", _leftDriveEncoder.getDistance());
+         SmartDashboard.putNumber("leftDriveDistance", _leftDriveEncoder.getDistance());
         // SmartDashboard.putNumber("leftDriveRate", _leftDriveEncoder.getRate());
-        // SmartDashboard.putNumber("rightDriveDistance", _rightDriveEncoder.getDistance());
+         SmartDashboard.putNumber("rightDriveDistance", _rightDriveEncoder.getDistance());
         // SmartDashboard.putNumber("rightDriveRate", _rightDriveEncoder.getRate());
-        // SmartDashboard.putNumber("gyroHeading", getHeading());
+         SmartDashboard.putNumber("gyroHeading", getHeading());
 
         // SmartDashboard.putNumber("turnP", _turnPID.getP());
         // SmartDashboard.putNumber("turnD", _turnPID.getD());
